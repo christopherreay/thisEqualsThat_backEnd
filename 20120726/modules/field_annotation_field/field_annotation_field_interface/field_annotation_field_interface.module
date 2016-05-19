@@ -1,0 +1,988 @@
+<?php
+/**
+ * @file
+ * An example field using the Field Types API.
+ */
+
+/**
+ * @defgroup field_example Example: Field Types API
+ * @ingroup examples
+ * @{
+ * Examples using Field Types API.
+ *
+ * This is updated from Barry Jaspan's presentation at Drupalcon Paris,
+ * @link http://acquia.com/community/resources/acquia-tv/intro-field-api-module-developers Video Presentation @endlink
+ *
+ * Providing a field requires:
+ * - Defining a field:
+ *   - hook_field_info()
+ *   - hook_field_schema()
+ *   - hook_field_validate()
+ *   - hook_field_is_empty()
+ *
+ * - Defining a formatter for the field (the portion that outputs the field for
+ *   display):
+ *   - hook_field_formatter_info()
+ *   - hook_field_formatter_view()
+ *
+ * - Defining a widget for the edit form:
+ *   - hook_field_widget_info()
+ *   - hook_field_widget_form()
+ *
+ * Our module defines the field in field_example_field_info(),
+ * field_example_field_validate() and field_example_field_is_empty().
+ * field_example_field_schema() is implemented in field_example.install.
+ *
+ * Our module sets up a formatter in field_example_field_formatter_info() and
+ * field_example_field_formatter_view(). These are the API hooks that present
+ * formatted and themed output to the user.
+
+ * And finally, our module defines the widet in
+ * field_example_field_widget_info() and field_example_field_widget_form().
+ * The widget is the form element used to receive input from the user
+ * when the field is being populated.
+ *
+ * @see field_types
+ * @see field
+ */
+
+/***************************************************************
+ * Field Type API hooks
+ ***************************************************************/
+
+/**
+ * Implements hook_field_info().
+ *
+ * Provides the description of the field.
+ */
+function field_annotation_field_interface_field_info() {
+  return array(
+    // We name our field as the associative name of the array.
+    'field_faf_interface' => array(
+      'label'             => t('Inteface Annotation Field'),
+      'description'       => t('Augment the information stored about a field so that it provides all the details requried by the Javascript Interface'),
+      'default_widget'    => 'field_faf_int_widget',
+      'default_formatter' => 'field_faf_int_formatter',
+      'settings'          => array(
+          "setting"   => "default setting",
+      ),
+      'instance_settings'     => array(
+          "annotated_field"         => Null,
+          "import_on_save"          => 0,
+          "svg_component"           => Null,
+          "parameter_type"          => "range",
+          "unit_before"             => "",
+          "unit_after"              => "",
+          "range_lower"             => Null,
+          "range_higher"            => Null,
+          "range_step"              => Null,
+          "range_options"           => Null,
+          "range_option_svg_urls"   => Null,
+      ),
+    ),
+  );
+}
+
+function field_annotation_field_interface_field_settings_form($field, $instance, $has_data) 
+{ $settings = $field['settings'];
+
+  $form = array();
+  $form['setting'] = array(
+    '#type' => 'textfield',
+    '#title' => 'setting',
+    '#description' => "A Setting",
+    '#default_value' => $settings['setting'],
+  );
+  
+  return $form;
+}
+
+function faf_interface_get_parameter_types()
+{ $list_of_parameter_types = 
+    array(  "range" => "Range", "select" => "Select"
+    );
+    
+  return $list_of_parameter_types;
+}
+
+function field_annotation_field_interface_field_instance_settings_form($field, $instance) 
+{ $settings = $instance['settings'];
+
+  dpm($instance);
+  
+  $listOfFields = field_info_instances($instance['entity_type'], $instance['bundle']);
+  unset($listOfFields[$instance['field_name']]);
+  $options = faf_interface_generate_bundle_field_options($listOfFields);
+
+  $form = array();
+  $form['annotated_field']  = array(
+        '#title'          => 'Annotated Field',
+        '#description'    => "Which field is to be annotated",
+        '#type'           => 'select',
+        '#options'        => $options,
+        '#default_value'  => $settings['annotated_field'],
+  );
+  
+  $form['import_on_save']    = array(
+        '#title'          => 'Import On Save',
+        '#description'    => "If this check box is ticked, any applicable values will be imported from the Field Settings of the Annotated Field when Field Settings are saved.",
+        '#type'           => 'checkbox',
+        '#default_value'  => $settings['import_on_save'],
+  );
+  
+  $form['svg_component']    = array(
+        '#title'          => 'SVG Component',
+        '#description'    => "What SVG component should represent this parameter on the SVG image of the model. This should be a full or partial URL",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['svg_component'],
+  );
+  
+  $form['parameter_type']   = array(
+        '#title'          => 'Parameter Type',
+        '#description'    => "What step should a numeric range have",
+        '#type'           => 'select',
+        '#options'        => faf_interface_get_parameter_types(),
+        '#default_value'  => $settings['parameter_type'],
+  );
+  $form['unit_before']             = array(
+        '#title'          => 'Unit Before (e.g. $ or £)',
+        '#description'    => "Enter like this: 'pound|pounds' for singular and plural",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['unit_before'],
+  );
+  $form['unit_after']             = array(
+        '#title'          => 'Unit After (e.g pound|pounds or mile|miles)',
+        '#description'    => "Enter like this: 'pound|pounds' for singular and plural",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['unit_after'],
+  );
+  $form['range_lower']      = array(
+        '#title'          => 'Range Lower',
+        '#description'    => "Minimum value for this paramter",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['range_lower'],
+  );
+  $form['range_higher']      = array(
+        '#title'          => 'Range Higher',
+        '#description'    => "Maximum value for this parameter",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['range_higher'],
+  );
+  $form['range_step']       = array(
+        '#title'          => 'Range Step',
+        '#description'    => "What step should a numeric range have on the interface",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['range_step'],
+  );
+  $form['range_options']    = array(
+        '#title'          => 'Range Options',
+        '#description'    => "List (usually fairly small) of possible values this parameter may take. <br><br>Separate options with a newline<br><b>Format:</b> machine_name<b style='font-size: 1.2em;'>|</b>Label Name",
+        '#type'           => 'textarea',
+        '#default_value'  => $settings['range_options'],
+  );  
+  $form['range_option_svg_urls']    = array(
+        '#title'          => 'Range Option SVG URLs',
+        '#description'    => "Each Range Option can have its own icon. Enter one URL for each of the lines in the Range Options above",
+        '#type'           => 'textarea',
+        '#default_value'  => $settings['range_options'],
+  );
+  
+  
+  
+ 
+  
+  return $form;
+}
+
+function faf_interface_generate_bundle_field_options($bundle_fields)
+{ $options = array();
+  foreach ($bundle_fields as $field_name => $field)
+  { $options[$field_name] = $field['label'];
+  }
+  return $options;
+}
+
+
+/**
+ * Implements hook_field_is_empty().
+ *
+ * hook_field_is_emtpy() is where Drupal asks us if this field is empty.
+ * Return TRUE if it does not contain data, FALSE if it does. This lets
+ * the form API flag an error when required fields are empty.
+ */
+function field_annotation_field_interface_field_is_empty($item, $field) {
+  //dpm("Is Empty");
+  //dpm($item);
+  return empty($item['value']);
+}
+
+
+/**
+ * Implements hook_field_formatter_info().
+ *
+ * We need to tell Drupal that we have two different types of formatters
+ * for this field. One will change the text color, and the other will
+ * change the background color.
+ *
+ * @see field_example_field_formatter_view()
+ */
+function field_annotation_field_interface_field_formatter_info() {
+  return array(
+    // This formatter just displays the hex value in the color indicated.
+    'field_faf_int_formatter' => array(
+      'label' => t('Simple text-based formatter'),
+      'field types' => array('field_faf_interface'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ *
+ * Two formatters are implemented.
+ * - field_example_simple_text just outputs markup indicating the color that
+ *   was entered and uses an inline style to set the text color to that value.
+ * - field_example_color_background does the same but also changes the
+ *   background color of div.region-content.
+ *
+ * @see field_example_field_formatter_info()
+ */
+function field_annotation_field_interface_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $colors = array("red", "black");
+
+  $element = array();
+  switch ($display['type']) {
+    // This formatter simply outputs the field as text and with a color.
+    case 'field_faf_int_formatter':
+      foreach ($items as $delta => $item) {
+        $element[$delta] = array(
+          // We create a render array to produce the desired markup,
+          // "<p style="color: #hexcolor">The color code ... #hexcolor</p>".
+          // See theme_html_tag().
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#attributes' => array(
+            'style' => 'color: ' . $item['value'],
+          ),
+          '#value' => t('The color code in this field is @code', array('@code' => $item['value'])),
+        );
+      }
+      break;
+
+    // This formatter adds css to the page changing the '.region-content' area's
+    // background color. If there are many fields, the last one will win.
+
+ 
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_info().
+ *
+ * Three widgets are provided.
+ * - A simple text-only widget where the user enters the '#ffffff'.
+ * - A 3-textfield widget that gathers the red, green, and blue values
+ *   separately.
+ * - A farbtastic colorpicker widget that chooses the value graphically.
+ *
+ * These widget types will eventually show up in hook_field_widget_form,
+ * where we will have to flesh them out.
+ *
+ * @see field_example_field_widget_form()
+ */
+function field_annotation_field_interface_field_widget_info() {
+  return array(
+    'field_faf_int_widget' => array(
+      'label' => t('FAF WIDGET'),
+      'field types' => array('field_faf_interface'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ *
+ * hook_widget_form() is where Drupal tells us to create form elements for
+ * our field's widget.
+ *
+ * We provide one of three different forms, depending on the widget type of
+ * the Form API item provided.
+ *
+ * The 'field_example_colorpicker' and 'field_example_text' are essentially
+ * the same, but field_example_colorpicker adds a javascript colorpicker
+ * helper.
+ *
+ * field_example_3text displays three text fields, one each for red, green,
+ * and blue. However, the field type defines a single text column,
+ * rgb, which needs an HTML color spec. Define an element validate
+ * handler that converts our r, g, and b fields into a simulated single
+ * 'rgb' form element.
+ */
+function field_annotation_field_interface_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $value = isset($items[$delta]['value']) ? $items[$delta]['value'] : '';
+
+  $widget = $element;
+  $widget['#delta'] = $delta;
+
+  switch ($instance['widget']['type']) {
+
+    
+    case 'field_faf_int_widget':
+      $widget += array(
+        '#type' => 'textfield',
+        '#default_value' => $value,
+        // Allow a slightly larger size that the field length to allow for some
+        // configurations where all characters won't fit in input field.
+        '#size' => 1,
+        '#maxlength' => 1,
+      );
+      break;
+
+  }
+
+  $element['value'] = $widget;
+  return $element;
+}
+
+
+class FAF_ajax_request
+{ public $root_nid;
+  public $input_field_name;
+  public $output_field_name;
+  public $value_to_set;
+  
+  public $faf_root;
+  public $response_model;
+  
+  public $debug;
+  
+  function __construct($input_vars = null)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+    if ($input_vars === null)
+    { if (array_key_exists('root_nid', $_POST))
+      { $input_vars = &$_POST; 
+      }
+      elseif (array_key_exists('root_nid', $_GET))
+      { $input_vars = &$_GET;
+      }
+    }
+    dpm($input_vars);
+    if (array_key_exists('root_nid', $input_vars))
+    { $this->root_nid           = $input_vars['root_nid'];
+      $this->input_field_name   = $input_vars['input_field_name'];
+      $this->output_field_name  = $input_vars['output_field_name'];
+      $this->value_to_set       = $input_vars['value_to_set'];
+    }
+    else
+    { $this->root_nid           = 392;
+      $this->input_field_name   = "field_distance";
+      $this->output_field_name  = "field_distance";
+      $this->value_to_set       = "2200";
+    }
+    cast_number_value($this->value_to_set);
+    
+    $root_node = node_load($this->root_nid);
+    $faf_root  = new FAF_node();
+    $faf_root->init_as_parent($root_node);
+    $this->faf_root = $faf_root;
+  }
+  function accept_external_input()
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+    $this->faf_root->accept_external_input($this->input_field_name, $this->output_field_name, $this->value_to_set);
+  }
+  function create_response_model()
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+    $response_model = array();
+    $debug = &$this->debug;
+    
+    //Get Meta Model Data
+    $meta_model_faf_node = 
+      $this->faf_root->settings['meta_model'];
+    $debug[] = $meta_model_faf_node;
+    $meta_data = array();
+    $meta_model_fields = field_info_instances("node", $meta_model_faf_node->node->type);
+    foreach($meta_model_fields as $field_name => $field)
+    { $meta_data[$field_name] = $meta_model_faf_node->get_field_value($field_name, "");
+    }
+    $response_model['meta_data'] = $meta_data;
+    
+    //Get Model Field Analysis
+    function faf_int_collect_field_data($faf_node, &$output)
+    { faf_int_process_field_list($faf_node, $faf_node->input_fields,  $output['input_fields']);
+      faf_int_process_field_list($faf_node, $faf_node->output_fields, $output['output_fields']);
+    }
+    function faf_int_process_field_list($faf_node, $field_list, &$existing_list)
+    { foreach ($field_list as $field_name => $field)
+      { $annotated_field_name = $field['settings']['annotated_field'];
+        $qualified_field_name = $faf_node->build_field_name($annotated_field_name);
+        $existing_list[$qualified_field_name] = 
+            array(
+              "instance"  => $field,
+              "value"     => $faf_node->get_value_through_faf($field, ""),
+              "interface" => faf_interface_get_instance_json($faf_node->node, $field_name),
+            );
+      }
+    }
+    $field_analysis = array("input_fields"=>array(), "output_fields" => array());
+    $this->faf_root->traverse_tree("faf_int_collect_field_data", null, $field_analysis);
+    
+    $input_fields = &$field_analysis['input_fields'];
+    foreach ($input_fields as $field_name => $field)
+    { if ($field['interface']['NO RANGE OR SELECT DATA SUPPLIED'])
+      { dpm("Field: ".$field_name.". WARNING, input field with NO RANGE OR SELECT DATA SUPPLIED");
+      }
+    }
+    
+    $response_model['field_analysis'] = $field_analysis;
+    
+    $this->response_model = $response_model;
+  }
+  function filter_response_model_to_json_output()
+  { 
+  }
+  function json_encoded_output()
+  { return json_encode($this->response_model);
+  }
+  function pretty_print_json_output()
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+    $toReturn   =   "<pre><code>";
+    { ob_start();
+      print_r($this->json_output);
+      $toReturn   .=  ob_get_contents();
+      ob_end_clean();
+    }
+    $toReturn   .= "</code></pre>";
+    return $toReturn;
+  }
+}
+
+class FAF_json_response
+{ public $root_nid;
+  public $input_field_name;
+  public $output_field_name;
+  public $value_to_set;
+  
+  public $meta_data;
+  public $input_fields;
+  public $output_fields;
+  
+  public $debug;
+  
+  function __construct($ajax_request)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->root_nid           = $ajax_request->root_nid;
+    $this->input_field_name   = $ajax_request->input_field_name;
+    $this->output_field_name  = $ajax_request->output_field_name;
+    $this->value_to_set       = $ajax_request->value_to_set;
+    
+    $this->meta_data      =
+        $ajax_request->response_model['meta_data'];
+    $this->input_fields   = 
+        $this->map_field_data($ajax_request->response_model['field_analysis']['input_fields']);
+    $this->output_fields  = 
+        $this->map_field_data($ajax_request->response_model['field_analysis']['output_fields']);
+  }
+  
+  function map_field_data(&$field_list)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $toReturn = array();
+    foreach ($field_list as $field_name => $field_data)
+    { $field_entry = array();
+
+      $field_entry['qualified_field_name'] = $field_name;      
+      $field_mapping = array( "local_field_name"  => array('instance','settings','annotated_field'),
+                              "label"             => array('instance','settings','annotated_field_instance','label'),
+                              "interface"         => 'interface',
+                              "value"             => 'value'
+                       );
+      pu_map_to_target($field_mapping, $field_data, $field_entry);
+      $toReturn[] = $field_entry;
+    }
+    return $toReturn;
+  }
+  function json_encoded_output()
+  { $debug = $this->debug;
+    $this->debug = Null;
+    return json_encode($this);
+    $this->debug = $debug;
+  }
+}
+
+
+function field_annotation_field_menu()
+{ $menu = array();
+  $menu["jsInterface"] = array(
+    'title' => "jsInterface",
+    'page callback' => "faf_jsInterface",
+    'access callback' => True,
+    'type' => MENU_CALLBACK
+  );
+  $menu["listOfModels/aModelOfACarURL"] = array(
+    'title' => "Model of a Car",
+    'page callback' => "faf_aModelOfACarURL",
+    'access callback' => True,
+    'type' => MENU_NORMAL_ITEM
+  );
+  $menu["listOfModels/aModelOfACarURL_debug"] = array(
+    'title' => "Model of a Car",
+    'page callback' => "faf_aModelOfACarURL_debug",
+    'access callback' => True,
+    'type' => MENU_NORMAL_ITEM
+  );
+  $menu["listOfModels/test_oop"] = array(
+    'title' => "Model of a Car",
+    'page callback' => "faf_test_oop",
+    'access callback' => True,
+    'type' => MENU_NORMAL_ITEM
+  );
+  
+  $menu["ajaxInterface/initialiseNewThisEqualsThat/%"]= array(
+    'title' => "Create New ThisEqualsThat",
+    'page callback' => "faf_init_new_thisEqualsThat",
+    'page arguments' => array(2),
+    'access callback' => True,
+    'type' => MENU_CALLBACK
+  );
+  
+  $menu["ajaxInterface/getModelCategoryHierarchy/%"]= array(
+    'title' => "Model Hierarchy",
+    'page callback' => "faf_return_model_category_hierarchy",
+    'page arguments' => array(2),
+    'access callback' => True,
+    'type' => MENU_CALLBACK,
+  );
+  $menu["ajaxInterface/getModelsByCategory/%/%"]= array(
+    'title' => "Models by Category",
+    'page callback' => "faf_return_models_by_category",
+    'page arguments' => array(2,3),
+    'access callback' => True,
+    'type' => MENU_CALLBACK,
+  );
+  
+  $menu["ajaxInterface/accept_external_input/%"]= array(
+    'title' => "Model of a Car",
+    'page callback' => "faf_accept_external_input",
+    'page arguments' => array(2),
+    'access callback' => True,
+    'type' => MENU_CALLBACK
+  );
+  
+  $menu["ajaxInterface/getModelsByFieldName/%/%"]= array(
+    'title' => "Models by Field Name",
+    'page callback' => "faf_return_models_by_field_name",
+    'page arguments' => array(2, 3),
+    'access callback' => True,
+    'type' => MENU_CALLBACK,
+  );
+  
+  return $menu;
+}
+
+function faf_init_new_thisEqualsThat($output_style="json")
+{ global $user;
+
+  $node = new stdClass();
+
+  $node->uid          = $user->uid;
+  $node->title        = "Unnamed ThisEqualsThat";
+  $node->type         = "this_that";
+  $node->language     = LANGUAGE_NONE;
+  $node->status       = 1;
+  $node->comment      = 2;
+  
+  node_submit($node);
+  node_save($node);
+  
+  $this_that_to_interface = array();
+  $field_mapping = array( 'nid','title','created','changed' );
+  pu_map_to_target($field_mapping, $node, $this_that_to_interface);                  
+  
+  if ($output_style === "debug")
+  { dpm($node);
+    dpm($this_that_to_interface);
+    $toReturn = "TODO: Allow people to browse this_that nodes by taxonomy terms of referenced Models";
+    return $toReturn;
+  }
+  else
+  { print_r(json_encode($this_that_to_interface));
+  }
+}
+#TODO: Allow people to browse this_that nodes by taxonomy terms of referenced Models
+
+function faf_return_model_category_hierarchy($output_style="json")
+{ $model_category_term_vid  = taxonomy_vocabulary_machine_name_load("model_categories");
+  $original_taxonomy_tree   = taxonomy_get_tree($model_category_term_vid->vid, 0, Null, True);
+  $model_category_tree      = _taxonomy_get_real_tree($original_taxonomy_tree,
+                                 "__faf_int_process_taxonomy_tree_to_menu_item");
+
+  $rooted_tree = new stdClass();
+  $rooted_tree->tid=0;
+  $rooted_tree->vid=0;
+  $children = array();
+  foreach ($model_category_tree as $cat_root)
+  { $children[] = $cat_root;
+  }
+  $rooted_tree->children = $children;
+
+  if ($output_style==="debug")
+  { dpm($rooted_tree);
+    return "MODEL CATEGORY HIERARCHY";
+  }
+  else
+  { print_r(json_encode($rooted_tree));
+    return;
+  }
+}
+function __faf_int_process_taxonomy_tree_to_menu_item(&$term)
+{ pu_process_entity_field_images_uri_to_url($term, 'category_menu_item', 'field_term_menu_icon');
+  $field_mapping = array( 'tid'       =>  'tid', 
+                          'vid'       =>  'vid',
+                          'depth'     =>  'depth',
+                          'name'      =>  'name',
+                          'parents'   =>  'parents',
+                          'children'  =>  'children',
+                          'leafs'     =>  'leafs',
+                          "icon_url"  =>  array('field_term_menu_icon','und',0,'pu_auto_url'),
+                    );
+  $new_term = new stdClass();
+  pu_map_to_target($field_mapping, $term, $new_term);
+  $term = $new_term;
+  #return $new_term;
+}
+
+function faf_return_models_by_category($category_tid, $output_style="json")
+{ $node_nids = taxonomy_select_nodes($category_tid);
+  
+  $nodes = node_load_multiple($node_nids);
+  
+  $toReturn = array();
+  foreach ($nodes as $node)
+  { $toReturn[] = faf_process_meta_model_node_as_menu_item($node);
+  }
+  
+  if ($output_style === "debug")
+  { dpm(func_get_args());
+    dpm($node_nids);
+    dpm($nodes);
+    dpm($toReturn);
+    return "Models by Category";
+  }
+  else
+  { print_r($toReturn);
+    return;
+  }
+}
+function faf_process_meta_model_node_as_menu_item($node)
+{ pu_process_entity_field_images_uri_to_url($node, 'category_menu_item', 'field_menu_icon');
+    
+  $node_as_menu_item = array();
+  $field_mapping = array( 'name'          =>  array('field_model_display_name','und',0,'value'),
+                          'icon_url'      =>  array('field_menu_icon','und',0,'pu_auto_url'), 
+                          'metaModel_nid' =>  'nid',
+                   );
+  pu_map_to_target($field_mapping, $node, $node_as_menu_item);
+  
+  return $node_as_menu_item;
+}
+
+class FAF_field_from_interface
+{ public $raw_text;
+  public $local_field_name;
+  public $path;
+  public $path_with_field_name;
+  
+  function __construct($raw_text)
+  { $this->raw_text             = $raw_text;
+    $path_with_field_name       = explode(".", $raw_text);
+    $this->path_with_field_name = $path_with_field_name;
+    $this->local_field_name     = array_pop($path_with_field_name);
+    $this->path                 = $path_with_field_name;
+  }
+}
+function faf_return_models_by_field_name($field_name, $output_style="json")
+{ $meta_field_info  = field_info_field("field_model_metamodel");
+  $meta_field_node_types = $meta_field_info['bundles']['node'];
+
+  $model_parameter  = new FAF_field_from_interface($field_name);
+  $field_info       = field_info_field($model_parameter->local_field_name);
+  $field_node_types = $field_info['bundles']['node'];
+
+  $relevant_node_types = array_intersect($meta_field_node_types, $field_node_types);
+
+  //Get all MetaModel nodes that are attached to relevant node types
+  foreach ($relevant_node_types as $node_type)
+  { $model_metamodel_enc_instance = field_info_instance("node", "field_model_metamodel_enc", $node_type);
+    $meta_model_nid = $model_metamodel_enc_instance['settings']['template_node_id'];
+    $meta_model_node_nid_list[] = $meta_model_nid;
+  }
+  $meta_model_nodes = node_load_multiple($meta_model_node_nid_list);
+ 
+  $model_category_term_vid  = taxonomy_vocabulary_machine_name_load("model_categories");
+  $original_taxonomy_tree   = taxonomy_get_tree($model_category_term_vid->vid, 0, Null, True);
+  
+  $taxonomy_tree_by_tid = array();
+  foreach ($original_taxonomy_tree as $tree_node)
+  { $taxonomy_tree_by_tid[$tree_node->tid] = $tree_node;
+  }
+
+  foreach ($meta_model_nodes as $meta_model_node)
+  { $meta_model_node_categories = $meta_model_node->field_model_category['und'];
+    foreach ($meta_model_node_categories as $term_value)
+    { $taxonomy_tree_by_tid[$term_value['tid']]->leafs[] = faf_process_meta_model_node_as_menu_item($meta_model_node);
+      faf_mark_all_taxonomy_parents($taxonomy_tree_by_tid, $term_value['tid'], "has_leafs");
+    }
+  }
+  
+  foreach ($original_taxonomy_tree as $index => $tree_node)
+  { if (!$tree_node->has_leafs)
+    { unset($original_taxonomy_tree[$index]);
+    }
+  }
+  
+  $model_category_tree      = _taxonomy_get_real_tree($original_taxonomy_tree,
+                                                      __faf_int_process_taxonomy_tree_to_menu_item);
+  
+  if ($output_style === "debug")
+  { dpm($field_name);
+    dsm_named("Field Infos", array($meta_field_node_types, $field_node_types, $relevant_node_types));
+    dsm_named("Relevant Nodes and Tax Tree", array($meta_model_nodes, $original_taxonomy_tree, $original_taxonomy_tree));
+    dsm_named("model_category_tree", $model_category_tree);
+    return "MODELS BY FEILD NAME";
+  }
+  else
+  { print_r($model_category_tree);
+    return;
+  }
+}
+function faf_mark_all_taxonomy_parents(&$complete_tree, $tid, $field_name, $value=True)
+{ $tree_node = &$complete_tree[$tid];
+  if ($tree_node->$field_name === $value)
+  { return;
+  }
+  $tree_node->$field_name = $value;
+  foreach ($tree_node->parents as $parent_tid)
+  { faf_mark_all_taxonomy_parents($complete_tree, $parent_tid, $field_name, $value);
+  }
+}
+
+function faf_accept_external_input($output_style="json")
+{ $faf_request = new FAF_ajax_request();
+  
+  $faf_request->accept_external_input();
+  $faf_request->create_response_model();
+  
+  $json_response = new FAF_json_response($faf_request);
+  if ($output_style==="debug")
+  { dpm($faf_request);
+    dpm($json_response);
+    return "Accept External Input - DEBUG";
+  }
+  else
+  { print($json_response->json_encoded_output());
+    return;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+function faf_test_oop()
+{ $node = node_load(392);
+  $faf_node = new FAF_node();
+  $faf_node->init_as_parent($node);
+  
+  dpm($faf_node);
+  
+  $faf_node->accept_external_input("field_engine_size", "field_ann_enc_gof.field_mass", "1200");
+  
+  dpm($faf_node);
+  return "something";
+}
+
+
+
+
+function faf_jsInterface()
+{ 
+}
+function faf_aModelOfACarURL_debug()
+{ $debug = array();
+  faf_aModelOfAURL($debug);
+  dpm("JSON DATA");
+  dpm($debug['response_model']);
+  return "Something";
+}
+function faf_aModelOfACarURL()
+{ $debug = array();
+  $response_model = faf_aModelOfAURL($debug);
+  print("<pre><code>");
+  print_r($response_model);
+  print("</code></pre>");
+}
+
+function faf_aModelOfAURL(&$debug)
+{ $debug = array();
+  
+  #print_r($result);
+
+  if (!empty($_POST['writeJS']))
+  { $modify_nid   = $_POST['modify_nid'];
+  
+    $field        = $_POST['modify_field'];
+    $field_field  = $_POST['modify_field_field'];
+    $value        = $_POST['modify_value'];
+    
+    $model_nid    = $_POST['model_nid'];
+  }
+  else
+  { $modify_nid   = 392;
+    $field        = "field_gof_faf";
+    $field_field  = "intermsof";
+    $value        = 5;
+    
+    $model_nid    = 392;
+  }
+  
+  $modify_node = node_load($modify_nid);
+
+  $response_model['root_nid'] = $model_nid;
+
+  $model_node = node_load($model_nid);
+  
+  $model_root = new FAF_node();
+  $model_root->init_as_parent($model_node);
+  
+  faf_output_model_as_json($model_root, $response_model);
+  
+  return $response_model;
+}
+  
+function faf_output_model_as_json($root_faf_node, &$response_model)
+{ $debug = array();
+  $model_root = $root_faf_node;
+  
+  $debug[] = $model_root;
+  //print_r($model_tree);
+  //print("<br><br>");
+  
+  //Specifically include the Meta_model field for the root Model. Ignore for any
+  //  sub models.
+  //Input fields should be taken from the Root Model
+  //Output field, i.e "In Terms Of" can include any fields from the RootModel 
+  //  and all SubModels.
+  
+  
+  $meta_model_faf_node = 
+      $model_root->settings['meta_model'];
+  
+  $debug[] = $meta_model_faf_node;
+  $meta_data = array();
+  $meta_model_fields = field_info_instances("node", $meta_model_faf_node->node->type);
+  foreach($meta_model_fields as $field_name => $field)
+  { $meta_data[$field_name] = $meta_model_faf_node->get_field_value($field_name, "");
+  }
+  $response_model['meta_data'] = $meta_data;
+  
+  function faf_int_collect_field_data($faf_node, $output)
+  { faf_int_process_field_list($faf_node, $faf_node->input_fields,  &$output['input_fields']);
+    faf_int_process_field_list($faf_node, $faf_node->output_fields, &$output['output_fields']);
+  }
+  function faf_int_process_field_list($faf_node, $field_list, &$existing_list)
+  { foreach ($field_list as $field_name => $field)
+    { $qualified_field_name = $faf_node->build_field_name($field_name);
+      $existing_list[$qualified_field_name] = 
+          array(
+            "instance"  => $field,
+            "value"     => $faf_node->get_value_through_faf($field, ""),
+            "interface" => faf_interface_get_instance_json($faf_node->node, $field_name),
+          );
+    }
+  }
+  
+  $field_analysis = array("input_fields"=>array(), "output_fields" => array());
+  $model_root->traverse_tree(faf_int_collect_field_data, null, $field_analysis);
+  //faf_int_collect_field_data($model_root, &$field_analysis);
+  $response_model['field_analysis'] = $field_analysis;
+ 
+  //print (json_encode($response_model));
+  $response_model['debug'] = $debug;
+  return $response_model;
+}
+
+function faf_interface_get_instance_json($node, $field_name)
+{ $faf_int_field_name = $field_name."_int";
+  
+  $instance_data        = field_info_instance("node", $faf_int_field_name, $node->type);
+  $settings             = $instance_data['settings'];
+
+  //Format Range Data
+  $field_mapping = 
+      array(  "higher"  => "range_higher",
+              "lower"   => "range_lower",
+              "step"    => "range_step"
+           );
+  $range = array();
+  foreach ($field_mapping as $field => $setting)
+  { $value = $settings[$setting];
+    unset($settings[$setting]);
+    
+    if ($value) $addRange = True;
+    cast_number_value($value);
+    
+    $range[$field] = $value;
+  }
+  if ($addRange) $settings['range'] = $range;
+  
+  //Format Select List
+  $option_string        = $settings['range_options'];
+  $svg_option_img_list  = $settings['range_option_svg_urls'];
+  if ($option_string)
+  { $option_array = list_extract_allowed_values($option_string, "list_text", False);
+    if ($svg_option_img_list)
+    { $svg_option_array = list_extract_allowed_values($svg_option_img_list, "list_text", False);
+    }
+    
+    if (count($option_array)) $addSelect = True;
+        
+    if (count($option_array) != count($svg_option_array))
+    { $svg_option_array = array_fill(0, count($option_array), "");
+      dpm("Field: $faf_int_field_name, there is not exactly one svg image for each option for this field");
+    }
+    
+    $options = array();
+    $i = 0;
+    foreach ($option_array as $option_value => $option_label)
+    { $option = 
+          array("value"   => cast_number_value($option_value),
+                "label"   => $option_label,
+                "svg_url" => $svg_option_array[$i],
+          );
+      $options[] = $option;
+    }
+    
+    if ($addSelect)
+    { $settings['select'] = $options;
+    }
+  }
+  unset($settings['range_options']);
+  unset($settings['range_option_svg_urls']);
+  
+  if (!$addRange && !$addSelect)
+  { $settings['NO RANGE OR SELECT DATA SUPPLIED'] = "WARNING";
+  }
+  unset($settings['user_register_form']);
+  unset($settings['import_on_save']);
+  //print ("<br><br>");
+  //print_r($instance_data['settings']);
+  return $settings;
+}

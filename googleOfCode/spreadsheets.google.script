@@ -1,0 +1,32 @@
+/**
+ * The function in this script will be called by the Apps Script Execution API.
+ */
+
+/**
+ * Return the set of folder names contained in the user's root folder as an
+ * object (with folder IDs as keys).
+ * @return {Object} A set of folder names keyed by folder ID.
+ */
+function getFoldersUnderRoot() {
+  var root = DriveApp.getRootFolder();
+  var folders = root.getFolders();
+  var folderSet = {};
+  while (folders.hasNext()) {
+    var folder = folders.next();
+    folderSet[folder.getId()] = folder.getName();
+  }
+  return folderSet;
+}
+
+function getElectionData()
+{ var spreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1l9x4LhHZjRn_TZgc0NsrVXBv6dQ-y0BxZJ9qTVDKwjc/edit#gid=1301991772")
+  
+  var sheets = spreadsheet.sheets();
+  var numSheets = sheets.length;
+
+  for (var i=0; i<numSheets; i++)
+  { var sheet = sheets[i];
+    Logger.log(sheet.getSheetName());    
+  }
+  return data;
+}

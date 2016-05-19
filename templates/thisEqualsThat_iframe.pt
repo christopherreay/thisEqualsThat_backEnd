@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+<head>
+  <title>The Pyramid Web Framework</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <meta name="keywords" content="python web application" />
+  <meta name="description" content="pyramid web application" />
+  <link rel="shortcut icon" href="/static/favicon.ico" />
+  
+  <link rel="stylesheet" href="/static/pylons.css" type="text/css" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="http://static.pylonsproject.org/fonts/nobile/stylesheet.css" media="screen" />
+  <link rel="stylesheet" href="http://static.pylonsproject.org/fonts/neuton/stylesheet.css" media="screen" />
+  
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+  <!-- jqueryUI libraries -->
+    <link rel="stylesheet" href="/javascript/colorPicker/jquery.colorpicker.css"/script>
+    <script src="/javascript/colorPicker/jquery.colorpicker.js"> </script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+
+  <link rel="stylesheet" href="css/thisEqualsThat.css" media="screen" />
+  <link rel="stylesheet" href="css/thisEqualsThat_iframe.css" media="screen" />
+  <script src="/javascript/thisEqualsThat.js" type="text/javascript"></script>
+
+  
+
+  <script src="/javascript/svg3d/dom_utils.js"></script>
+  <script src="/javascript/svg3d/jquery_svg3d.js"></script>
+  <script src="/javascript/svg3d/svg3d.js"></script>
+  <script src="/javascript/svg3d/svg3d_parsing.js"></script>
+
+
+
+  
+  <!--[if lte IE 6]>
+  <link rel="stylesheet" href="/static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+  <![endif]-->
+</head>
+<body>
+  <div id="wrap">
+    <div id="thisEqualsThatSceneDiv">
+    </div>
+  </div>
+</body>
+</html>

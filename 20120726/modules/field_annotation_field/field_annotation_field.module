@@ -1,0 +1,1106 @@
+<?php
+/**
+ * @file
+ * An example field using the Field Types API.
+ */
+
+/**
+ * @defgroup field_example Example: Field Types API
+ * @ingroup examples
+ * @{
+ * Examples using Field Types API.
+ *
+ * This is updated from Barry Jaspan's presentation at Drupalcon Paris,
+ * @link http://acquia.com/community/resources/acquia-tv/intro-field-api-module-developers Video Presentation @endlink
+ *
+ * Providing a field requires:
+ * - Defining a field:
+ *   - hook_field_info()
+ *   - hook_field_schema()
+ *   - hook_field_validate()
+ *   - hook_field_is_empty()
+ *
+ * - Defining a formatter for the field (the portion that outputs the field for
+ *   display):
+ *   - hook_field_formatter_info()
+ *   - hook_field_formatter_view()
+ *
+ * - Defining a widget for the edit form:
+ *   - hook_field_widget_info()
+ *   - hook_field_widget_form()
+ *
+ * Our module defines the field in field_example_field_info(),
+ * field_example_field_validate() and field_example_field_is_empty().
+ * field_example_field_schema() is implemented in field_example.install.
+ *
+ * Our module sets up a formatter in field_example_field_formatter_info() and
+ * field_example_field_formatter_view(). These are the API hooks that present
+ * formatted and themed output to the user.
+
+ * And finally, our module defines the widet in
+ * field_example_field_widget_info() and field_example_field_widget_form().
+ * The widget is the form element used to receive input from the user
+ * when the field is being populated.
+ *
+ * @see field_types
+ * @see field
+ */
+
+
+/***************************************************************
+ * Field Type API hooks
+ ***************************************************************/
+
+/**
+ * Implements hook_field_info().
+ *
+ * Provides the description of the field.
+ */
+function field_annotation_field_field_info() {
+  return array(
+    // We name our field as the associative name of the array.
+    'field_enc' => array(
+      'label'             => t('Encapsulate'),
+      'description'       => t('a encapsulate field'),
+      'default_widget'    => 'field_faf_widget',
+      'default_formatter' => 'field_faf_formatter',
+      'settings'          => array(
+          "setting"   => "default setting",
+      ),
+      'instance_settings' => array(
+          "annotated_field" => Null,
+          //"calculation_php" => "",
+          
+          "local_source_field" => Null,
+          "target_target_field" => Null,
+          "default_target_field_value" => Null,
+          "default_target_field_type" => Null,
+          "template_node_id" => Null,
+          "template_node_type" => "static",
+          "template_node_readonly" => "readonly",
+      ),
+    ),
+    'field_faf' => array(
+      'label'             => t('FAF'),
+      'description'       => t('a FAF field'),
+      'default_widget'    => 'field_faf_widget',
+      'default_formatter' => 'field_faf_formatter',
+      'settings'          => array(
+          "setting"   => "default setting",
+      ),
+      'instance_settings' => array(
+          "input_field" => False,
+          "output_field" => False,
+          "constant_field" => False,
+          "annotated_field" => Null,
+          "calculation_php" => Null,
+      ),
+    ),
+  );
+}
+
+function field_annotation_field_field_settings_form($field, $instance, $has_data) 
+{ $settings = $field['settings'];
+
+  $form = array();
+  $form['setting'] = array(
+    '#type' => 'textfield',
+    '#title' => 'setting',
+    '#description' => "A Setting",
+    '#default_value' => $settings['setting'],
+  );
+  
+  return $form;
+}
+
+function field_annotation_field_field_instance_settings_form($field, $instance) 
+{ $settings = $instance['settings'];
+
+  //dpm($instance);
+
+  
+  if ($field['type'] == "field_enc")
+  { $target_field_name = $instance['settings']['annotated_field'];
+    $field_info = field_info_field($target_field_name);
+    //dpm($field_info);
+    
+    $target_bundle = array_values($field_info['settings']['handler_settings']['target_bundles']);
+    $target_bundle = $target_bundle[0];
+    $listOfFields = field_info_instances($field_info['settings']['target_type'], 
+                                         $target_bundle);
+                                    
+    //dpm($listOfFields);
+    $field_enc_target_field_options = array(0=>"None") + generate_bundle_field_options($listOfFields);
+  }
+  
+  $input_field_list = faf_get_fields_input($instance);
+  unset($input_field_list[$instance['field_name']]);
+
+  $listOfFields = field_info_instances($instance['entity_type'], $instance['bundle']);
+  unset($listOfFields[$instance['field_name']]);
+  $options = generate_bundle_field_options($listOfFields);
+
+  $form = array();
+  $form['annotated_field'] = array(
+        '#title'          => 'Annotated Field',
+        '#description'    => "Which field is to be annotated",
+        '#type'           => 'select',
+        '#options'        => $options,
+        '#default_value'  => $settings['annotated_field'],
+  );
+  if ($field['type'] == "field_enc")
+  { 
+  
+    $form['calculation_php'] = array(
+        '#title' => 'Calculation PHP',
+        '#description' => 'PHP is run inside<br>function hook_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items)',
+
+        '#type' => 'textarea',
+        '#default_value' => $settings['calculation_php'],
+    );
+  
+    $form["local_source_field"] = array(
+        '#title'          => 'Local Source Field',
+        '#description'    => "Write the value in this field to the Target Target Field",
+        '#type'           => 'select',
+        '#options'        => array(0=>"None") + $options,
+        '#default_value'  => $settings['local_source_field'],
+    );
+    $form["target_target_field"] = array(
+        '#title'          => "Target Target Field",
+        '#description'    => "Update a field in the encapsulated Entity with the value in the Local Source Field",
+        '#type'           => 'select',
+        '#options'        => $field_enc_target_field_options,
+        '#default_value'  => $settings['target_target_field'],
+    );
+    $form["target_target_field_field"] = array(
+        '#title'          => "Target Target Field",
+        '#description'    => "Update a field in the encapsulated Entity with the value in the Local Source Field",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['target_target_field_field'],
+    );
+    $form["default_target_field_value"] = array(
+        '#title'          => "Default Target Field Value",
+        '#description'    => "Update a field in the encapsulated Entity with the value in the Local Source Field",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['default_target_field_value'],
+    );
+    $form["default_target_field_type"] = array(
+        '#title'          => "Default Target Field Type",
+        '#description'    => "Update a field in the encapsulated Entity with the value in the Local Source Field",
+        '#type'           => 'textfield',
+        '#default_value'  => $settings['default_target_field_type'],
+    );
+    $form["template_node_id"] = array(
+      '#title'          => "Template Node ID",
+      '#description'    => "Link a node to be a template for the encapsulated node",
+      '#type'           => 'textfield',
+      '#default_value'  => $settings['template_node_id'],
+    );
+    $form["template_node_type"] = array(
+      '#title'          => "Template Node Type",
+      '#description'    => "It is possible to Clone the template node, to provide a dynamic space for this Model to store instance data, or we can link to the original template node, in which case all nodes of this bundle will have access to the same node",
+      '#type'           => 'select',
+      '#options'        => array("cloned" => "Clone Template", "static" => "Use static template"),
+      '#default_value'  => $settings['template_node_type'],
+    );
+    $form["template_node_readonly"] = array(
+      '#title'          => "Template Node Read Only",
+      '#description'    => "If readonly is set, this Model will not be able to write to the template node. This is useful when the template node is static and you do not want node instances to share space to write too.",
+      '#type'           => 'select',
+      '#options'        => array("readonly" => "Read Only", "writeable" => "Writeable"),
+      '#default_value'  => $settings['template_node_readonly'],
+    );
+    
+    
+  }
+  if ($field['type'] == "field_faf")
+  { $form['input_field'] = array(
+        '#title' => 'Input Field',
+        '#description' => 'Can this field value be altered directly by the user?',
+
+        '#type' => 'select',
+        '#options' => array(False=>"No", True=>"Yes"),
+        '#default_value' => $settings['input_field'],
+    );
+    $form['output_field'] = array(
+        '#title' => 'Output Field',
+        '#description' => 'Does this field calculate its value based on the values of other fields',
+
+        '#type' => 'select',
+        '#options' => array(False=>"No", True=>"Yes"),
+        '#default_value' => $settings['output_field'],
+    );
+    $form['constant_field'] = array(
+        '#title' => 'Constant Field',
+        '#description' => 'Is this field a Constant in the Model',
+        '#type' => 'select',
+        '#options' => array(False=>"No", True=>"Yes"),
+        '#default_value' => $settings['constant_field'],
+    );
+    
+    //dpm($input_field_list);
+    foreach($input_field_list as $input_field_name => $input_field)
+    { $form['calculation_php_'.$input_field_name] = array(
+        '#title' => 'Calculation PHP '.$input_field_name,
+        '#description' => 'PHP is run inside<br>function hook_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items)',
+
+        '#type' => 'textarea',
+        '#default_value' => $settings['calculation_php_'.$input_field_name],
+      );
+    }
+    $form['calculation_php'] = array(
+        '#title' => 'Calculation PHP',
+        '#description' => 'PHP is run inside<br>function hook_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items)',
+
+        '#type' => 'textarea',
+        '#default_value' => $settings['calculation_php'],
+    );
+  }
+  
+  return $form;
+}
+
+function generate_bundle_field_options($bundle_fields)
+{ 
+
+  $options = array();
+  foreach ($bundle_fields as $field_name => $field)
+  { $options[$field_name] = $field['label'];
+  }
+  return $options;
+}
+
+
+/**
+ * Implements hook_field_is_empty().
+ *
+ * hook_field_is_emtpy() is where Drupal asks us if this field is empty.
+ * Return TRUE if it does not contain data, FALSE if it does. This lets
+ * the form API flag an error when required fields are empty.
+ */
+function field_annotation_field_field_is_empty($item, $field) {
+  //dpm("Is Empty");
+  //dpm($item);
+  return empty($item['intermsof']);
+}
+
+
+/**
+ * Implements hook_field_formatter_info().
+ *
+ * We need to tell Drupal that we have two different types of formatters
+ * for this field. One will change the text color, and the other will
+ * change the background color.
+ *
+ * @see field_example_field_formatter_view()
+ */
+function field_annotation_field_field_formatter_info() {
+  return array(
+    // This formatter just displays the hex value in the color indicated.
+    'field_faf_formatter' => array(
+      'label' => t('Simple text-based formatter'),
+      'field types' => array('field_faf', 'field_enc'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ *
+ * Two formatters are implemented.
+ * - field_example_simple_text just outputs markup indicating the color that
+ *   was entered and uses an inline style to set the text color to that value.
+ * - field_example_color_background does the same but also changes the
+ *   background color of div.region-content.
+ *
+ * @see field_example_field_formatter_info()
+ */
+function field_annotation_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $colors = array("red", "black");
+
+  $element = array();
+  switch ($display['type']) {
+    // This formatter simply outputs the field as text and with a color.
+    case 'field_faf_formatter':
+      foreach ($items as $delta => $item) {
+        $element[$delta] = array(
+          // We create a render array to produce the desired markup,
+          // "<p style="color: #hexcolor">The color code ... #hexcolor</p>".
+          // See theme_html_tag().
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#attributes' => array(
+            'style' => 'color: ' . $item['value'],
+          ),
+          '#value' => t('The color code in this field is @code', array('@code' => $item['value'])),
+        );
+      }
+      break;
+
+    // This formatter adds css to the page changing the '.region-content' area's
+    // background color. If there are many fields, the last one will win.
+
+ 
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_info().
+ *
+ * Three widgets are provided.
+ * - A simple text-only widget where the user enters the '#ffffff'.
+ * - A 3-textfield widget that gathers the red, green, and blue values
+ *   separately.
+ * - A farbtastic colorpicker widget that chooses the value graphically.
+ *
+ * These widget types will eventually show up in hook_field_widget_form,
+ * where we will have to flesh them out.
+ *
+ * @see field_example_field_widget_form()
+ */
+function field_annotation_field_field_widget_info() {
+  return array(
+    'field_faf_widget' => array(
+      'label' => t('FAF WIDGET'),
+      'field types' => array('field_faf', 'field_enc'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ *
+ * hook_widget_form() is where Drupal tells us to create form elements for
+ * our field's widget.
+ *
+ * We provide one of three different forms, depending on the widget type of
+ * the Form API item provided.
+ *
+ * The 'field_example_colorpicker' and 'field_example_text' are essentially
+ * the same, but field_example_colorpicker adds a javascript colorpicker
+ * helper.
+ *
+ * field_example_3text displays three text fields, one each for red, green,
+ * and blue. However, the field type defines a single text column,
+ * rgb, which needs an HTML color spec. Define an element validate
+ * handler that converts our r, g, and b fields into a simulated single
+ * 'rgb' form element.
+ */
+function field_annotation_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $value = isset($items[$delta]['intermsof']) ? $items[$delta]['intermsof'] : '';
+
+  $widget = $element;
+  $widget['#delta'] = $delta;
+
+  switch ($instance['widget']['type']) {
+
+    
+    case 'field_faf_widget':
+      $widget += array(
+        '#type' => 'textfield',
+        '#default_value' => $value,
+        // Allow a slightly larger size that the field length to allow for some
+        // configurations where all characters won't fit in input field.
+        '#size' => 1,
+        '#maxlength' => 1,
+      );
+      break;
+
+  }
+
+  $element['intermsof'] = $widget;
+  return $element;
+}
+
+
+/**
+ * Validate the individual fields and then convert them into a single HTML RGB
+ * value as text.
+ */
+function field_faf_widget_validate($element, &$form_state) {
+  $delta = $element['#delta']; // TODO: Isn't there a better way to find out which element?
+  $field = $form_state['field'][$element['#field_name']][$element['#language']]['field'];
+  $field_name = $field['field_name'];
+  if (isset($form_state['values'][$field_name][$element['#language']][$delta]['intermsof'])) {
+    $values = $form_state['values'][$field_name][$element['#language']][$delta]['intermsof'];
+
+    $value = $values;
+    form_set_value($element, $value, $form_state);
+  }
+}
+
+/**
+ * Implements hook_field_widget_error().
+ *
+ * hook_field_widget_error() lets us figure out what to do with errors
+ * we might have generated in hook_field_validate(). Generally, we'll just
+ * call form_error().
+ *
+ * @see field_example_field_validate()
+ * @see form_error()
+ */
+function field_annotation_field_field_widget_error($element, $error, $form, &$form_state) {
+  switch ($error['error']) {
+    case 'field_annotation_field_invalid':
+      form_error($element, $error['message']);
+      break;
+  }
+}
+
+
+/**
+ * Implements hook_field_validate().
+ *
+ * This hook gives us a chance to validate content that's in our
+ * field. We're really only interested in the $items parameter, since
+ * it holds arrays representing content in the field we've defined.
+ * We want to verify that the items only contain RGB hex values like
+ * this: #RRGGBB. If the item validates, we do nothing. If it doesn't
+ * validate, we add our own error notification to the $errors parameter.
+ *
+ * @see field_example_field_widget_error()
+ */
+ 
+function field_annotation_field_node_presave($node)
+{ //Then we need to update the values in the fields of any encapsulated nodes
+  $listOfFields = field_info_instances("node", $node->type);
+  //dpm($listOfFields);
+  
+  foreach ($listOfFields as $field_name => $instance)
+  { $field_info = field_info_field($field_name);
+    if ($field_info['type'] == "field_enc")
+    { $target_field_name = $instance['settings']['annotated_field'];
+      $target_field = &$node->$target_field_name;
+        
+      //Run data into the encapsulated node
+      if (empty($target_field['und'][0]['target_id']))
+      { //dpm("Is EmptTarget FIeld");
+        //dpm($target_field);
+        $target_field_info = field_info_field($target_field_name);
+        //dpm($field_info);
+      
+        $encapsulated_node = create_encapsulated_node($target_field_info, $instance);
+        
+        $target_target_field = $instance['settings']['target_target_field'];
+        $target_field_field  = $instance['settings']['target_target_field_field'];
+        if (! $target_field_field)
+        { $target_field_field = 'value';
+        }
+        $default_value = $instance['settings']['default_target_field_value'];
+        $default_type  = $instance['settings']['default_target_field_type'];
+        if ($target_target_field && $default_value && $default_type)
+        { $modify_node = node_load($encapsulated_node->nid);
+          $field = &$modify_node->$target_target_field;
+          $field['und'][0][$target_target_field] = $default_value;
+          node_submit($modify_node);
+          node_save($modify_node);
+        }
+        
+        $target_field['und'][0]['target_id'] = $encapsulated_node->nid;
+        $target_field['und'][0]['target_type'] = "node";
+        
+        //dpm($entity);
+      }
+    }
+  }
+}
+function create_encapsulated_node($target_field, $instance)
+{ global $user;
+
+  $target_bundle = array_values($target_field['settings']['handler_settings']['target_bundles']);
+  $target_bundle = $target_bundle[0];
+  
+  $template_id = $instance['settings']['template_node_id'];
+  //dpm($template_id);
+  if ($template_id)
+  { $node = node_load($template_id);
+    
+    if ($instance['settings']['template_node_type'] == "static")
+    { return $node;
+    }
+    
+    unset($node->nid);
+    unset($node->vid);
+  }
+  else
+  { $node = new stdClass();
+    $node->type = $target_bundle;
+    $node->title = $node->type;
+    $node->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
+    $node->promote = 0; //(1 or 0): promoted to front page
+    $node->comment = 1; //2 = comments on, 1 = comments off
+  }
+  $node->uid = $user->uid; 
+
+  if($node = node_submit($node)) 
+  { node_save($node);
+    //dpm($node);
+  }
+  
+  return $node;
+  
+}
+
+define("VALID_PHP_VAR_REGEX", "[_a-zA-Z0-9]+");
+function find_double_bang_fields($code)
+{ //dpm("find double bang fields");
+  //dpm($code);
+  //dpm("!!(".VALID_PHP_VAR_REGEX.")!!");
+  $code_split = preg_split('/(!!'.VALID_PHP_VAR_REGEX.'!!)/', $code, -1, PREG_SPLIT_DELIM_CAPTURE);
+  //$code_split = preg_split('/ /', $code, -1, PREG_SPLIT_DELIM_CAPTURE);
+  //dpm($code_split);
+  return $code_split;
+}
+
+class FAF_node
+{ public $node;
+
+  public $children = array();
+  
+  public $input_fields;
+  public $output_fields;
+  public $constant_fields;  
+
+  public $parent_node;
+  public $enc_field;
+  public $enc_field_label;
+  public $source_field;
+  public $target_field;
+  public $field_path = "";
+  
+  public $settings = array();
+  
+  public $debug = array();
+  
+  function init_as_parent($node)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+    $this->node = $node;
+    
+    $this->input_fields     = &faf_get_fields_input($node);
+    $this->output_fields    = &faf_get_fields_output($node);
+    $this->constant_fields  = &faf_get_fields_constant($node);
+
+    $enc_fields = faf_get_fields_by_type($node);
+    $enc_fields = $enc_fields['field_enc'];
+    
+    foreach ($enc_fields as $enc_field_name => $enc_field)
+    { $target_field_name = $enc_field['settings']['annotated_field'];
+      $target_field = &$this->node->$target_field_name;
+      
+      //Check that encapsulated node has been populated previously during node_save
+      $enc_nid = $target_field['und'][0]['target_id'];
+      if (! $enc_nid)
+      { //TODO: REPLACE THIS WITH ENC NODE CREATION CODE FROM hook_node_presave
+        dpm("faf_get_node_tree: Cannot get node tree. The root node has never been saved. $target_field_name does not point to any node");
+        return False;
+      }
+      $enc_node = node_load($enc_nid);
+      
+      $child_node = new FAF_node();
+      $child_node->install_as_child($this, $enc_field);
+      
+      $feedback = $child_node->init_as_parent($enc_node);
+      if (! $feedback)
+      { return False;
+      }
+    }
+    return True;
+  }
+  
+  function install_as_child($parent, $enc_field)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $parent->children[$enc_field['field_name']] = $this;
+    $this->parent_node  = $parent;
+    $this->enc_field    = $enc_field;
+    $enc_reference      = field_info_instance("node", $enc_field['settings']['annotated_field'], $parent->node->type);
+    $this->enc_field_label = $enc_reference['label'];
+    $this->source_field = $enc_field['settings']['local_source_field'];
+    $this->target_field = $enc_field['settings']['target_target_field'];
+    $this->field_path   = $parent->build_field_name($enc_field['field_name']);
+    
+    $this->debug[] = "install_as_child";
+    $this->debug[] = func_get_args();
+    if ($enc_field['settings']['annotated_field'] == "field_model_metamodel")
+    { $this->debug[] = "IS FIELD MODEL METANMODEL";
+      $parent->settings['meta_model'] = $this;
+    }
+    
+  }
+  
+  function traverse_tree($function_enter, $function_exit, &$output_array)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    if ($function_enter)
+    { $function_enter($this, &$output_array);
+    }
+    foreach($this->children as $index => $child)
+    { $child->traverse_tree($function_enter, $function_exit, &$output_array);
+    }
+    if ($function_exit)
+    { $function_exit($this, &$output_array);
+    }
+  }
+  
+    
+  function accept_external_input($input_field_name, $output_field_name, $value)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    /*1. Find commonPath from rootNode to commonParentNode of input and output field params
+      2. Run EncPath1         from rootNode to commonParent
+      3. Run ReverseEncPath1  from input_field up to commonParent
+      4. Run EncPath2         from commonParent to output_field
+      5. Set input_field to $value
+      6. Save nodes along ReverseEncPath1 inclusive (implictly saves nodes along EncPath2)
+      7. Save nodes traversing in Reverse along EncPath1
+    */
+    $path_analysis = array("value_to_set" => $value);
+    $this->analyse_path_common($input_field_name, $output_field_name, $path_analysis);
+    
+    $this->debug[] = $path_analysis;
+    
+    $input_traverse   = array_reverse($path_analysis['common_to_input']);
+    $output_traverse  = $path_analysis['common_to_output'];
+    
+    $this->debug[] = $input_traverse;
+    $this->debug[] = $output_traverse;
+    
+    $parent_step = array_shift($input_traverse);
+    $parent_node = $parent_step['faf_node'];
+    $parent_node->set_field_value($parent_step['field_name'], $value);
+    $parent_node->process_faf();
+    $parent_node->save_node();
+    foreach ($input_traverse as $index => $current_node)
+    { $current_faf_node = $current_node['faf_node'];
+      
+      $parent_node->send_data_accross_link($current_faf_node, "reverse");
+      $current_faf_node->process_faf();
+      $current_faf_node->save_node();
+      
+      $this->debug[] = $current_faf_node;
+      $parent_node = $current_faf_node;
+    }
+    
+    $this->debug[] = $output_traverse;
+    $parent_node = array_shift($output_traverse);
+    foreach ($output_traverse as $index => $current_node)
+    { $this->debug[] = "output_traverse: ".$current_node['faf_node']->node->nid;
+      $current_faf_node = $current_node['faf_node'];
+      dpm($current_faf_node);
+      $current_faf_node->send_data_accross_link($parent_node['faf_node']);
+      $this->debug[] = $current_node['faf_node'];
+      $current_faf_node->process_faf();
+      $current_faf_node->save_node();
+      $parent_node = $current_node;
+    }
+    
+  }
+
+  function analyse_path_common($input_field_name, $output_field_name, &$path_analysis)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->debug[] = "analyse_path_common";
+    $debug = &$this->debug;
+  
+    $input_path   = $this->step_field_name($input_field_name);
+    $output_path  = $this->step_field_name($output_field_name);
+    
+    $debug[] = $input_path;
+    $debug[] = $output_path;
+    
+    $local_input_field    = $input_path[0];
+    $target_output_field  = $output_path[0];
+    
+    $have_set_input   = False;
+    $have_set_output  = False;
+    if (count($input_path) == 1)
+    { $this->analyse_path_to_input($input_field_name, $path_analysis);
+      $have_set_input = True;
+    }
+    if (count($output_path) == 1)
+    { $this->analyse_path_to_output($output_field_name, $path_analysis);
+      $have_set_output = True;
+    }
+    $debug[] = $have_set_input;
+    $debug[] = $have_set_output;
+    
+    if ($local_input_field == $target_output_field)
+    { $path_analysis['common_path'][] = array("faf_node" => $this, "field_name" => $local_input_field);
+      $next_node = $this->set_data_link($local_input_field);
+      $next_node->analyse_path_common($input_path[1], $output_path[1], $path_analysis);
+    }
+    else
+    { if (!$have_set_input)
+      { //$next_input_node = $this->set_data_link($local_input_field, "reverse");
+        //$next_input_node->analyse_path_to_input($input_field_name, $path_analysis);
+        $this->analyse_path_to_input($input_field_name, $path_analysis);
+      }
+      if (!$have_set_output)
+      { $this->analyse_path_to_output($output_field_name, $path_analysis);
+      }
+    }
+
+    return $path_analysis;
+  }
+  function analyse_path_to_input($input_field_name, &$path_analysis)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->debug[] = "analyse_path_to_input";
+    $this->debug[] = func_get_args();
+    $this->debug[] = $this->node->nid;
+    $input_path = $this->step_field_name($input_field_name);
+    $path_analysis['common_to_input'][] = array("faf_node" => $this, "field_name" => $input_path[0]);
+    if (count($input_path) == 1)
+    { $this->set_input_field($input_path[0]);
+      return;
+    }
+    $next_input_node = $this->set_data_link($input_path[0], "reverse");
+    $next_input_node->analyse_path_to_input($input_path[1], $path_analysis);
+  }
+  function analyse_path_to_output($output_field_name, &$path_analysis)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->debug[] = "analyse_path_to_output";
+    $this->debug[] = func_get_args();
+    $this->debug[] = $this->node->nid;
+    $output_path = $this->step_field_name($output_field_name);
+    $path_analysis['common_to_output'][] = array("faf_node" => $this, "field_name" => $output_path[0]);
+    if (count($output_path) == 1)
+    { $this->debug[] = "finishing path to output";
+      $this->set_output_field($output_path[0]);
+      return;
+    }
+    $next_output_node = $this->set_data_link($output_path[0]);
+    $next_output_node->analyse_path_to_output($output_path[1], $path_analysis);
+  }
+  function set_data_link($local_enc_field, $reverse=False)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->debug[] = "set_data_link";
+    $this->debug[] = func_get_args();
+  
+    $next_node = &$this->children[$local_enc_field];
+    $enc_field = $next_node->enc_field;
+    $source_field = $enc_field['settings']['local_source_field'];
+    $target_field = $enc_field['settings']['target_target_field'];
+    if (! $reverse)
+    { $this->set_output_field($source_field);
+      $next_node->set_input_field($target_field);
+    }
+    else
+    { $this->set_input_field($source_field);
+      $next_node->set_output_field($target_field);
+    }
+    return $next_node;
+  }
+  function send_data_accross_link($parent_node, $reverse = False)
+  { dpm("send_data_accross_link");
+    dpm(func_get_args());
+    dpm($this);
+    PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+
+    $source_field = $this->enc_field['settings']['local_source_field'];
+    $target_field = $this->enc_field['settings']['target_target_field'];
+    
+    $this->debug[] = "send_data_accross_link";
+    $this->debug[] = $this;
+    $this->debug[] = func_get_args();
+
+    if (!is_object($parent_node))
+    { $this->set_field_value($target_field, $parent_node);
+      return;
+    }
+    if (!$reverse)
+    { $this->set_field_value($target_field, $parent_node->get_field_value($source_field)); 
+    }
+    else
+    { $parent_node->set_field_value($source_field, $this->get_field_value($target_field));
+    }
+  }
+  
+  function build_field_name($local_field_name)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    if ($this->field_path)
+    { $field_path = $this->field_path.".".$local_field_name;
+    }
+    else
+    { $field_path = $local_field_name;
+    }
+    return $field_path;
+  }
+  function step_field_name($field_name, &$local_field=Null, &$rest_of_path=Null)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $exploded = explode(".", $field_name, 2);
+    $local_field  = $exploded[0];
+    if (count($exploded) > 1)
+    { $rest_of_path = $exploded[1];
+    }
+    $this->debug[] = $exploded;
+    return $exploded;
+
+  }
+  function get_field_value($field_name, $target = "value")
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $readable_field = &$this->node->$field_name;
+    if ($target === "")
+    { $value = $readable_field['und'][0];
+    }
+    else
+    { $value = $readable_field['und'][0][$target];
+    }
+    
+    if (is_array($value) && array_key_exists("value", $value))
+    { cast_number_value($value['value']);
+    }
+    
+    cast_number_value($value);
+    return $value;
+  }
+  function set_field_value($field_name, $value, $target="value")
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    cast_number_value($value);
+    
+    $this->debug[] = "set_field_value: $field_name = $value";
+    $writable_field = &$this->node->$field_name;
+    if ($target === "")
+    { return $writable_field['und'][0] = $value;
+    }
+    else
+    { return $writable_field['und'][0][$target] = $value;
+    }
+  }
+  function get_value_through_faf($field, $target=null)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $annotated_field_name = $field['settings']['annotated_field'];
+    return $this->get_field_value($annotated_field_name, $target);
+  }
+  function set_vaule_through_faf($field, $value, $target=null)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $annotated_field_name = $field['settings']['annotated_field'];
+    return $this->set_field_value($annotated_field_name, $value, $target);
+  }
+  function set_input_field($field_name)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->node->field_input_field['und'][0]['value']   = $field_name;
+    $this->source_field = $field_name;
+  }
+  function set_output_field($field_name)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $this->node->field_output_field['und'][0]['value']  = $field_name;
+    $this->target_field = $field_name;
+  }
+  
+  function process_faf($faf_field_name=Null)
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    $node = &$this->node;
+    if (!$faf_field_name)
+    { $faf_field_name = $node->field_output_field['und'][0]['value']."_faf";
+    }
+    
+    $this->debug[] = "process faf: $faf_field_name";
+    $this->debug[] = $node;
+    $faf_field = field_info_instance("node", $faf_field_name, $node->type);
+    $faf_field_writeable = &$node->$faf_field_name;
+    $this->debug[] = $faf_field;
+    $this->debug[] = $faf_field_writeable;
+
+    if (array_key_exists("processing_faf", $faf_field_writeable))
+    { dpm("FIELD: $faf_field_name is currently processing. Circular reference detected");
+      return False;
+    }
+    $faf_field_writeable['processing_faf'] = True;
+    
+    $toEval = $faf_field['settings']['calculation_php'];
+    
+    //INPUT DEPENDENT CALCULATION//
+    { $current_input_field_name     = $node->field_input_field['und'][0]['value'];
+      $current_input_field_name_faf = $current_input_field_name."_faf";
+      
+      $toEval_depInput  = $faf_field['settings']['calculation_php_'.$current_input_field_name_faf];
+      
+      $input_data_field = &$node->$current_input_field_name;
+      $input_value      = $input_data_field['und'][0]['value'];
+      
+      $this->debug[] = "input_value: $input_value";
+    }
+    $toEval = str_replace("!!depends_on_input!!", "\n\n".$toEval_depInput."\n\n", $toEval);
+
+    if ($toEval)
+    { $dependent_fields = find_double_bang_fields($toEval);
+      $debug[] = $dependent_fields;
+      
+      $dep_field_dict = array();
+      foreach ($dependent_fields as $_ => $code_part)
+      { if (substr($code_part, 0, 2) == "!!")
+        { $dep_field_name = substr($code_part, 2, strlen($code_part) -4);
+          $dep_field_dict[$dep_field_name] = $code_part;
+        }
+      }
+      foreach($dep_field_dict as $dep_field_name => $code_part)
+      { $debug[] = "Check Dependency: $dep_field_name";
+        
+        $dep_field_name_faf = $dep_field_name."_faf";
+        if (property_exists($node, $dep_field_name_faf))
+        { $debug[] = "Processing Dependency: $dep_field_name_faf";
+          if (! $this->process_faf($dep_field_name_faf))
+          { return True;
+          }
+        }
+        $this->debug[] = array($code_part, $dep_field_name, $toEval);
+        $toEval = 
+            str_replace($code_part, 
+                        "((double) \$node->".$dep_field_name."['und'][0]['value'])", 
+                        $toEval
+                       );
+      }
+
+      $this->debug[] = $toEval;
+      eval($toEval);
+
+      $target_field_name = $faf_field['settings']['annotated_field'];
+      $target_field = &$node->$target_field_name;
+      $target_field['und'][0]['value'] = $output_value;
+      
+      $this->debug[] = "output_value";
+      $this->debug[] = $output_value;
+    }
+    $faf_field_writeable['processed_faf'] = True;
+    return True;
+  }
+
+  function save_node()
+  { PU_debug_tools::PU_DEBUG_METHOD($this, __METHOD__, func_get_args());
+  
+    node_submit($this->node);
+    node_save($this->node);
+  }
+}
+
+function faf_get_fields_by_type($node)
+{ static $faf_get_fields_cache = array();
+
+  if (is_object($node))
+  { $node_type = $node->type;
+  }
+  else
+  { $node_type = $node['bundle'];
+  }
+
+  if (array_key_exists($node_type, $faf_get_fields_cache))
+  { return $faf_get_fields_cache[$node_type];
+  }
+
+  $field_list = array();
+
+  $my_bundle_fields = field_info_instances('node', $node_type);
+  foreach ($my_bundle_fields as $field_name => $field)
+  { $field_info = field_info_field($field_name);
+    $field_list[$field_info['type']][$field_name] = $field;
+    if ($annotated_field_instance = faf_get_annotated_field($field))
+    { $field_list[$field_info['type']][$field_name]['settings']['annotated_field_instance'] = $annotated_field_instance;
+    }
+  }
+  $faf_get_fields_cache[$node->type] = $field_list;
+  return $field_list;
+}
+
+
+function faf_get_fields_input($instance)
+{ $input_field_list = array();
+  
+  $faf_fields = faf_get_fields_by_type($instance);
+  
+  //dpm($faf_fields);
+  $faf_fields = $faf_fields['field_faf'];
+  
+  if (! $faf_fields)
+  { return $input_field_list;
+  }
+  
+  foreach ($faf_fields as $field_name => $field)
+  { if ($field['settings']['input_field'])
+    { $input_field_list[$field_name] = $field;
+    }
+  }
+  
+  return $input_field_list;
+}
+
+function faf_get_fields_output($instance)
+{ $output_field_list = array();
+  
+  $faf_fields = faf_get_fields_by_type($instance);
+  
+  //dpm($faf_fields);
+  $faf_fields = $faf_fields['field_faf'];
+  
+  if (! $faf_fields)
+  { return $output_field_list;
+  }
+  
+  foreach ($faf_fields as $field_name => $field)
+  { if ($field['settings']['output_field'])
+    { $output_field_list[$field_name] = $field;
+    }
+  }
+  
+  return $output_field_list;
+}
+
+function faf_get_fields_constant($instance)
+{ $output_field_list = array();
+  
+  $faf_fields = faf_get_fields_by_type($instance);
+  
+  //dpm($faf_fields);
+  $faf_fields = $faf_fields['field_faf'];
+  
+  if (! $faf_fields)
+  { return $output_field_list;
+  }
+  
+  foreach ($faf_fields as $field_name => $field)
+  { if ($field['settings']['constant_field'])
+    { $output_field_list[$field_name] = $field;
+    }
+  }
+  
+  return $output_field_list;
+}
+
+function faf_get_annotated_field($instance)
+{ $node_type = $instance['bundle'];
+  if (array_key_exists('annotated_field', $instance['settings']))
+  { $annotated_field_name     = $instance['settings']['annotated_field'];
+    $annotated_field_instance = field_info_instance("node", $annotated_field_name, $node_type);
+    return $annotated_field_instance;
+  }
+  return null;
+}
+
+
+function faf_get_all_node_types_as_options()
+{ $field_info_model_metamodel = field_info_field("field_model_metamodel");
+  dpm($field_info_model_metamodel);
+  $list_of_bundles = $field_info_model_metamodel['bundles']['node'];
+  $all_node_types = node_type_get_types();
+  
+  foreach ($list_of_bundles as $index => $node_type)
+  { $options[$node_type] = $all_node_types[$node_type]->name;
+  }
+  dpm($all_node_types);
+ 
+  return $options;
+}

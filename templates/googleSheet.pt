@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in</title>
+
+  <link rel="stylesheet"
+        href="http://workout.freefreecrowdfunding.org:6540/static/pyramid_google_login/pure-min.css">
+  <link rel="stylesheet"
+        href="http://workout.freefreecrowdfunding.org:6540/static/pyramid_google_login/login.css">
+</head>
+<body>
+
+  <div class="splash-container">
+    <div class="splash">
+
+      <p class="splash-head">
+        Welcome on Project Euler
+      </p>
+
+      <p>
+        <a href="http://workout.freefreecrowdfunding.org:6540/auth/signin_redirect?url=%2FgoogleConnect" class="pure-button pure-button-primary">
+          Sign in
+        </a>
+      </p>
+
+      <p class="splash-message">
+        Ask Dilbert for access
+      </p>
+
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

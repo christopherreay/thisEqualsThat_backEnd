@@ -1,0 +1,12 @@
+name = Field Annotation Field
+description = FAF
+package = This Equals
+core = 7.x
+files[] = 
+
+; Information added by drupal.org packaging script on 2012-02-20
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "examples"
+datestamp = "1329696863"
+
