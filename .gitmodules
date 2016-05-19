@@ -1,10 +1,1 @@
-[submodule "static/javascript/colorPicker"]
-	path= static/javascript/colorPicker
-        url = https://github.com/vanderlee/colorpicker.git
-[submodule "static/javascript/mmenu"]
-  	path= static/javascript/mmenu
-        url = https://github.com/BeSite/jQuery.mmenu.git
 
-[submodule "static"]
-	path = static
-	url = ../thisEqualsThat_frontEnd
