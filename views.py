@@ -341,15 +341,12 @@ def googleConnect_getSheets(context, request):
             # with String keys and values, and so the result is treated as a
             # Python dictionary (folderSet).
             ipdb.set_trace()
-            folderSet = googleConnect_response['response'].get('result', {})
+            sheetNames = googleConnect_response['response'].get('result', {})
             if not folderSet:
-                toReturn =  {"status":'No folders returned!', "folders":[]}
+                toReturn =  {"status":'No sheet names returned!', "sheetNames":[]}
             else:
-                toReturn = {"status": 'Folders under your root folder:'}
-                folders = []
-                for (folderId, folder) in folderSet.iteritems():
-                    folders.append({"folderID": folderId, "folder": folder})
-                toReturn["folders"] = folders
+                toReturn = {"status": 'Folders under your root folder:', "sheetNames": sheetNames}
+                toReturn["sheetNames"] = folders
         return toReturn
 
     except errors.HttpError as e:
