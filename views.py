@@ -342,11 +342,10 @@ def googleConnect_getSheets(context, request):
             # Python dictionary (folderSet).
             ipdb.set_trace()
             sheetNames = googleConnect_response['response'].get('result', {})
-            if not folderSet:
+            if not sheetNames:
                 toReturn =  {"status":'No sheet names returned!', "sheetNames":[]}
             else:
                 toReturn = {"status": 'Folders under your root folder:', "sheetNames": sheetNames}
-                toReturn["sheetNames"] = folders
         return toReturn
 
     except errors.HttpError as e:
