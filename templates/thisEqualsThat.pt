@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "//www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
 <head>
   <title>The Pyramid Web Framework</title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
@@ -7,11 +7,11 @@
   <meta name="description" content="pyramid web application" />
   <link rel="shortcut icon" href="/static/favicon.ico" />
   
-  <link rel="stylesheet" href="/static/pylons.css" type="text/css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" href="http://static.pylonsproject.org/fonts/nobile/stylesheet.css" media="screen" />
-  <link rel="stylesheet" href="http://static.pylonsproject.org/fonts/neuton/stylesheet.css" media="screen" />
+  <link rel="stylesheet" href="//static/pylons.css" type="text/css" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="//static.pylonsproject.org/fonts/nobile/stylesheet.css" media="screen" />
+  <link rel="stylesheet" href="//static.pylonsproject.org/fonts/neuton/stylesheet.css" media="screen" />
   
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="/static/javascript/colorPicker/jquery.colorpicker.css"/script>
     <script src="/static/javascript/colorPicker/jquery.colorpicker.js"> </script>
 
-    <script src="/javascript/popupWindow/jquery.popupWindow.js"></script>  
+    <script src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>  
 
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>

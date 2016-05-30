@@ -246,6 +246,8 @@ def googleConnect_login(context, request):
   emailAddress = request.params['emailAddress']
   if emailAddress in request.root['users']:
     del request.root['users'][emailAddress]
+    print ("deleted credentials %s" % emailAddress)
+
 
   transaction.commit()
 
@@ -265,10 +267,11 @@ def googleConnect_login_happened(googleConnect_loginEvent):
 
       }
   
-  if userID not in users:
-    users[userID] = loggingIn
+  users[userID] = loggingIn
   
   localUserData = users[loggingIn["id"]]
+
+  print "google connect log in event completed"
   
   transaction.commit()
 
@@ -293,67 +296,70 @@ def googleConnect_getSheets(context, request):
 
   ipdb.set_trace()
 
-  emailAddress    = request.params['emailAddress']
-  spreadsheetURL  = request.params['spreadsheetURL']
-
-  credentials = client.AccessTokenCredentials(request.root["users"][emailAddress]["oauth2_token"]["access_token"], "ThisEqualsThat")
-
-  http = credentials.authorize(httplib2.Http())
-
-  scriptID_directoryListing = "MZ7tLcHX3wZ083vtBstxR_yxJyIsVAxIO"
-
-  service = discovery.build('script', 'v1', http=http)
-
-  # Create an execution request object.
-  googleConnect_request = {"function": "getSheets", "parameters": [spreadsheetURL], "devMode": True}
-
-  toReturn = {"Fail"}
-
   try:
-      # Make the API request.
-      googleConnect_response = service.scripts().run(body=googleConnect_request,
-              scriptId=scriptID_directoryListing).execute()
+    emailAddress    = request.params['emailAddress']
+    spreadsheetURL  = request.params['spreadsheetURL']
+
+    credentials = client.AccessTokenCredentials(request.root["users"][emailAddress]["oauth2_token"]["access_token"], "ThisEqualsThat")
+
+    http = credentials.authorize(httplib2.Http())
+
+    scriptID_directoryListing = "MZ7tLcHX3wZ083vtBstxR_yxJyIsVAxIO"
+
+    service = discovery.build('script', 'v1', http=http)
+
+    # Create an execution request object.
+    googleConnect_request = {"function": "getSheets", "parameters": [spreadsheetURL], "devMode": True}
+
+    toReturn = {"Fail"}
+
+    try:
+        # Make the API request.
+        googleConnect_response = service.scripts().run(body=googleConnect_request,
+                scriptId=scriptID_directoryListing).execute()
 
 
-      if 'error' in googleConnect_response:
-          # The API executed, but the script returned an error.
+        if 'error' in googleConnect_response:
+            # The API executed, but the script returned an error.
 
-          # Extract the first (and only) set of error details. The values of
-          # this object are the script's 'errorMessage' and 'errorType', and
-          # an list of stack trace elements.
-          error = googleConnect_response['error']['details'][0]
-          print "Script error message: {0}".format(error['errorMessage'])
+            # Extract the first (and only) set of error details. The values of
+            # this object are the script's 'errorMessage' and 'errorType', and
+            # an list of stack trace elements.
+            error = googleConnect_response['error']['details'][0]
+            print "Script error message: {0}".format(error['errorMessage'])
 
-          if 'scriptStackTraceElements' in error:
-              # There may not be a stacktrace if the script didn't start
-              # executing.
-              print "Script error stacktrace:"
-              for trace in error['scriptStackTraceElements']:
-                  print("\t{0}: {1}".format(trace['function'],
-                      trace['lineNumber']))
-      else:
-          # The structure of the result will depend upon what the Apps Script
-          # function returns. Here, the function returns an Apps Script Object
-          # with String keys and values, and so the result is treated as a
-          # Python dictionary (folderSet).
-          ipdb.set_trace()
-          folderSet = googleConnect_response['response'].get('result', {})
-          if not folderSet:
-              toReturn =  {"status":'No folders returned!', "folders":[]}
-          else:
-              toReturn = {"status": 'Folders under your root folder:'}
-              folders = []
-              for (folderId, folder) in folderSet.iteritems():
-                  folders.append({"folderID": folderId, "folder": folder})
-              toReturn["folders"] = folders
-      return toReturn
+            if 'scriptStackTraceElements' in error:
+                # There may not be a stacktrace if the script didn't start
+                # executing.
+                print "Script error stacktrace:"
+                for trace in error['scriptStackTraceElements']:
+                    print("\t{0}: {1}".format(trace['function'],
+                        trace['lineNumber']))
+        else:
+            # The structure of the result will depend upon what the Apps Script
+            # function returns. Here, the function returns an Apps Script Object
+            # with String keys and values, and so the result is treated as a
+            # Python dictionary (folderSet).
+            ipdb.set_trace()
+            folderSet = googleConnect_response['response'].get('result', {})
+            if not folderSet:
+                toReturn =  {"status":'No folders returned!', "folders":[]}
+            else:
+                toReturn = {"status": 'Folders under your root folder:'}
+                folders = []
+                for (folderId, folder) in folderSet.iteritems():
+                    folders.append({"folderID": folderId, "folder": folder})
+                toReturn["folders"] = folders
+        return toReturn
 
-  except errors.HttpError as e:
-      # The API encountered a problem before the script started executing.
-      print e.content
-
-
-
+    except errors.HttpError as e:
+        # The API encountered a problem before the script started executing.
+        print e.content
+    except client.AccessTokenCredentialsError as e:
+      ipdb.set_trace()
+      print('An exception occurred: {}'.format(e))
+  except BaseException as exception:
+    print('An exception occurred: {}'.format(exception))
 
 
 @view_config(route_name="scottishParliament/votingModel", renderer="templates/scottishParliament_votingModel.pt")
