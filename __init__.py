@@ -41,7 +41,8 @@ def main(global_config, **settings):
     config.add_route("googleConnect/gotCredentials",      "/googleConnect/gotCredentials")
     config.add_route("googleConnect/credentialsCheck",    "/googleConnect/credentialsCheck")
     config.add_route("googleConnect/getSheets",           "/googleConnect/getSheets")
-        
+    config.add_route("googleConnect/getCellRange",        "/googleConnect/getCellRange")
+
     config.add_route("scottishParliament/votingModel",           "scottishParliament/votingModel")
     config.add_route("scottishParliament/data",           "scottishParliament/data")
     config.add_route("scottishParliament/updateSwings",           "scottishParliament/updateSwings")

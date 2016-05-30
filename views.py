@@ -294,8 +294,6 @@ def googleConnect_gotCredentials(context, request):
 @view_config(route_name="googleConnect/getSheets", renderer="json")
 def googleConnect_getSheets(context, request):
 
-  ipdb.set_trace()
-
   try:
     emailAddress    = request.params['emailAddress']
     spreadsheetURL  = request.params['spreadsheetURL']
@@ -340,12 +338,76 @@ def googleConnect_getSheets(context, request):
             # function returns. Here, the function returns an Apps Script Object
             # with String keys and values, and so the result is treated as a
             # Python dictionary (folderSet).
-            ipdb.set_trace()
             sheetNames = googleConnect_response['response'].get('result', {})
             if not sheetNames:
                 toReturn =  {"status":'No sheet names returned!', "sheetNames":[]}
             else:
                 toReturn = {"status": 'Folders under your root folder:', "sheetNames": sheetNames}
+        return toReturn
+
+    except errors.HttpError as e:
+        # The API encountered a problem before the script started executing.
+        print e.content
+    except client.AccessTokenCredentialsError as e:
+      ipdb.set_trace()
+      print('An exception occurred: {}'.format(e))
+  except BaseException as exception:
+    print('An exception occurred: {}'.format(exception))
+
+@view_config(route_name="googleConnect/getCellRange", renderer="json")
+def googleConnect_getCellRange(context, request):
+
+  try:
+    emailAddress    = request.params['emailAddress']      or "christopherreay@gmail.com"
+    spreadsheetURL  = request.params['spreadsheetURL']    or "https://docs.google.com/spreadsheets/d/1HIhmZMCHDRaiCQYogvsBSb1C5hzEOuIhIivvLb5eEBY/edit?pref=2&pli=1#gid=1562621115"
+    sheetName       = request.params['sheetName']         or 1.0
+    cellRange       = request.params['cellRange']         or "a76:b76"
+
+    credentials = client.AccessTokenCredentials(request.root["users"][emailAddress]["oauth2_token"]["access_token"], "ThisEqualsThat")
+
+    http = credentials.authorize(httplib2.Http())
+
+    scriptID_directoryListing = "MZ7tLcHX3wZ083vtBstxR_yxJyIsVAxIO"
+
+    service = discovery.build('script', 'v1', http=http)
+
+    # Create an execution request object.
+    googleConnect_request = {"function": "getCellRange", "parameters": [spreadsheetURL, sheetName, cellRange], "devMode": True}
+
+    toReturn = {"Fail"}
+
+    try:
+        # Make the API request.
+        googleConnect_response = service.scripts().run(body=googleConnect_request,
+                scriptId=scriptID_directoryListing).execute()
+
+
+        if 'error' in googleConnect_response:
+            # The API executed, but the script returned an error.
+
+            # Extract the first (and only) set of error details. The values of
+            # this object are the script's 'errorMessage' and 'errorType', and
+            # an list of stack trace elements.
+            error = googleConnect_response['error']['details'][0]
+            print "Script error message: {0}".format(error['errorMessage'])
+
+            if 'scriptStackTraceElements' in error:
+                # There may not be a stacktrace if the script didn't start
+                # executing.
+                print "Script error stacktrace:"
+                for trace in error['scriptStackTraceElements']:
+                    print("\t{0}: {1}".format(trace['function'],
+                        trace['lineNumber']))
+        else:
+            # The structure of the result will depend upon what the Apps Script
+            # function returns. Here, the function returns an Apps Script Object
+            # with String keys and values, and so the result is treated as a
+            # Python dictionary (folderSet).
+            cellRangeData = googleConnect_response['response'].get('result', {})
+            if not cellRangeData:
+                toReturn =  {"status":'No sheet names returned!', "cellRangeData":[]}
+            else:
+                toReturn = {"status": 'Folders under your root folder:', "cellRangeData": cellRangeData}
         return toReturn
 
     except errors.HttpError as e:
