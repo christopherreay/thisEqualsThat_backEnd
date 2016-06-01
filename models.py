@@ -1347,7 +1347,7 @@ toReturn['clone3d'].update(
                               "postProcessing"            :
                                 { "ccRandomiseColors": 0,
                                   "ccRandomiseColorsByGroup": 5,
-                                  "ccRandomisePosition" : 100,
+                                  "ccRandomisePosition" : 20,
                                 }
                           }
                       })
