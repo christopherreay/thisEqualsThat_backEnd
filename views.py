@@ -25,6 +25,19 @@ from oauth2client import tools
 
 from apiclient import errors
 
+@view_config(route_name = "initialise", renderer='templates/initialise.pt')
+def initalise(request):
+  toReturn = {"stauts": "fail"}
+  if "initialiseAppConfig" in request.root:
+    toReturn['status'] = "alreadyConfigured"
+    toReturn['currentConfig'] = request.root['initialiseAppConfig']
+  else:
+    toReturn['status'] = "newConfigStarted"
+
+
+  return toReturn
+
+
 @view_config(renderer='templates/mytemplate.pt')
 def my_view(request):
     return {'project': 'thisEqualsThat'}
