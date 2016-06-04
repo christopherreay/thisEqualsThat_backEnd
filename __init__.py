@@ -17,10 +17,10 @@ def main(global_config, **settings):
     config.include('pyramid_google_login')
 
     config.add_static_view("static",        "static",             cache_max_age=3600)
-    config.add_static_view("graphics",    "/static/graphics",   cache_max_age=1000000)
-    config.add_static_view("javascript",  "/static/javascript", cache_max_age=3600)
-    config.add_static_view("css",         "/static/css",        cache_max_age=3600)
-    config.add_static_view("svg",         "/static/svg",        cache_max_age=3600)
+    config.add_static_view("graphics",      "/static/graphics",     cache_max_age=1000000)
+    config.add_static_view("javascript",    "/static/javascript", cache_max_age=3600)
+    config.add_static_view("css",           "/static/css",        cache_max_age=3600)
+    config.add_static_view("svg",           "/static/svg",        cache_max_age=3600)
         
     config.add_route("thisEqualsThat",        "/thisEqualsThat")
     config.add_route("thisEqualsThat_iframe", "/thisEqualsThat_iframe")
@@ -33,7 +33,7 @@ def main(global_config, **settings):
     config.add_route("getClassInstance",      "/getClassInstance")
     config.add_route("setBottomModel",        "/setBottomModel")
     
-    config.add_route("initialise",  "/intialise")
+    config.add_route("initialise",            "/intialise")
 
     #google connect
     #config.add_route("googleConnect",         "/googleConnect")
