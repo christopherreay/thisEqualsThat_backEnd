@@ -10,20 +10,13 @@
   <link rel="stylesheet"
         href="/static/pyramid_google_login/login.css">
 
-  <!--[if lte IE 8]>
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
-  <![endif]-->
-  <!--[if gt IE 8]><!-->
-      <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
-  <!--<![endif]-->
-
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
   
     <!-- jqueryUI libraries -->
     <link rel="stylesheet" href="/static/javascript/colorPicker/jquery.colorpicker.css"/>
