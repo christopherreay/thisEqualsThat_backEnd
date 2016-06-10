@@ -10,30 +10,32 @@ def root_factory(request):
 
 
 def main(global_config, **settings):
+    
+    print __file__
     """ This function returns a Pyramid WSGI application.
     """
     config = Configurator(root_factory=root_factory, settings=settings)
     config.include('pyramid_chameleon')
     config.include('pyramid_google_login')
 
-    config.add_static_view("static",        "static",             cache_max_age=3600)
-    config.add_static_view("graphics",      "/static/graphics",     cache_max_age=1000000)
-    config.add_static_view("javascript",    "/static/javascript", cache_max_age=3600)
-    config.add_static_view("css",           "/static/css",        cache_max_age=3600)
-    config.add_static_view("svg",           "/static/svg",        cache_max_age=3600)
+    config.add_static_view("static",              "static",                 cache_max_age=3600)
+    config.add_static_view("graphics",            "/static/graphics",       cache_max_age=1000000)
+    config.add_static_view("javascript",          "/static/javascript",     cache_max_age=3600)
+    config.add_static_view("css",                 "/static/css",            cache_max_age=3600)
+    config.add_static_view("svg",                 "/static/svg",            cache_max_age=3600)
         
-    config.add_route("thisEqualsThat",        "/thisEqualsThat")
-    config.add_route("thisEqualsThat_iframe", "/thisEqualsThat_iframe")
+    config.add_route("thisEqualsThat",            "/thisEqualsThat")
+    config.add_route("thisEqualsThat_iframe",     "/thisEqualsThat_iframe")
     config.add_route("thisEqualsThat_bertonbeil", "/thisEqualsThat_bertonbeil")
 
-    config.add_route("testData",              "/testData")
+    config.add_route("testData",                  "/testData")
     
-    config.add_route("inputFieldAltered",     "/inputFieldAltered")
-    config.add_route("getModelClasses",       "/getModelClasses")
-    config.add_route("getClassInstance",      "/getClassInstance")
-    config.add_route("setBottomModel",        "/setBottomModel")
+    config.add_route("inputFieldAltered",         "/inputFieldAltered")
+    config.add_route("getModelClasses",           "/getModelClasses")
+    config.add_route("getClassInstance",          "/getClassInstance")
+    config.add_route("setBottomModel",            "/setBottomModel")
     
-    config.add_route("initialise",            "/intialise")
+    config.add_route("initialise",                "/intialise")
 
     #google connect
     #config.add_route("googleConnect",         "/googleConnect")

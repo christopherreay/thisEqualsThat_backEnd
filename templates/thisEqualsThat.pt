@@ -45,6 +45,7 @@
     <div id="top">
       <div class="top">
         <div id="logo">
+          HELLO
           <img src="/static/graphics/thisEquals/this-equals-that.png" width="160" alt="pyramid"/>
         </div>
       </div>
