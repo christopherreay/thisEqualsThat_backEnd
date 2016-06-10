@@ -52,11 +52,11 @@
       <div id="swings"> 
         <div id="constituencySwings" class="swings">
           <div>Consituency</div>
-          <textarea></textarea>
+          <textarea placeholder="national.Labour.Green=10"></textarea>
         </div>
         <div id="listSwings" class="swings">
           <div>List</div>
-          <textarea></textarea>
+          <textarea placeholder="Ayr.Labour.Green=100"></textarea>
         </div>
       </div>
 
