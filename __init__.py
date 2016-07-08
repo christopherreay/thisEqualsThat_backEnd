@@ -49,7 +49,7 @@ def main(global_config, **settings):
     config.add_route("scottishParliament/data",           "scottishParliament/data")
     config.add_route("scottishParliament/updateSwings",   "scottishParliament/updateSwings")
 
-
+    config.add_route("mapppm",   "mapppm")
     
     config.scan()
     return config.make_wsgi_app()
