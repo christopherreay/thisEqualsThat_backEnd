@@ -76,6 +76,41 @@ def getClassInstance(request):
   jsonOutput                    = [ modelInstanceInterface ]
   transaction.commit()
   return jsonOutput
+
+@view_config(route_name="getEmbedURL", renderer="json")
+def getEmbedURL(request):
+  ipdb.set_trace()
+
+  newModelInstance  = copyClassInstance(request)
+  titleInput        = request.params['titleInput']
+  toggleFeatures    = json.loads(request.params['toggleFeatures'])
+
+  transaction.commit()
+
+  toReturn = {}
+
+  toReturn['uuid'] = newModelInstance['uuid']
+  
+  # add query string arguments for title and axes etc
+  toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
+  return newModelInstance['uuid']
+
+def copyClassInstance(request):
+  modelInstanceUUID   = request.params['modelInstanceUUID']
+  modelInstance       = request.root['modelInstances'][modelInstanceUUID]
+  modelClass          = modelInstance['modelClass']
+
+  urlData                       = modelInstance.getCanonicalURLJSON()
+  urlData['outputField']        = modelInstance['lastAlteredOutput']
+  urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
+
+  newModelInstance = modelClass.getModelInstance(request.root['savedModelInstances'])
+  newModelInstance.setFieldValues(urlData['fieldValues'])
+  newModelInstance['lastAlteredInput']          = modelInstance['lastAlteredInput']
+  newModelInstance['lastAlteredOutput']         = modelInstance['lastAlteredOutput']
+  newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']
+
+  return newModelInstance
   
 @view_config(route_name="inputFieldAltered", renderer="json")
 def inputFieldAltered(request):
@@ -255,17 +290,6 @@ def setBottomModel(request):
   return jsonOutput
 
 import pyramid_google_login
-
-
-@view_config(route_name="getEmbedURL", renderer="json")
-def getEmbedURL(context, request):
-  ipdb.set_trace()
-
-  modelInstanceID   = request.params['modelInstanceID']
-  modelInstance     = request.root['modelInstances'][modelInstanceID]
-  modelClass        = modelInstance['modelClass']
-
-  modelInstance.getCanonicalURLJSON()
 
 
 @view_config(route_name="googleConnect/login", renderer="json")

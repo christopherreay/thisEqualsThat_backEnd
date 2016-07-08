@@ -37,6 +37,8 @@ def main(global_config, **settings):
     
     config.add_route("initialise",                "/intialise")
 
+    config.add_route("getEmbedURL",                "/getEmbedURL")
+
     #google connect
     #config.add_route("googleConnect",         "/googleConnect")
     config.add_route("googleConnect/login",               "/googleConnect/login")

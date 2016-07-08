@@ -720,13 +720,19 @@ class ModelInstance(Node):
       "fields": dict(fieldDefinitions).keys()
     }
     #more bottomModel stuff
-    if boundInputField is not None:
-      jsInterface['fields'][boundInputFullAddress]['inputField'] = False
-    fieldValues = jsInterface['fieldValues'] = {}
+    #if self['boundInputField'] is not None:
+    #  urlData['fields'][boundInputFullAddress]['inputField'] = False
+    fieldValues = urlData['fieldValues'] = {}
     for (fieldName, fieldBranch) in fieldBranches.items():
       fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
-    return jsInterface
+    return urlData
 
+  def setFieldValues(self, fieldValues):
+    ipdb.set_trace()
+
+    (fieldDefinitions, fieldBranches) = self['modelClass'].getFieldDefinitions()
+    for (fieldName, fieldBranch) in fieldBranches.items():
+      fieldBranch.setFieldValue(self, fieldValues[fieldName])
 
 
 #Big complicated object that administrates loads of stuff
@@ -1192,6 +1198,7 @@ def appmaker(zodb_root):
 
         modelClasses                = app_root['modelClasses']    = ModelClasses()
         modelInstances              = app_root['modelInstances']  = Node()
+        savedModelInstances         = app_root['savedModelInstances']= Node()
         modelFields                 = app_root['fieldUnitIndex']  = ModelFields()
 
         users                       = app_root['users']           = Users()
