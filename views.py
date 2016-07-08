@@ -17,6 +17,7 @@ import transaction, json
 
 import httplib2
 import os
+import time
 
 from apiclient import discovery
 import oauth2client
@@ -94,6 +95,7 @@ def inputFieldAltered(request):
       inputFieldValue = float(request.params['newValue'])
     
     print "Set Input Value from Interface: %s: %s" % (inputField, inputFieldValue)
+    modelInstance.modelFieldAlteredSequence.append(("input", inputField, inputFieldValue, time.time()))
     modelInstance.getInputSetter(inputField).setValue(modelInstance, inputFieldValue)
   except KeyError as e:
     print "Exception in setting input value: %s" % e
@@ -101,6 +103,7 @@ def inputFieldAltered(request):
     valueFromInstance.append("newValue")
   try:
     outputField     = tuple(json.loads(request.params['outputField']))
+    modelInstance['modelFieldAlteredSequence'].append(("output", outputField, None, time.time()))
     modelInstance.getOutputSetter(outputField)
   except Exception as e:
     print repr(e)
@@ -108,6 +111,7 @@ def inputFieldAltered(request):
     outputField = modelInstance['lastAlteredOutput']
   try:
     visualisationField = tuple(json.loads(request.params['visualisationField']))
+    modelInstance['modelFieldAlteredSequence'].append(("visualisation", visualisationField, None, time.time()))
     modelInstance['lastAlteredVisualisation'] = visualisationField
   except Exception as e:
     print repr(e)
@@ -251,6 +255,17 @@ def setBottomModel(request):
   return jsonOutput
 
 import pyramid_google_login
+
+
+@view_config(route_name="getEmbedURL", renderer="json")
+def getEmbedURL(context, request):
+  ipdb.set_trace()
+
+  modelInstanceID   = request.params['modelInstanceID']
+  modelInstance     = request.root['modelInstances'][modelInstanceID]
+  modelClass        = modelInstance['modelClass']
+
+  modelInstance.getCanonicalURLJSON()
 
 
 @view_config(route_name="googleConnect/login", renderer="json")

@@ -645,6 +645,9 @@ class ModelInstance(Node):
     #set the currentVisualisation to ...
     visualisationField = self["lastAlteredVisualisation"] = modelClass['defaultVisualisationField']
 
+    #record the inputFieldAltered sequence for embed URL and other things... cant remember whwat
+    modelFieldAlteredSequence = self['modelFieldAlteredSequence'] = PersistentList()
+
     #store BottomModel data and memoise bottomModel instances
     self['bottomModel']         = None
     self['isBottomModel']       = False
@@ -705,6 +708,26 @@ class ModelInstance(Node):
     for (fieldName, fieldBranch) in fieldBranches.items():
       fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
     return jsInterface
+
+  def getCanonicalURLJSON(self):
+    #modelClass, fieldValues, lastAlteredInput, lastAlteredOutput, lastAlteredVisualisation
+    
+    (fieldDefinitions,  fieldBranches)  = self['modelClass'].getFieldDefinitions()
+    ##ipdb.set_trace()    
+    #if not 'jsInterface' in self:
+    urlData = \
+    { "id":     self['uuid'],
+      "fields": dict(fieldDefinitions).keys()
+    }
+    #more bottomModel stuff
+    if boundInputField is not None:
+      jsInterface['fields'][boundInputFullAddress]['inputField'] = False
+    fieldValues = jsInterface['fieldValues'] = {}
+    for (fieldName, fieldBranch) in fieldBranches.items():
+      fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
+    return jsInterface
+
+
 
 #Big complicated object that administrates loads of stuff
 #  FieldNames by RootClass
