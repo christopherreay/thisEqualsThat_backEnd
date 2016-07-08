@@ -690,3 +690,9 @@ def scottishParliament_updateSwings(context, request):
 
 
 
+#yogesh
+@view_config(route_name="mapppm", renderer="templates/mapppm.pt")
+def mapppm(context, request):
+  toReturn = {}
+
+  return toReturn
