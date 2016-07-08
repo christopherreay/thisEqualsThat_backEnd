@@ -47,6 +47,10 @@ def my_view(request):
 def thisEqualsThat(request):
     return {'project': 'thisEqualsThat'}
 
+@view_config(route_name='thisEqualsThat_byUser',      renderer='templates/thisEqualsThat_byUser.pt')
+def thisEqualsThat(request):
+    return {'developerName': request.matchdict["developerName"]}    
+
 @view_config(route_name='thisEqualsThat_iframe',      renderer='templates/thisEqualsThat_iframe.pt')
 def thisEqualsThat_iframe(request):
     return {'project': 'thisEqualsThat'}

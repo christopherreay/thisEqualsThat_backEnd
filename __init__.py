@@ -24,9 +24,13 @@ def main(global_config, **settings):
     config.add_static_view("css",                 "/static/css",            cache_max_age=3600)
     config.add_static_view("svg",                 "/static/svg",            cache_max_age=3600)
         
-    config.add_route("thisEqualsThat",            "/thisEqualsThat")
+    #config.add_route("thisEqualsThat",            "/thisEqualsThat")
+
+    config.add_route("thisEqualsThat_byUser",     "/thisEqualsThat/{developerName}")
     config.add_route("thisEqualsThat_iframe",     "/thisEqualsThat_iframe")
     config.add_route("thisEqualsThat_bertonbeil", "/thisEqualsThat_bertonbeil")
+
+    config.add_route("getEmbedURL",            "/getEmbedURL")
 
     config.add_route("testData",                  "/testData")
     

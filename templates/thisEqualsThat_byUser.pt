@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "//www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+<head>
+  <title>The Pyramid Web Framework</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <meta name="keywords"           content="python web application" />
+  <meta name="description"        content="pyramid web application" />
+  <link rel="shortcut icon"       href="/static/${developerName}/favicon.ico" />
+  
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  
+    
+    <link   rel="stylesheet" href="/static/${developerName}/javascript/colorPicker/jquery.colorpicker.css" />
+    <script src="/static/${developerName}/javascript/colorPicker/jquery.colorpicker.js"> </script>
+
+    <script src="/static/${developerName}/javascript/popupWindow/jquery.popupWindow.js"></script>  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
+
+  <link rel="stylesheet" href="/static/${developerName}/css/thisEqualsThat.css" media="screen" />
+  <script src="/static/javascript/thisEqualsThat.js" type="text/javascript"
+    tal:attributes="src '/static/%s/javascript/thisEqualsThat.js' % (developerName, )"></script>
+
+  
+  <!-- SVG3d -->
+  <script src="/static/${developerName}/javascript/svg3d/dom_utils.js"></script>
+  <script src="/static/${developerName}/javascript/svg3d/jquery_svg3d.js"></script>
+  <script src="/static/${developerName}/javascript/svg3d/svg3d.js"></script>
+  <script src="/static/${developerName}/javascript/svg3d/svg3d_parsing.js"></script>
+
+  <!--[if lte IE 6]>
+  <link rel="stylesheet" href="/static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+  <![endif]-->
+</head>
+<body>
+  <div id="wrap">
+    <div id="top">
+      <div class="top">
+        <div id="logo">
+          HELLO
+          <img src="/static/${developerName}/graphics/thisEquals/this-equals-that.png" width="160" alt="pyramid"/>
+        </div>
+      </div>
+    </div>
+    <div id="thisEqualsThatSceneDiv">
+    </div>
+  </div>
+</body>
+</html>
