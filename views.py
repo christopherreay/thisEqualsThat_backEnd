@@ -81,19 +81,55 @@ def getClassInstance(request):
 def getEmbedURL(request):
   ipdb.set_trace()
 
-  newModelInstance  = copyClassInstance(request)
   titleInput        = request.params['titleInput']
   toggleFeatures    = json.loads(request.params['toggleFeatures'])
+  svg 			 	      = request.params["svg"]
+
+  
+  newModelInstance  = copyClassInstance(request)
+  
+  uuid              = newModelInstance['uuid']
+
+
+  newModelInstance['svg'] = svg
 
   transaction.commit()
 
-  toReturn = {}
+  with open("%s/visualisations/svg/%s.svg" % (__file__, uuid, ) , "w") as svgFile:
+    svgFile.write(svg)
 
-  toReturn['uuid'] = newModelInstance['uuid']
+
+
+  #### Write a file to the filesystem and then nginx can serve it directly. Give that URL, including the UUID
+  ####  various possiblities
+
+  # toReturn = {}
+
+  # toReturn['uuid'] = newModelInstance['uuid']
   
-  # add query string arguments for title and axes etc
-  toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
-  return newModelInstance['uuid']
+  # # add query string arguments for title and axes etc
+  # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
+  return request.relative_url("getVisualisation/%s" % (newModelInstance['uuid'], ) )
+
+@view_config(route_name="getVisualisation")
+def getVisualisation(request):
+
+  uuid = request.matchdict['uuid']
+
+  res = request.response
+  res.content_type  = "image/svg"
+  res.text = "<image src=\"%s\"/>" % (request.relative_url("getSVGData/%s" % (uuid, ) ))
+  return res
+
+@view_config(route_name="getSVGData")
+def getSVGData(request):
+  modelInstance = request.root['savedModelInstances'][request.matchdict['uuid']]
+
+  res = request.response
+  res.content_type  = "image/svg+xml"
+  res.text = modelInstance['svg']
+  return res
+
 
 def copyClassInstance(request):
   modelInstanceUUID   = request.params['modelInstanceUUID']
