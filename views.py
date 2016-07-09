@@ -95,10 +95,8 @@ def getEmbedURL(request):
 
   transaction.commit()
 
-  with open("%s/visualisations/svg/%s.svg" % (__file__, uuid, ) , "w") as svgFile:
+  with open(os.path.join(os.path.dirname(__file__), "visualisations", "svg", "%s.svg" % (uuid, ) ) , "w") as svgFile:
     svgFile.write(svg)
-
-
 
   #### Write a file to the filesystem and then nginx can serve it directly. Give that URL, including the UUID
   ####  various possiblities
@@ -109,7 +107,7 @@ def getEmbedURL(request):
   
   # # add query string arguments for title and axes etc
   # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
-  return request.relative_url("getVisualisation/%s" % (newModelInstance['uuid'], ) )
+  return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
 
 @view_config(route_name="getVisualisation")
 def getVisualisation(request):
