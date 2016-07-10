@@ -164,7 +164,7 @@ def inputFieldAltered(request):
       inputFieldValue = float(request.params['newValue'])
     
     print "Set Input Value from Interface: %s: %s" % (inputField, inputFieldValue)
-    modelInstance.modelFieldAlteredSequence.append(("input", inputField, inputFieldValue, time.time()))
+    modelInstance['modelFieldAlteredSequence'].append(("input", inputField, inputFieldValue, time.time()))
     modelInstance.getInputSetter(inputField).setValue(modelInstance, inputFieldValue)
   except KeyError as e:
     print "Exception in setting input value: %s" % e
@@ -205,8 +205,10 @@ def inputFieldAltered(request):
   #The front end just neesd to have the overflow set for the container
   if modelInstance['isBottomModel']:
     modelInstance.getInputSetter(modelInstance['boundInputField'])
+  
   newOutputValue = modelInstance.process()
   modelInstance.getInputSetter(originalInputFieldAddress)  
+
 
   #ipdb.set_trace()
   choosableFields = []
@@ -275,7 +277,11 @@ def inputFieldAltered(request):
 
   transaction.commit()
   
-  return {   "fieldName": modelInstance['outputFieldAddress'], "newValue": newOutputValue, 
+  return {    "fieldName":          modelInstance['outputFieldAddress'], 
+              "newValue":           newOutputValue, 
+              
+              "fieldData":          modelInstance.getJSInterface(),
+              
               "choosableFields":    choosableFields,
               "svg3dDisplayJSON":   svg3dDisplayJSON,
               "bottomModelData":    bottomModelData,
