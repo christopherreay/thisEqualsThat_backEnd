@@ -17,6 +17,7 @@ import transaction, json
 
 import httplib2
 import os
+import time
 
 from apiclient import discovery
 import oauth2client
@@ -75,6 +76,75 @@ def getClassInstance(request):
   jsonOutput                    = [ modelInstanceInterface ]
   transaction.commit()
   return jsonOutput
+
+@view_config(route_name="getEmbedURL", renderer="json")
+def getEmbedURL(request):
+  ipdb.set_trace()
+
+  titleInput        = request.params['titleInput']
+  toggleFeatures    = json.loads(request.params['toggleFeatures'])
+  svg 			 	      = request.params["svg"]
+
+  
+  newModelInstance  = copyClassInstance(request)
+  
+  uuid              = newModelInstance['uuid']
+
+
+  newModelInstance['svg'] = svg
+
+  transaction.commit()
+
+  with open(os.path.join(os.path.dirname(__file__), "visualisations", "svg", "%s.svg" % (uuid, ) ) , "w") as svgFile:
+    svgFile.write(svg)
+
+  #### Write a file to the filesystem and then nginx can serve it directly. Give that URL, including the UUID
+  ####  various possiblities
+
+  # toReturn = {}
+
+  # toReturn['uuid'] = newModelInstance['uuid']
+  
+  # # add query string arguments for title and axes etc
+  # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
+  return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
+
+@view_config(route_name="getVisualisation")
+def getVisualisation(request):
+
+  uuid = request.matchdict['uuid']
+
+  res = request.response
+  res.content_type  = "image/svg"
+  res.text = "<image src=\"%s\"/>" % (request.relative_url("getSVGData/%s" % (uuid, ) ))
+  return res
+
+@view_config(route_name="getSVGData")
+def getSVGData(request):
+  modelInstance = request.root['savedModelInstances'][request.matchdict['uuid']]
+
+  res = request.response
+  res.content_type  = "image/svg+xml"
+  res.text = modelInstance['svg']
+  return res
+
+
+def copyClassInstance(request):
+  modelInstanceUUID   = request.params['modelInstanceUUID']
+  modelInstance       = request.root['modelInstances'][modelInstanceUUID]
+  modelClass          = modelInstance['modelClass']
+
+  urlData                       = modelInstance.getCanonicalURLJSON()
+  urlData['outputField']        = modelInstance['lastAlteredOutput']
+  urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
+
+  newModelInstance = modelClass.getModelInstance(request.root['savedModelInstances'])
+  newModelInstance.setFieldValues(urlData['fieldValues'])
+  newModelInstance['lastAlteredInput']          = modelInstance['lastAlteredInput']
+  newModelInstance['lastAlteredOutput']         = modelInstance['lastAlteredOutput']
+  newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']
+
+  return newModelInstance
   
 @view_config(route_name="inputFieldAltered", renderer="json")
 def inputFieldAltered(request):
@@ -94,6 +164,7 @@ def inputFieldAltered(request):
       inputFieldValue = float(request.params['newValue'])
     
     print "Set Input Value from Interface: %s: %s" % (inputField, inputFieldValue)
+    modelInstance['modelFieldAlteredSequence'].append(("input", inputField, inputFieldValue, time.time()))
     modelInstance.getInputSetter(inputField).setValue(modelInstance, inputFieldValue)
   except KeyError as e:
     print "Exception in setting input value: %s" % e
@@ -101,6 +172,7 @@ def inputFieldAltered(request):
     valueFromInstance.append("newValue")
   try:
     outputField     = tuple(json.loads(request.params['outputField']))
+    modelInstance['modelFieldAlteredSequence'].append(("output", outputField, None, time.time()))
     modelInstance.getOutputSetter(outputField)
   except Exception as e:
     print repr(e)
@@ -108,6 +180,7 @@ def inputFieldAltered(request):
     outputField = modelInstance['lastAlteredOutput']
   try:
     visualisationField = tuple(json.loads(request.params['visualisationField']))
+    modelInstance['modelFieldAlteredSequence'].append(("visualisation", visualisationField, None, time.time()))
     modelInstance['lastAlteredVisualisation'] = visualisationField
   except Exception as e:
     print repr(e)
@@ -132,8 +205,10 @@ def inputFieldAltered(request):
   #The front end just neesd to have the overflow set for the container
   if modelInstance['isBottomModel']:
     modelInstance.getInputSetter(modelInstance['boundInputField'])
+  
   newOutputValue = modelInstance.process()
   modelInstance.getInputSetter(originalInputFieldAddress)  
+
 
   #ipdb.set_trace()
   choosableFields = []

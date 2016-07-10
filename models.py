@@ -576,6 +576,7 @@ class ProcessPath(Node):
   #  in all the fields along the way. In the end, outputSetter.getValue(instance) will contain the correct value.
   def process(self, instance):
     ##ipdb.set_trace()
+    instance['currentlyProcessing'] = []
     processPath = self
     print "Processing Path:\n  input: %s\n  output: %s" % (self['inputSetter'], self['outputSetter'])
   
@@ -645,6 +646,9 @@ class ModelInstance(Node):
     #set the currentVisualisation to ...
     visualisationField = self["lastAlteredVisualisation"] = modelClass['defaultVisualisationField']
 
+    #record the inputFieldAltered sequence for embed URL and other things... cant remember whwat
+    modelFieldAlteredSequence = self['modelFieldAlteredSequence'] = PersistentList()
+
     #store BottomModel data and memoise bottomModel instances
     self['bottomModel']         = None
     self['isBottomModel']       = False
@@ -705,6 +709,32 @@ class ModelInstance(Node):
     for (fieldName, fieldBranch) in fieldBranches.items():
       fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
     return jsInterface
+
+  def getCanonicalURLJSON(self):
+    #modelClass, fieldValues, lastAlteredInput, lastAlteredOutput, lastAlteredVisualisation
+    
+    (fieldDefinitions,  fieldBranches)  = self['modelClass'].getFieldDefinitions()
+    ##ipdb.set_trace()    
+    #if not 'jsInterface' in self:
+    urlData = \
+    { "id":     self['uuid'],
+      "fields": dict(fieldDefinitions).keys()
+    }
+    #more bottomModel stuff
+    #if self['boundInputField'] is not None:
+    #  urlData['fields'][boundInputFullAddress]['inputField'] = False
+    fieldValues = urlData['fieldValues'] = {}
+    for (fieldName, fieldBranch) in fieldBranches.items():
+      fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
+    return urlData
+
+  def setFieldValues(self, fieldValues):
+    ipdb.set_trace()
+
+    (fieldDefinitions, fieldBranches) = self['modelClass'].getFieldDefinitions()
+    for (fieldName, fieldBranch) in fieldBranches.items():
+      fieldBranch.setFieldValue(self, fieldValues[fieldName])
+
 
 #Big complicated object that administrates loads of stuff
 #  FieldNames by RootClass
@@ -1020,14 +1050,20 @@ class SVGDisplayDefs(Node):
     self['svgDefinitions']      = svgFieldDefinitions
   
   def process(self, modelInstance):
+
+    print "\n\nProcessing visualisation path"
+    print "  from: %s to %s" % (modelInstance['lastAlteredOutput'], modelInstance['lastAlteredVisualisation'])
+
     context = {}
     modelClass = modelInstance['modelClass']
-    #debugSVGDisplayDefs#ipdb.set_trace()
-    #print "SVGDisplayDefs.process: %s" % modelInstance['lastAlteredOutput']
+        
     output_to_valueQuantise_Dict = getAddressOrDefault(self['svgDefinitions'], modelInstance['lastAlteredVisualisation'])
-    svgProcessPath = modelInstance.getProcessPathTemp(modelInstance['lastAlteredOutput'], output_to_valueQuantise_Dict['modelOutputField_forSVGConversion'])
-    svgFieldValue = svgProcessPath.process(modelInstance)
-    
+    print "\nUsing algorithm: %s" % (output_to_valueQuantise_Dict, )
+
+    svgProcessPath  = modelInstance.getProcessPathTemp(modelInstance['lastAlteredOutput'], output_to_valueQuantise_Dict['modelOutputField_forSVGConversion'])
+    svgFieldValue   = svgProcessPath.process(modelInstance)
+    print "processed Value: %s" % (svgFieldValue, )
+
     svgDisplayDefByValue = output_to_valueQuantise_Dict['svgDisplayDefByValue']
     toReturn = False
     for (checkValueExec, svgDisplayDef) in svgDisplayDefByValue.items():
@@ -1169,6 +1205,7 @@ def appmaker(zodb_root):
 
         modelClasses                = app_root['modelClasses']    = ModelClasses()
         modelInstances              = app_root['modelInstances']  = Node()
+        savedModelInstances         = app_root['savedModelInstances']= Node()
         modelFields                 = app_root['fieldUnitIndex']  = ModelFields()
 
         users                       = app_root['users']           = Users()
@@ -2588,10 +2625,14 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
             },
-              {           "mass": { "__default" : "toReturn = !!volume!! / !!density!!",
+              {           "mass": { "__default": 
+                                            "toReturn = !!volume!!  / !!density!!",
                                   },
-              "volume"          : { "__default":                     
-                                            "toReturn = !!mass!! * !!density!!",
+                        "volume": { "__default":                     
+                                            "toReturn = !!mass!!    * !!density!!",
+                                  },
+                       "density": { "__default":
+                                            "toReturn = !!volume!!  / !!mass!!",
                                   },
             },
             {
