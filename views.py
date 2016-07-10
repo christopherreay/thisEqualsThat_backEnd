@@ -202,7 +202,11 @@ def inputFieldAltered(request):
 
   transaction.commit()
   
-  return {   "fieldName": modelInstance['outputFieldAddress'], "newValue": newOutputValue, 
+  return {    "fieldName": modelInstance['outputFieldAddress'], 
+              "newValue": newOutputValue, 
+
+              "fieldValues": modelInstance.getJSInterface()['fieldValues'],
+
               "choosableFields":    choosableFields,
               "svg3dDisplayJSON":   svg3dDisplayJSON,
               "bottomModelData":    bottomModelData,
