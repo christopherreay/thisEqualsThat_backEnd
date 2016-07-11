@@ -2594,7 +2594,7 @@ toReturn['translate3d'].update(
                                 }),
               "mass": ClassField({ "name":        "mass", 
                                 "fieldType":        "slider", 
-                                "defaultValue":     70.80, 
+                                "defaultValue":     10.0, 
                                 "rangeBottom":            0.00000001, 
                                 "rangeTop":     100000000000, 
                                 "rangeType":           "log",
