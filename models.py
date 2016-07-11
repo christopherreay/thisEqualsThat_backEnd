@@ -1099,6 +1099,10 @@ class SVGDisplayDefs(Node):
       else:
         postProcessing = {}
 
+      svgHUD = {}
+      if "svgHUD" in svgDisplayDef:
+        svgHUD = svgDisplayDef['svgHUD']
+
       svgDisplayJSONDict = \
           { "svgFile"               : svgDisplayDef['svgFile'],
             "rootGroupNodeSelector" : svgDisplayDef['rootGroupNodeSelector'],
@@ -1107,7 +1111,8 @@ class SVGDisplayDefs(Node):
             "svgFieldValue"         : svgFieldValue,
             "svgRelativeHighness"   : svgRelativeHighness,
             "postProcessing"        : postProcessing,
-          }
+            "svgHUD"                : svgHUD,
+          } 
       
       return svgDisplayJSONDict
 
@@ -1446,27 +1451,42 @@ toReturn['clone3d'].update(
                             "height"                  : """toReturn = math.pow(svgFieldValue / 4.23508127518, 1.0/3)""",
                             "defaultSVG3dDict"        : 
                             { "translate3d" : {"x": 200, "y": 200, "z": 0},
-                                                    "clone3d": {
-                                                        "row":        6,
-                                                        "x":          150,
-                                                        "layer":      100,
-                                                        "y":          -90,
-                                                        "z":          220,
-                                                        "nb":         1
-                                                    },
-                                                  },
-                                              "svg3dParameterExec"        :
-                                                  """
-                                                  """
+                                   "clone3d": {
+                                           "row":        6,
+                                             "x":          150,
+                                         "layer":      100,
+                                             "y":          -90,
+                                             "z":          220,
+                                            "nb":         1
+                                              },
+                            },
+                            "svg3dParameterExec"        :
+                                """
+                                """,
+                            "svgHUD":
+                            { "colourPickers":
+                              [ { ".face":
+                                      """ topColor  = pickedColor.transition("black", 0.05);
+                                          sideColor = pickedColor.transition("black", 0.10);
+
+                                          toReturn  = 
+                                              [ ".face": pickedColor, 
+                                                ".face.topFace .face.bottomFace": topColor, 
+                                                ".face.leftFace .face.rightFace": sideColor
+                                              ];
+                                      """,
+                                }
+                              ]                            
                             }
-            })
+                          }
+             })
         #123.6,76.4,200
         #1.61780104712, 1, 2.61780104712
-        """width = height * 2.61780104712
-        depth = height * 1.61780104712
-        volume = height * height * 2.61780104712 * height * 1.61780104712
-        volume = height ^ 3 * 4.23508127518
-        height = (volume / 4.23508127518) ^ 1/3
+        """ width = height * 2.61780104712
+            depth = height * 1.61780104712
+            volume = height * height * 2.61780104712 * height * 1.61780104712
+            volume = height ^ 3 * 4.23508127518
+            height = (volume / 4.23508127518) ^ 1/3
         """
         rep_kierBales = \
             OD({ "toReturn = True":
