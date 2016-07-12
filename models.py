@@ -1464,19 +1464,21 @@ toReturn['clone3d'].update(
                                 """
                                 """,
                             "svgHUD":
-                            { "colourPickers":
-                              [ { ".face":
-                                      """ topColor  = pickedColor.transition("black", 0.05);
-                                          sideColor = pickedColor.transition("black", 0.10);
+                            { "colorPickers":
+                              { ".face":
+                                { "initialColorString": "rgba(53, 53, 53, 0.9)",
+                                  "onColorChange":
+                                      """ var topColor  = pickedColor.transition("black", 0.05);
+                                          var sideColor = pickedColor.transition("black", 0.10);
 
                                           toReturn  = 
-                                              [ ".face": pickedColor, 
-                                                ".face.topFace .face.bottomFace": topColor, 
-                                                ".face.leftFace .face.rightFace": sideColor
-                                              ];
+                                              `.face                            { fill: ${ pickedColor .toRgbaString() };  } 
+                                               .face.faceTop,  .face.faceBottom { fill: ${ topColor    .toRgbaString() };  } 
+                                               .face.faceLeft, .face.faceRight  { fill: ${ sideColor   .toRgbaString() };  }
+                                              `;
                                       """,
                                 }
-                              ]                            
+                              }
                             }
                           }
              })

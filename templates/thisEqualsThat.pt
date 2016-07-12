@@ -11,14 +11,20 @@
   <link rel="stylesheet" href="//static.pylonsproject.org/fonts/nobile/stylesheet.css" media="screen" />
   <link rel="stylesheet" href="//static.pylonsproject.org/fonts/neuton/stylesheet.css" media="screen" />
   
-  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/theme.min.css">
+
   
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
   
     <!-- jqueryUI libraries -->
-    <link rel="stylesheet" href="/static/javascript/colorPicker/jquery.colorpicker.css"/script>
-    <script src="/static/javascript/colorPicker/jquery.colorpicker.js"> </script>
+    <link   rel ="stylesheet"       href="/static/javascript/colorPicker/jquery.colorpicker.css"/script>
+    <script type="text/javascript"  src ="/static/javascript/colorPicker/jquery.colorpicker.js"> </script>
+
+    <link   rel ="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">
+    <script type="text/javascript"  src ="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 
     <script src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>  
 
