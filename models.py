@@ -1468,8 +1468,8 @@ toReturn['clone3d'].update(
                               { ".face":
                                 { "initialColorString": "rgba(53, 53, 53, 0.9)",
                                   "onColorChange":
-                                      """ var topColor  = pickedColor.transition("black", 0.05);
-                                          var sideColor = pickedColor.transition("black", 0.10);
+                                      """ var topColor  = pickedColor.transition("black", 0.10);
+                                          var sideColor = pickedColor.transition("black", 0.175);
 
                                           toReturn  = 
                                               `.face                            { fill: ${ pickedColor .toRgbaString() };  } 
