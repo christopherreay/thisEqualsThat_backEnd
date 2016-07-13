@@ -1386,11 +1386,25 @@ toReturn['clone3d'].update(
   }
 )
                                   """,
-                              "postProcessing"            :
-                                { "ccRandomiseColors": 0,
-                                  "ccRandomiseColorsByGroup": 5,
-                                  "ccRandomisePosition" : 20,
-                                }
+                            "postProcessing"            :
+                            { "ccRandomiseColors": 0,
+                              "ccRandomiseColorsByGroup": 5,
+                              "ccRandomisePosition" : 20,
+                            },
+                            "svgHUD":
+                            { "RandomiseClones":
+                              { "randomiseColors":
+                                { "degreeOfRandom": 0,
+                                },         
+                                "randomiseColorsByGroup":
+                                { "degreeOfRandom": 5,
+                                },
+                                "randomisePosition":
+                                { "degreeOfRandom": 20,
+                                },
+                              },         
+                            }
+
                           }
                       })
 
