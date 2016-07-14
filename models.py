@@ -1392,7 +1392,7 @@ toReturn['clone3d'].update(
                               "ccRandomisePosition" : 20,
                             },
                             "svgHUD":
-                            { "RandomiseClones":
+                            { "RandomiseClones.preColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 0,
                                 },         
@@ -1478,7 +1478,7 @@ toReturn['clone3d'].update(
                                 """
                                 """,
                             "svgHUD":
-                            { "colorPickers":
+                            { "colorPickers.postClone":
                               { ".face":
                                 { "initialColorString": "rgba(53, 53, 53, 0.9)",
                                   "onColorChange":
@@ -1497,10 +1497,10 @@ toReturn['clone3d'].update(
                           }
              })
         rep_greyCube_100    = copy.deepcopy(rep_greyCube)
-        rep_greyCube_100['toReturn = True']['svgHUD']["colorPickers"][".face"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
+        rep_greyCube_100['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
         
         rep_greyCube_inAir  = copy.deepcopy(rep_greyCube)
-        rep_greyCube_inAir['toReturn = True']['svgHUD']["colorPickers"][".face"]["initialColorString"] = "rgba(109,192,196,0.31)"
+        rep_greyCube_inAir['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(109,192,196,0.31)"
         #123.6,76.4,200
         #1.61780104712, 1, 2.61780104712
         """ width = height * 2.61780104712
