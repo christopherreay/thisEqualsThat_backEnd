@@ -1388,6 +1388,7 @@ toReturn['clone3d'].update(
                                 },         
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 0,
+
                                 },
                                 "randomisePosition":
                                 { "degreeOfRandom": 20,
