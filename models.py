@@ -1280,7 +1280,21 @@ if svgQuantiseValue > 1.0:
 #    "row" : row
 #  }
 #)
-                                  """
+                                  """,
+                            "svgHUD":
+                            { "RandomiseClones.preColor":
+                              { "randomisePosition":
+                                { "degreeOfRandom": 2,
+                                },
+                                "randomiseColors":
+                                { "degreeOfRandom": 0,
+                                },         
+                                "randomiseColorsByGroup":
+                                { "degreeOfRandom": 2,
+                                },
+                              },         
+                            },
+
                           }
                       }
             )
@@ -1325,11 +1339,20 @@ toReturn['clone3d'].update(
   }
 )
                                   """,
-                              "postProcessing"            :
-                                { "ccRandomiseColors": 10,
-                                  "ccRandomiseColorsByGroup": 25,
-                                  "ccRandomisePosition" : 12,
-                                }
+
+                            "svgHUD":
+                            { "RandomiseClones.preColor":
+                              { "randomisePosition":
+                                { "degreeOfRandom": 12,
+                                },
+                                "randomiseColors":
+                                { "degreeOfRandom": 10,
+                                },         
+                                "randomiseColorsByGroup":
+                                { "degreeOfRandom": 25,
+                                },
+                              },         
+                            },
                           }
                       }
             )
@@ -1356,7 +1379,21 @@ toReturn['clone3d'].update(
                                             "row" : math.ceil(math.sqrt(svgQuantiseValue))
                                         }
                                     )
-                                  """
+                                  """,
+
+                            "svgHUD":
+                            { "RandomiseClones.preColor":
+                              { "randomiseColors":
+                                { "degreeOfRandom": 5,
+                                },         
+                                "randomiseColorsByGroup":
+                                { "degreeOfRandom": 0,
+                                },
+                                "randomisePosition":
+                                { "degreeOfRandom": 20,
+                                },
+                              },         
+                            },
                           }
                       })
         rep_ratioPeople = \
@@ -1386,11 +1423,7 @@ toReturn['clone3d'].update(
   }
 )
                                   """,
-                            "postProcessing"            :
-                            { "ccRandomiseColors": 0,
-                              "ccRandomiseColorsByGroup": 5,
-                              "ccRandomisePosition" : 20,
-                            },
+
                             "svgHUD":
                             { "RandomiseClones.preColor":
                               { "randomiseColors":
@@ -1403,7 +1436,7 @@ toReturn['clone3d'].update(
                                 { "degreeOfRandom": 20,
                                 },
                               },         
-                            }
+                            },
 
                           }
                       })
@@ -1431,32 +1464,23 @@ toReturn['clone3d'].update(
                                           "row" : math.ceil(math.sqrt(svgQuantiseValue))
                                         }
                                     )
-                                  """
+                                  """,
+                            "svgHUD":
+                            { "RandomiseClones.preColor":
+                              { "randomiseColors":
+                                { "degreeOfRandom": 0,
+                                },         
+                                "randomiseColorsByGroup":
+                                { "degreeOfRandom": 5,
+                                },
+                                "randomisePosition":
+                                { "degreeOfRandom": 5,
+                                },
+                              },         
+                            },
                           }
                       })
 
-        rep_yellowCube = \
-            OD({ "toReturn = True":
-                          { "svgFile"                 : "declarative_cube_yellow.svg",
-                            "rootGroupNodeSelector"   : "#person",
-                            "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
-                            "height"                  : """toReturn = math.pow(svgFieldValue / 4.23508127518, 1.0/3)""",
-                            "defaultSVG3dDict"        : 
-            { "translate3d" : {"x": 200, "y": 200, "z": 0},
-                                    "clone3d": {
-                                        "row":        6,
-                                        "x":          150,
-                                        "layer":      100,
-                                        "y":          -90,
-                                        "z":          220,
-                                        "nb":         1
-                                    },
-                                  },
-                              "svg3dParameterExec"        :
-                                  """
-                                  """
-                          }
-                      })
         rep_greyCube = \
             OD({ "toReturn = True":
                           { "svgFile"                 : "declarative_cube_grey.svg",
@@ -1497,10 +1521,13 @@ toReturn['clone3d'].update(
                           }
              })
         rep_greyCube_100    = copy.deepcopy(rep_greyCube)
-        rep_greyCube_100['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
+        rep_greyCube_100  ['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
         
         rep_greyCube_inAir  = copy.deepcopy(rep_greyCube)
         rep_greyCube_inAir['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(109,192,196,0.31)"
+
+        rep_yellowCube      = copy.deepcopy(rep_greyCube)
+        rep_yellowCube    ['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(200,200,53,0.9)"
         #123.6,76.4,200
         #1.61780104712, 1, 2.61780104712
         """ width = height * 2.61780104712
