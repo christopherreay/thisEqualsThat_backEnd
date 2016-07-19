@@ -1103,6 +1103,10 @@ class SVGDisplayDefs(Node):
       if "svgHUD" in svgDisplayDef:
         svgHUD = svgDisplayDef['svgHUD']
 
+      inputFieldHUD = {}
+      if "inputFieldHUD" in svgDisplayDef:
+        inputFieldHUD = svgDisplayDef['inputFieldHUD']
+
       svgDisplayJSONDict = \
           { "svgFile"               : svgDisplayDef['svgFile'],
             "rootGroupNodeSelector" : svgDisplayDef['rootGroupNodeSelector'],
@@ -1112,6 +1116,7 @@ class SVGDisplayDefs(Node):
             "svgRelativeHighness"   : svgRelativeHighness,
             "postProcessing"        : postProcessing,
             "svgHUD"                : svgHUD,
+            "inputFieldHUD"         : inputFieldHUD,
           } 
       
       return svgDisplayJSONDict
@@ -1233,17 +1238,17 @@ else:
   toReturn = 0.85725
 """,
                             "defaultSVG3dDict"        : 
-                              { "translate3d" : {"x": 100, "y": 100, "z": 0},
-                                    "clone3d": {
-                                        "row":        1,
-                                        "x":          50,
-                                        "layer":      100,
-                                        "y":          -50,
-                                        "z":          50,
-                                        "nb":         40
-                                    },
-                                  },
-                              "svg3dParameterExec"        :
+                            { "translate3d" : {"x": 100, "y": 100, "z": 0},
+                              "clone3d": 
+                              {   "row":        1,
+                                  "x":          50,
+                                  "layer":      100,
+                                  "y":          -50,
+                                  "z":          50,
+                                  "nb":         40
+                              },
+                            },
+                            "svg3dParameterExec"        :
                                   """
 cubeRoot = math.ceil(svgQuantiseValue ** (1 / 3.0))
 total = math.ceil(svgQuantiseValue)
@@ -1404,17 +1409,17 @@ toReturn['clone3d'].update(
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
                             "height"                  : """toReturn = 1.72""",
                             "defaultSVG3dDict"        : 
-            { "translate3d" : {"x": 100, "y": 300, "z": 0},
-                                    "clone3d": {
-                                        "row":        10,
-                                        "x":          30,
-                                        "layer":      1000,
-                                        "y":          -80,
-                                        "z":          50,
-                                        "nb":         100
-                                    },
+                                { "translate3d" : {"x": 100, "y": 300, "z": 0},
+                                  "clone3d": 
+                                  { "row":        10,
+                                    "x":          30,
+                                    "layer":      1000,
+                                    "y":          -80,
+                                    "z":          50,
+                                    "nb":         100
                                   },
-                              "svg3dParameterExec"        :
+                                },
+                            "svg3dParameterExec"        :
                                   """
 toReturn['recolourClones'] = svgFieldValue
 cloneCount = float(svgFieldValue[0]['cloneCount1'])
@@ -1428,7 +1433,7 @@ toReturn['clone3d'].update(
                             "svgHUD":
                             { "RandomiseClones.preColor":
                               { "randomiseColors":
-                                { "degreeOfRandom": 0,
+                                { "degreeOfRandom": 1,
                                 },         
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 5,
@@ -1436,6 +1441,16 @@ toReturn['clone3d'].update(
                                 "randomisePosition":
                                 { "degreeOfRandom": 20,
                                 },
+                              },         
+                            },
+                            "inputFieldHUD":
+                            { "Replace.onLoad_allFieldsOnDOM":
+                              { "ratioColor":
+                                { "fieldsToHide": ["[\"colours\"]", "[\"ratios\"]"],
+                                  "addFieldsExec" :
+                                      """
+                                      """,
+                                }
                               },         
                             },
 
@@ -2656,8 +2671,8 @@ toReturn['translate3d'].update(
                                 "inputField":          True, 
                                 "outputField":         True, 
                                 "visualisationField":   True,
-                                "defaultInputField":   True, 
-                                "defaultOutputField":  False,
+                                "defaultInputField":   False, 
+                                "defaultOutputField":  True,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
@@ -2674,7 +2689,7 @@ toReturn['translate3d'].update(
                                 "inputField":          True, 
                                 "outputField":         True, 
                                 "defaultInputField":   False, 
-                                "defaultOutputField":  True,
+                                "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
               "density": ClassField({ "name":        "density", 
@@ -2689,7 +2704,7 @@ toReturn['translate3d'].update(
                                 "unitSuffix":          "m3/kg",
                                 "inputField":          True, 
                                 "outputField":         False, 
-                                "defaultInputField":   False, 
+                                "defaultInputField":   True, 
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
