@@ -1325,7 +1325,7 @@ else:
                                     "clone3d": {
                                         "row":        1,
                                         "x":          35,
-                                        "layer":      1,
+                                        "layer":      100,
                                         "y":          -50,
                                         "z":          50,
                                         "nb":         40
@@ -1340,8 +1340,7 @@ else:
   row = sqrt
 toReturn['clone3d'].update(
   { "nb"  : math.ceil(svgQuantiseValue),
-    "row" : row,
-    "layer": nb+10
+    "row" : row
   }
 )
                                   """,
@@ -1382,8 +1381,7 @@ toReturn['clone3d'].update(
                               "svg3dParameterExec"        :
                                   """toReturn['clone3d'].update(
                                           { "nb"  : math.ceil(svgQuantiseValue),
-                                            "row" : math.ceil(math.sqrt(svgQuantiseValue)),
-                                            "layer": nb+10
+                                            "row" : math.ceil(math.sqrt(svgQuantiseValue))
                                         }
                                     )
                                   """,
@@ -1427,8 +1425,7 @@ toReturn['recolourClones'] = svgFieldValue
 cloneCount = float(svgFieldValue[0]['cloneCount1'])
 toReturn['clone3d'].update(
   { "row" : math.sqrt(cloneCount),
-    "nb"  : cloneCount,
-    "layer":      nb+10
+    "nb"  : cloneCount
   }
 )
                                   """,
@@ -1542,8 +1539,7 @@ localContext.initContainer();
                               "svg3dParameterExec"        :
                                   """toReturn['clone3d'].update(
                                         { "nb"  : math.ceil(svgQuantiseValue),
-                                          "row" : math.ceil(math.sqrt(svgQuantiseValue)),
-                                          "layer":      nb+10,
+                                          "row" : math.ceil(math.sqrt(svgQuantiseValue))
                                         }
                                     )
                                   """,
