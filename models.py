@@ -1325,7 +1325,7 @@ else:
                                     "clone3d": {
                                         "row":        1,
                                         "x":          35,
-                                        "layer":      1,
+                                        "layer":      100,
                                         "y":          -50,
                                         "z":          50,
                                         "nb":         40
@@ -1380,7 +1380,7 @@ toReturn['clone3d'].update(
                                         "nb":         40
                                     },
                                   },
-                              "svg3dParameterExec"        :
+                              "svg3dParameterExec"        : \
                                   """
 nb = math.ceil(svgQuantiseValue)
 toReturn['clone3d'].update(
@@ -1545,8 +1545,7 @@ localContext.initContainer();
                               "svg3dParameterExec"        :
                                   """toReturn['clone3d'].update(
                                         { "nb"  : math.ceil(svgQuantiseValue),
-                                          "row" : math.ceil(math.sqrt(svgQuantiseValue)),
-                                          "layer":      nb+10,
+                                          "row" : math.ceil(math.sqrt(svgQuantiseValue))
                                         }
                                     )
                                   """,
