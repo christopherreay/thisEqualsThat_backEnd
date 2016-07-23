@@ -1333,9 +1333,11 @@ if sqrt > 10:
   row = 10
 else:
   row = sqrt
+nb = math.ceil(svgQuantiseValue)
 toReturn['clone3d'].update(
-  { "nb"  : math.ceil(svgQuantiseValue),
-    "row" : row
+  { "nb"  : nb,
+    "row" : row,
+    "layer":      nb+10,
   }
 )
                                   """,
@@ -1374,11 +1376,14 @@ toReturn['clone3d'].update(
                                     },
                                   },
                               "svg3dParameterExec"        :
-                                  """toReturn['clone3d'].update(
-                                          { "nb"  : math.ceil(svgQuantiseValue),
-                                            "row" : math.ceil(math.sqrt(svgQuantiseValue))
-                                        }
-                                    )
+                                  """
+nb = math.ceil(svgQuantiseValue)
+toReturn['clone3d'].update(
+      { "nb"  :     nb,
+        "row" :     math.ceil(math.sqrt(svgQuantiseValue)),
+        "layer":    nb+10,
+      }
+)
                                   """,
 
                             "svgHUD":
@@ -1420,7 +1425,8 @@ toReturn['recolourClones'] = svgFieldValue
 cloneCount = float(svgFieldValue[0]['cloneCount1'])
 toReturn['clone3d'].update(
   { "row" : math.sqrt(cloneCount),
-    "nb"  : cloneCount
+    "nb"  : cloneCount,
+    "layer": cloneCount + 10,
   }
 )
                                   """,
