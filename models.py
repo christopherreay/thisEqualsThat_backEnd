@@ -1325,7 +1325,7 @@ else:
                                     "clone3d": {
                                         "row":        1,
                                         "x":          35,
-                                        "layer":      100,
+                                        "layer":      1,
                                         "y":          -50,
                                         "z":          50,
                                         "nb":         40
@@ -1340,7 +1340,8 @@ else:
   row = sqrt
 toReturn['clone3d'].update(
   { "nb"  : math.ceil(svgQuantiseValue),
-    "row" : row
+    "row" : row,
+    "layer": nb+10
   }
 )
                                   """,
@@ -1381,7 +1382,8 @@ toReturn['clone3d'].update(
                               "svg3dParameterExec"        :
                                   """toReturn['clone3d'].update(
                                           { "nb"  : math.ceil(svgQuantiseValue),
-                                            "row" : math.ceil(math.sqrt(svgQuantiseValue))
+                                            "row" : math.ceil(math.sqrt(svgQuantiseValue)),
+                                            "layer": nb+10
                                         }
                                     )
                                   """,
@@ -1425,7 +1427,8 @@ toReturn['recolourClones'] = svgFieldValue
 cloneCount = float(svgFieldValue[0]['cloneCount1'])
 toReturn['clone3d'].update(
   { "row" : math.sqrt(cloneCount),
-    "nb"  : cloneCount
+    "nb"  : cloneCount,
+    "layer":      nb+10
   }
 )
                                   """,
@@ -1447,8 +1450,70 @@ toReturn['clone3d'].update(
                             { "Replace.onLoad_allFieldsOnDOM":
                               { "ratioColor":
                                 { "fieldsToHide": ["[\"colours\"]", "[\"ratios\"]"],
-                                  "addFieldsExec" :
+                                  "addFieldsExec" : \
                                       """
+localContext.initContainer =
+{ var container = 
+      $(` <div class='ratioColorTotal'>
+            <div class='ratioColor' />
+            <div class='addRatio'   />
+            <div class='total       />
+            <div class='submitCancel>
+              <div class='submit'     />
+              <div class='cancel'     />
+            </div>
+          </div>
+        `);
+  localContext.container = container;
+  container.on("click", ".addRatio",
+      function(event)
+      { localContext.createRatioInput();
+      }
+  );
+  container.on("click", ".closeBox",
+      function(event)
+      { debugger;
+        //get the target and find the hud_position and the $ of the original element.
+        //localContext.destroyRatioInput(event.target);
+      }
+  );
+  container.on("change",
+      function(event)
+      { debugger;
+      }
+  );
+}
+localContext.createRatioInput = 
+    function()
+    { if (! localContext.hasOwnProperty("ratioInputFieldCount") )
+      { localContext.ratioInputFieldCount = 0;
+        localContext.ratioInputFields     = [];
+      }
+      var toReturn = 
+            $(` <div class='inputFieldElement'>
+                  <input class='percentageSpinner' type='number' min='0' max='100' step='0.1' value ='0' />
+                  <div class='hudItem colorPicker'>
+                    <img src='/static/graphics/thisEquals/svgHUD/colorPicker.png' />
+                  </div>
+                  <div class="closeBox">x</div>
+                </div>
+            `)
+            .data("hud_position", localContext.ratioInputFieldCount++);
+
+      localContext.container.append(toReturn);
+      localContext.markDirty();
+    };
+localContext.destroyRatioInput =
+    function(hud_position, inputFieldElement)
+    { delete localContext.ratioInputFields[hud_position];
+
+      inputFieldElement.parent().removeChild(inputFieldElement);
+      localContext.markDirty();
+    };
+
+
+localContext.initContainer();
+
                                       """,
                                 }
                               },         
@@ -1477,7 +1542,8 @@ toReturn['clone3d'].update(
                               "svg3dParameterExec"        :
                                   """toReturn['clone3d'].update(
                                         { "nb"  : math.ceil(svgQuantiseValue),
-                                          "row" : math.ceil(math.sqrt(svgQuantiseValue))
+                                          "row" : math.ceil(math.sqrt(svgQuantiseValue)),
+                                          "layer":      nb+10,
                                         }
                                     )
                                   """,
