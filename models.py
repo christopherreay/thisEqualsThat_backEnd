@@ -1426,7 +1426,7 @@ toReturn['clone3d'].update(
                                 },
                             "svg3dParameterExec"        :
                                   """
-toReturn['recolourClones'] = svgFieldValue
+toReturn['recolorClones'] = svgFieldValue
 cloneCount = float(svgFieldValue[0]['cloneCount1'])
 toReturn['clone3d'].update(
   { "row" : math.sqrt(cloneCount),
@@ -1452,7 +1452,7 @@ toReturn['clone3d'].update(
                             "inputFieldHUD":
                             { "Replace.onLoad_allFieldsOnDOM":
                               { "ratioColor":
-                                { "fieldsToHide": ["[\"colours\"]", "[\"ratios\"]"],
+                                { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
                                   "addFieldsExec" : \
                                       """
 localContext.initContainer =
@@ -1888,8 +1888,8 @@ toReturn['translate3d'].update(
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "colours": ClassField({ 
-                                "name":               "colours", 
+              "colors": ClassField({ 
+                                "name":               "colors", 
                                 "fieldType":          "text", 
                                 "defaultValue":       "rgb(-100,255,-100)", 
                                 "rangeBottom":             0, 
@@ -1967,7 +1967,7 @@ toReturn['translate3d'].update(
             },
             { "outputTable" :  { "__default" : 
                                   """toReturn = [ { 'ratios':         '!!ratios!!'.split("|"), 
-                                                    'colours':        '!!colours!!'.split("|"), 
+                                                    'colors':        '!!colors!!'.split("|"), 
                                                     'cloneCount1' :   !!numberOfClones!!, 
                                                     'randomLayout' :  '!!randomLayout!!'
                                                   },
@@ -2837,8 +2837,8 @@ toReturn['translate3d'].update(
 #                                 "defaultOutputField":  True,
 #                                 "svgComponent":         None
 #                                 }),
-#              "colour1": ClassField({ 
-#                                 "name":               "colour1", 
+#              "color1": ClassField({ 
+#                                 "name":               "color1", 
 #                                 "fieldType":          "text", 
 #                                 "defaultValue":       "rgb(255,-255,-255)", 
 #                                 "rangeBottom":             0, 
@@ -2856,7 +2856,7 @@ toReturn['translate3d'].update(
 #                                 "svgComponent":         None
 #                                 }),
 #               "numberOfClones": ClassField({ 
-#                                 "name":               "colour1", 
+#                                 "name":               "color1", 
 #                                 "fieldType":          "text", 
 #                                 "defaultValue":       "100", 
 #                                 "rangeBottom":             0, 
@@ -2920,7 +2920,7 @@ toReturn['translate3d'].update(
 
 #         bristolHealth_2012HealthData['processorDefinitions'].update(
 #             { "outputTable" :  { "__default" : 
-#                                   """toReturn = [ { 'ratio1': !!percentage!!, 'colour1': '!!colour1!!', 'cloneCount1' : '!!numberOfClones!!'},
+#                                   """toReturn = [ { 'ratio1': !!percentage!!, 'color1': '!!color1!!', 'cloneCount1' : '!!numberOfClones!!'},
 #                                                 ]
 #                                   """},
 #               "percentage": 
