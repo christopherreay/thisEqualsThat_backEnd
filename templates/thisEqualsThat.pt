@@ -7,10 +7,10 @@
   <meta name="description" content="pyramid web application" />
   <link rel="shortcut icon" href="/static/favicon.ico" />
   
-  <link rel="stylesheet" href="//static/pylons.css" type="text/css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" href="//static.pylonsproject.org/fonts/nobile/stylesheet.css" media="screen" />
-  <link rel="stylesheet" href="//static.pylonsproject.org/fonts/neuton/stylesheet.css" media="screen" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
+
   
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/theme.min.css">

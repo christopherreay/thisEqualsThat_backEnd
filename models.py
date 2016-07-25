@@ -1450,76 +1450,14 @@ toReturn['clone3d'].update(
                               },         
                             },
                             "inputFieldHUD":
-                            { "Replace.onLoad_allFieldsOnDOM":
-                              { "ratioColor":
+                            { "Remove":
+                              { "hideFields":
                                 { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
-                                  "addFieldsExec" : \
-                                      """
-localContext.initContainer =
-{ var container = 
-      $(` <div class='ratioColorTotal'>
-            <div class='ratioColor' />
-            <div class='addRatio'   />
-            <div class='total       />
-            <div class='submitCancel>
-              <div class='submit'     />
-              <div class='cancel'     />
-            </div>
-          </div>
-        `);
-  localContext.container = container;
-  container.on("click", ".addRatio",
-      function(event)
-      { localContext.createRatioInput();
-      }
-  );
-  container.on("click", ".closeBox",
-      function(event)
-      { debugger;
-        //get the target and find the hud_position and the $ of the original element.
-        //localContext.destroyRatioInput(event.target);
-      }
-  );
-  container.on("change",
-      function(event)
-      { debugger;
-      }
-  );
-}
-localContext.createRatioInput = 
-    function()
-    { if (! localContext.hasOwnProperty("ratioInputFieldCount") )
-      { localContext.ratioInputFieldCount = 0;
-        localContext.ratioInputFields     = [];
-      }
-      var toReturn = 
-            $(` <div class='inputFieldElement'>
-                  <input class='percentageSpinner' type='number' min='0' max='100' step='0.1' value ='0' />
-                  <div class='hudItem colorPicker'>
-                    <img src='/static/graphics/thisEquals/svgHUD/colorPicker.png' />
-                  </div>
-                  <div class="closeBox">x</div>
-                </div>
-            `)
-            .data("hud_position", localContext.ratioInputFieldCount++);
-
-      localContext.container.append(toReturn);
-      localContext.markDirty();
-    };
-localContext.destroyRatioInput =
-    function(hud_position, inputFieldElement)
-    { delete localContext.ratioInputFields[hud_position];
-
-      inputFieldElement.parent().removeChild(inputFieldElement);
-      localContext.markDirty();
-    };
-
-
-localContext.initContainer();
-
-                                      """,
-                                }
-                              },         
+                                },
+                              },
+                              "RatioColor.postColor":
+                              { "config":{},
+                              },
                             },
 
                           }
@@ -1891,7 +1829,7 @@ toReturn['translate3d'].update(
               "colors": ClassField({ 
                                 "name":               "colors", 
                                 "fieldType":          "text", 
-                                "defaultValue":       "rgb(-100,255,-100)", 
+                                "defaultValue":       "rgba(0,255,0, 0.77)", 
                                 "rangeBottom":             0, 
                                 "rangeTop":             100, 
                                 "rangeType":           "linear",
