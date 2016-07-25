@@ -1450,7 +1450,7 @@ toReturn['clone3d'].update(
                               },         
                             },
                             "inputFieldHUD":
-                            { "Remove":
+                            { "Remove.preClone":
                               { "hideFields":
                                 { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
                                 },
