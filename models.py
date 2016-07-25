@@ -1287,7 +1287,7 @@ if svgQuantiseValue > 1.0:
 #)
                                   """,
                             "svgHUD":
-                            { "RandomiseClones.preColor":
+                            { "RandomiseClones.postColor":
                               { "randomisePosition":
                                 { "degreeOfRandom": 2,
                                 },
@@ -1348,7 +1348,7 @@ toReturn['clone3d'].update(
                                   """,
 
                             "svgHUD":
-                            { "RandomiseClones.preColor":
+                            { "RandomiseClones.postColor":
                               { "randomisePosition":
                                 { "degreeOfRandom": 12,
                                 },
@@ -1392,7 +1392,7 @@ toReturn['clone3d'].update(
                                   """,
 
                             "svgHUD":
-                            { "RandomiseClones.preColor":
+                            { "RandomiseClones.postColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 5,
                                 },         
@@ -1437,7 +1437,7 @@ toReturn['clone3d'].update(
                                   """,
 
                             "svgHUD":
-                            { "RandomiseClones.preColor":
+                            { "RandomiseClones.postColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 1,
                                 },         
@@ -1488,7 +1488,7 @@ toReturn['clone3d'].update(
                                     )
                                   """,
                             "svgHUD":
-                            { "RandomiseClones.preColor":
+                            { "RandomiseClones.postColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 0,
                                 },         
