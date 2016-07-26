@@ -3,7 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign in</title>
+
+
+  <title>Scottish General Election Voting Model</title>
+  <meta property="og:image" content="https://christopher.freefreecrowdfunding.org/static/graphics/og/votingModel.og.jpg"/>
+  <meta property="og:title" content="Scottish General Election Voting Model"/>
+  <meta property="og:url"   content="https://christopher.freefreecrowdfunding.org/scottishParliament/votingModel"/>
+  <meta property="og:site_name" content="Visual.Tools"/>
+  <meta property="og:type"  content="education"/>
+
+  <meta property='og:image:width'  content="1000px"/>
+  <meta property='og:image:height'  content="640px"/>
+
 
   <link rel="stylesheet"
         href="/static/pyramid_google_login/pure-min.css">
