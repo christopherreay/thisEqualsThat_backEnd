@@ -12,8 +12,8 @@
   <meta property="og:site_name" content="Visual.Tools"/>
   <meta property="og:type"  content="education"/>
 
-  <meta property='og:image:width'  content="1000px"/>
-  <meta property='og:image:height'  content="640px"/>
+  <meta property='og:image:width'  content="1000"/>
+  <meta property='og:image:height'  content="640"/>
 
 
   <link rel="stylesheet"
