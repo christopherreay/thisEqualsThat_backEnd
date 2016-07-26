@@ -1524,32 +1524,27 @@ toReturn['clone3d'].update(
                                 """
                                 """,
                             "svgHUD":
-                            { "colorPickers.postClone":
-                              { ".face":
-                                { "initialColorString": "rgba(53, 53, 53, 0.9)",
-                                  "onColorChange":
-                                      """ var topColor  = pickedColor.transition("black", 0.10);
-                                          var sideColor = pickedColor.transition("black", 0.175);
-
-                                          toReturn  = 
-                                              `.face                            { fill: ${ pickedColor .toRgbaString() };  } 
-                                               .face.faceTop,  .face.faceBottom { fill: ${ topColor    .toRgbaString() };  } 
-                                               .face.faceLeft, .face.faceRight  { fill: ${ sideColor   .toRgbaString() };  }
-                                              `;
-                                      """,
+                            { "fillManager.postClone":
+                              { "cubeShader":
+                                { "initialColorString": "rgba(128,128,128,0.7)",
+                                  "fillSmasher":
+                                  { ".faceBack, .faceFront"  : "pickedColor            .toString('rgb')",
+                                    ".faceTop,  .faceBottom" : "pickedColor.darken(10) .toString('rgb')",
+                                    ".faceLeft, .faceRight"  : "pickedColor.darken(20) .toString('rgb')",
+                                  },
                                 }
                               }
                             }
                           }
              })
         rep_greyCube_100    = copy.deepcopy(rep_greyCube)
-        rep_greyCube_100  ['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
+        rep_greyCube_100  ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
         
         rep_greyCube_inAir  = copy.deepcopy(rep_greyCube)
-        rep_greyCube_inAir['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(109,192,196,0.31)"
+        rep_greyCube_inAir['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(109,192,196,0.31)"
 
         rep_yellowCube      = copy.deepcopy(rep_greyCube)
-        rep_yellowCube    ['toReturn = True']['svgHUD']["colorPickers.postClone"][".face"]["initialColorString"] = "rgba(200,200,53,0.9)"
+        rep_yellowCube    ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(200,200,53,0.9)"
         #123.6,76.4,200
         #1.61780104712, 1, 2.61780104712
         """ width = height * 2.61780104712
@@ -1557,6 +1552,26 @@ toReturn['clone3d'].update(
             volume = height * height * 2.61780104712 * height * 1.61780104712
             volume = height ^ 3 * 4.23508127518
             height = (volume / 4.23508127518) ^ 1/3
+        """
+######
+        """"svgHUD":
+                            { "colorPickers.postClone":
+                              { ".face":
+                                { "initialColorString": "rgba(53, 53, 53, 0.9)",
+                                  "onColorChange":
+                                      "#"" var topColor  = pickedColor.transition("black", 0.10);
+                                          var sideColor = pickedColor.transition("black", 0.175);
+
+                                          toReturn  = 
+                                              `.face                            { fill: ${ pickedColor .toRgbaString() };  } 
+                                               .face.faceTop,  .face.faceBottom { fill: ${ topColor    .toRgbaString() };  } 
+                                               .face.faceLeft, .face.faceRight  { fill: ${ sideColor   .toRgbaString() };  }
+                                              `;
+                                      "#"",
+                                }
+                              }
+                            }
+
         """
         rep_kierBales = \
             OD({ "toReturn = True":
@@ -2040,11 +2055,11 @@ toReturn['translate3d'].update(
                   },
                 ("massCO2", "volume_100"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_100"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": rep_greyCube_100
                   },
                 ("massCO2", "volume_inAir"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_inAir"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": rep_greyCube_inAir
                   },
             }
         )
@@ -2140,7 +2155,7 @@ toReturn['translate3d'].update(
 
             { "mass":             { "volume_100"      : "toReturn = !!volume_100!! / .5562",
                                     "volume_inAir"    : "toReturn = !!volume_inAir!! / .5562 / 2500",
-                                    "timeToBreathOut" : "toReturn = !!volume!! / 0.00120048019"
+                                    "timeToBreathOut" : "toReturn = !!volume_inAir!! / 0.00120048019"
                                   },
               "volume_frozen":    { "mass"            : "toReturn = !!mass!! / 1562.0"        },
               "volume_100":       { "mass":             "toReturn = !!mass!! * (.5562)",
@@ -2149,11 +2164,11 @@ toReturn['translate3d'].update(
                                   },
               "volume_inAir":     { "mass"            : "toReturn = !!mass!! * .5562 * 2500",
                                     "volume_100"      : "toReturn = !!volume_100!! * 2500",
-                                    "timeToBreathOut" : "toReturn = !!volume!!"
+                                    "timeToBreathOut" : "toReturn = !!volume_inAir!!"
                                   },
               "timeToBreathOut":  { "mass"            : "toReturn = (!!energy!! / 27000000) * 0.00120048019",
                                     "volume_100"      : "toReturn = !!mass!! * 0.00120048019",
-                                    "volume_inAir"    : "toReturn = !!volume!!"
+                                    "volume_inAir"    : "toReturn = !!volume_inAir!!"
                                   }
 
             },
