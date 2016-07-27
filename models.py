@@ -1453,7 +1453,8 @@ toReturn['clone3d'].update(
                                 { "degreeOfRandom": 5,
                                 },
                                 "randomisePosition":
-                                { "degreeOfRandom": 20,
+                                { "degreeOfRandom": 10,
+                                  "randomMultiplier": 64, #default was 32
                                 },
                               },         
                             },
