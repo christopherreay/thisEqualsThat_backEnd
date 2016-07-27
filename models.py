@@ -707,7 +707,11 @@ class ModelInstance(Node):
       jsInterface['fields'][boundInputFullAddress]['inputField'] = False
     fieldValues = jsInterface['fieldValues'] = {}
     for (fieldName, fieldBranch) in fieldBranches.items():
-      fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
+      fieldValues[fieldName] = fieldBranch.getFieldValue(self)   
+
+    if "inputFieldHUD" in self['modelClass']:
+      jsInterface['inputFieldHUDJSON'] = self['modelClass']['inputFieldHUD'] 
+    print    ("MODELINSTANCE", self.keys())
     return jsInterface
 
   def getCanonicalURLJSON(self):
@@ -821,7 +825,7 @@ class ModelClassAlreadyDefinedException(Exception):
   def __init__(self, message):
     self.message = message
 class ModelClass(Node):
-  def __init__(self, root, modelClassName, fields, processors, subModels, svgDisplayDefs):
+  def __init__(self, root, modelClassName, fields, processors, subModels, svgDisplayDefs, **kwargs):
     super(ModelClass, self).__init__()
     modelClasses    = root['modelClasses']
     fieldUnitIndex  = root['fieldUnitIndex']
@@ -843,7 +847,7 @@ class ModelClass(Node):
     self['fieldsByUnit']        = Node()
 
     self["classInstanceData"]   = ValueByInstance()
-  
+
     fieldDict = self.getDict("fields")
     for (fieldName, field) in fields.items():
       branch                = Branch(self, fieldName, field)
@@ -860,6 +864,9 @@ class ModelClass(Node):
       fieldDict[fieldName]['subModelClassDef']  = subModelDef
     
     self['svgDisplayDefs']      = SVGDisplayDefs(self, svgDisplayDefs)
+
+    self.update(kwargs)
+    
 
   def initialise(self, root=None, address=tuple()):
     if root==None:
@@ -926,6 +933,7 @@ class ModelClass(Node):
     
   def getModelInstance(self, modelInstances):
     instance          = ModelInstance(modelInstances, self)
+
     #jsInterface       = instance.getJSInterface()
 
     return instance    
@@ -1103,9 +1111,9 @@ class SVGDisplayDefs(Node):
       if "svgHUD" in svgDisplayDef:
         svgHUD = svgDisplayDef['svgHUD']
 
-      inputFieldHUD = {}
-      if "inputFieldHUD" in svgDisplayDef:
-        inputFieldHUD = svgDisplayDef['inputFieldHUD']
+      # inputFieldHUD = {}
+      # if "inputFieldHUD" in svgDisplayDef:
+      #   inputFieldHUD = svgDisplayDef['inputFieldHUD']
 
       svgDisplayJSONDict = \
           { "svgFile"               : svgDisplayDef['svgFile'],
@@ -1116,7 +1124,7 @@ class SVGDisplayDefs(Node):
             "svgRelativeHighness"   : svgRelativeHighness,
             "postProcessing"        : postProcessing,
             "svgHUD"                : svgHUD,
-            "inputFieldHUD"         : inputFieldHUD,
+            #"inputFieldHUD"         : inputFieldHUD,
           } 
       
       return svgDisplayJSONDict
@@ -1449,17 +1457,6 @@ toReturn['clone3d'].update(
                                 },
                               },         
                             },
-                            "inputFieldHUD":
-                            { "Remove.preClone":
-                              { "hideFields":
-                                { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
-                                },
-                              },
-                              "RatioColor.postColor":
-                              { "config":{},
-                              },
-                            },
-
                           }
                       })
 
@@ -1937,6 +1934,16 @@ toReturn['translate3d'].update(
                     "svgDisplayDefByValue": rep_ratioPeople
                   },
             },
+            inputFieldHUD =
+            { "Remove.preClone":
+              { "hideFields":
+                { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
+                },
+              },
+              "RatioColor.postColor":
+              { "config":{},
+              },
+            },
         )
 
         Wood = ModelClass(app_root, "Wood", 
@@ -2061,6 +2068,21 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_inAir"),
                     "svgDisplayDefByValue": rep_greyCube_inAir
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Wood"          ,
+                  "mass"                      ,
+                  "volume"                    ,
+                  "energy"                    ,
+                  "groupHeader_CO2"           ,
+                  "massCO2, mass"             ,
+                  "massCO2, timeToBreathOut"  ,
+                  "massCO2, volume_100"       ,
+                  "massCO2, volume_inAir"     ,
+                ],
+              },
             }
         )
 
