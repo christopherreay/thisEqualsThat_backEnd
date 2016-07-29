@@ -19,6 +19,10 @@ import math
 from datetime import datetime
 import requests
 
+def isalambda(v):
+  LAMBDA = lambda:0
+  return isinstance(v, type(LAMBDA)) and v.__name__ == LAMBDA.__name__
+
 def getAddressOrDefault(dict, fieldAddress):
   if fieldAddress in dict:
     return dict[fieldAddress]
@@ -1072,7 +1076,17 @@ class SVGDisplayDefs(Node):
     svgFieldValue   = svgProcessPath.process(modelInstance)
     print "processed Value: %s" % (svgFieldValue, )
 
+    ipdb.set_trace()
+
+    if 'closure' in output_to_valueQuantise_Dict:
+      data = output_to_valueQuantise_Dict['closure']
+
     svgDisplayDefByValue = output_to_valueQuantise_Dict['svgDisplayDefByValue']
+    if isinstance(svgDisplayDefByValue, basestring):
+      toReturn = None
+      exec(svgDisplayDefByValue)
+      svgDisplayDefByValue = toReturn
+
     toReturn = False
     for (checkValueExec, svgDisplayDef) in svgDisplayDefByValue.items():
       exec(checkValueExec)
@@ -1228,8 +1242,11 @@ def appmaker(zodb_root):
 
         users                       = app_root['users']           = Users()
         
-        rep_barrelsOfOil = \
-            OD(       { "toReturn = True":
+        representations = {}
+
+        representations["Barrels of Oil"] = \
+            OD(       { "class": "cloneable",
+                        "toReturn = True":
                           { "svgFile"                 : "2barrel.svg",
                             "rootGroupNodeSelector"   : "#barrel",
                             "svgQuantiseEquation"     : 
@@ -1311,8 +1328,9 @@ if svgQuantiseValue > 1.0:
                           }
                       }
             )
-        rep_tree = \
-            OD(       { "toReturn = True":
+        representations["Trees"] = \
+            OD(       { "class": "cloneable", 
+                        "toReturn = True":
                           { "svgFile"                 : "barrel.svg",
                             "rootGroupNodeSelector"   : "#barrel",
                             "svgQuantiseEquation"     : 
@@ -1371,8 +1389,9 @@ toReturn['clone3d'].update(
                           }
                       }
             )
-        rep_person = \
-            OD({ "toReturn = True":
+        representations["People"] = \
+            OD({ "class": "cloneable",
+                  "toReturn = True":
                           { "svgFile"                 : "person.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
@@ -1415,8 +1434,9 @@ toReturn['clone3d'].update(
                             },
                           }
                       })
-        rep_ratioPeople = \
-            OD({ "toReturn = True":
+        representations["Ratios of People"] = \
+            OD({  "class": "weird",
+                  "toReturn = True":
                           { "svgFile"                 : "person.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
@@ -1461,8 +1481,9 @@ toReturn['clone3d'].update(
                           }
                       })
 
-        rep_lightBulb = \
-            OD({ "toReturn = True":
+        representations["Lightbulbs"] = \
+            OD({ "class": "cloneable",
+                  "toReturn = True":
                           { "svgFile"                 : "lightbulb_simple.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
@@ -1501,8 +1522,9 @@ toReturn['clone3d'].update(
                           }
                       })
 
-        rep_greyCube = \
-            OD({ "toReturn = True":
+        representations["Grey Cube"] = \
+            OD({ "class": "howMuch",
+                  "toReturn = True":
                           { "svgFile"                 : "declarative_cube_grey.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
@@ -1535,14 +1557,14 @@ toReturn['clone3d'].update(
                             }
                           }
              })
-        rep_greyCube_100    = copy.deepcopy(rep_greyCube)
-        rep_greyCube_100  ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
+        representations["Grey Cube 100"]    = copy.deepcopy(representations["Grey Cube"])
+        representations["Grey Cube 100"]    ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
         
-        rep_greyCube_inAir  = copy.deepcopy(rep_greyCube)
-        rep_greyCube_inAir['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(109,192,196,0.31)"
+        representations["Grey Cube in Air"] = copy.deepcopy(representations["Grey Cube"])
+        representations["Grey Cube in Air"] ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(109,192,196,0.31)"
 
-        rep_yellowCube      = copy.deepcopy(rep_greyCube)
-        rep_yellowCube    ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(200,200,53,0.9)"
+        representations["Yellow Cube"]      = copy.deepcopy(representations["Grey Cube"])
+        representations["Yellow Cube"]      ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(200,200,53,0.9)"
         #123.6,76.4,200
         #1.61780104712, 1, 2.61780104712
         """ width = height * 2.61780104712
@@ -1571,8 +1593,9 @@ toReturn['clone3d'].update(
                             }
 
         """
-        rep_kierBales = \
-            OD({ "toReturn = True":
+        representations["Kier Bales"] = \
+            OD({ "class": "cloneable",
+                "toReturn = True":
                           { "svgFile"                 : "declarative_cube_yellow.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : 
@@ -1676,8 +1699,9 @@ toReturn['translate3d'].update(
                       }
             )
 
-        rep_kierBalesLogo = \
-            OD({ "toReturn = True":
+        representations["Kier Bales Logo"] = \
+            OD({ "class": "cloneable",
+                "toReturn = True":
                           { "svgFile"                 : "declarative_cube_kierGroup.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : 
@@ -1819,92 +1843,52 @@ toReturn['translate3d'].update(
 
         ScottishParliamentaryElection = None
              
-        PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
-            { "ratios": ClassField({ 
-                                "name":                 "ratios", 
-                                "fieldType":            "text", 
-                                "defaultValue":         0.1, 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
-                                "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "percent", 
-                                "unitPrefix":           "", 
-                                "unitSuffix":          "%",
-                                "inputField":          True, 
-                                "outputField":         True,
-                                "visualisationField":  False,
-                                "defaultInputField":   True, 
-                                "defaultOutputField":  False,
-                                "svgComponent":         None
-                                }),
-              "colors": ClassField({ 
-                                "name":               "colors", 
-                                "fieldType":          "text", 
-                                "defaultValue":       "rgba(0,255,0, 0.77)", 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
-                                "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "rgb", 
-                                "unitPrefix":           "", 
-                                "unitSuffix":          "",
-                                "inputField":           True,
-                                "outputField":          False,
-                                "visualisationField":   False, 
-                                "defaultInputField":    False, 
-                                "defaultOutputField":   False,
-                                "svgComponent":         None
-                                }),
-              "numberOfClones": ClassField({ 
-                                "name":               "numberOfClones", 
-                                "fieldType":          "text", 
-                                "defaultValue":       "100", 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
-                                "rangeType":           "linear",
+        # ofWhatSelectDict = {k: v for k, v in representations.iteritems() if "cloneable" in v["class"]}
+        ofWhatRepDict = {}
+        for (key, rep) in representations.items():
+          if ("cloneable" in rep['class'] ):
+            normalisedRep         = copy.deepcopy(rep)
+            normalisedRep["toReturn = True"]["svgQuantiseEquation"] = "toReturn = svgFieldValue"
+            ofWhatRepDict[key] = normalisedRep
+        ofWhatSelectDict = {}
+        for key in ofWhatRepDict.keys():
+          ofWhatSelectDict[key] = key
+
+
+
+        print ofWhatSelectDict
+        HowMany = ModelClass(app_root, "HowMany",
+            { "howMany": ClassField({ 
+                                "name":                 "howMany", 
+                                "fieldType":            "slider", 
+                                "defaultValue":         10, 
+                                "rangeBottom":          1, 
+                                "rangeTop":             1000, 
+                                "rangeType":           "log",
+                                "sliderRoundFunction": "toReturn = Math.ceil(currentValue);",
                                 "selectableValues":     None, 
                                 "unit":                "number", 
-                                "unitPrefix":           "", 
-                                "unitSuffix":          "unit",
-                                "inputField":           True, 
-                                "outputField":          False,
-                                "visualisationField":   False, 
-                                "defaultInputField":    False, 
-                                "defaultOutputField":   False,
-                                "svgComponent":         None
-                                }),
-              
-              "outputTable": ClassField({ 
-                                "name":               "outputTable", 
-                                "fieldType":          "text", 
-                                "defaultValue":       {}, 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
-                                "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "percent", 
-                                "unitPrefix":           "", 
-                                "unitSuffix":          "%",
-                                "inputField":           False, 
-                                "outputField":          True,
-                                "visualisationField":   True,
-                                "defaultInputField":    False, 
-                                "defaultOutputField":   True,
+                                "unitPrefix":          "count of", 
+                                "unitSuffix":          "",
+                                "inputField":          True, 
+                                "outputField":         True,
+                                "visualisationField":  True,
+                                "defaultInputField":   True, 
+                                "defaultOutputField":  True,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "randomLayout": ClassField({ 
-                                "name":               "randomLayout", 
+              "ofWhat": ClassField({ 
+                                "name":               "ofWhat", 
                                 "fieldType":          "select", 
-                                "defaultValue":       "Yes", 
+                                "defaultValue":       "Trees", 
                                 "rangeBottom":             0, 
                                 "rangeTop":             100, 
                                 "rangeType":           "linear",
-                                "selectableValues":     {"Yes": "Yes", "No": "No"}, 
-                                "unit":                "choice",
+                                "selectableValues":     ofWhatSelectDict, 
+                                "unit":                "choice List",
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "Yn",
+                                "unitSuffix":          "item",
                                 "inputField":           True, 
                                 "outputField":          False,
                                 "visualisationField":   False,
@@ -1915,13 +1899,8 @@ toReturn['translate3d'].update(
                                 }),
 
             },
-            { "outputTable" :  { "__default" : 
-                                  """toReturn = [ { 'ratios':         '!!ratios!!'.split("|"), 
-                                                    'colors':        '!!colors!!'.split("|"), 
-                                                    'cloneCount1' :   !!numberOfClones!!, 
-                                                    'randomLayout' :  '!!randomLayout!!'
-                                                  },
-                                                ]
+            { "howMany" :  { "__default" : 
+                                  """toReturn = !!howMany!!
                                   """
                             },
               
@@ -1930,19 +1909,20 @@ toReturn['translate3d'].update(
             #  { local(parent)FieldName: { "className": subModelClass, "remoteFieldName": targetFieldInSubModelClass} , ... }
             },
             {   "__default" :
-                  { "modelOutputField_forSVGConversion" : ("outputTable", ),
-                    "svgDisplayDefByValue": rep_ratioPeople
+                  { "modelOutputField_forSVGConversion" : ("howMany", ),
+                    "closure": {"ofWhatRepDict": ofWhatRepDict },
+                    "svgDisplayDefByValue": """toReturn = data['ofWhatRepDict'][modelClass['fields']['ofWhat'].getFieldValue(modelInstance)]""",
                   },
             },
             inputFieldHUD =
-            { "Remove.preClone":
-              { "hideFields":
-                { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
-                },
-              },
-              "RatioColor.postColor":
-              { "config":{},
-              },
+            { #"Remove.preClone":
+              #{ "hideFields":
+              #  { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
+              #  },
+              #},
+              #"RatioColor.postColor":
+              #{ "config":{},
+              #},
             },
         ) 
 
@@ -2058,7 +2038,7 @@ toReturn['translate3d'].update(
             },
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("outputTable", ),
-                    "svgDisplayDefByValue": rep_ratioPeople
+                    "svgDisplayDefByValue": representations["Ratios of People"]
                   },
             },
             inputFieldHUD =
@@ -2165,35 +2145,35 @@ toReturn['translate3d'].update(
             },
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_tree
+                    "svgDisplayDefByValue": representations["Trees"]
                   },
                 ("energy", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_tree
+                    "svgDisplayDefByValue": representations["Trees"]
                   },
                 ("mass", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_tree
+                    "svgDisplayDefByValue": representations["Trees"]
                   },
                 ("volume", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_tree
+                    "svgDisplayDefByValue": representations["Trees"]
                   },
                 ("massCO2", ):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_frozen"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("massCO2", "volume_frozen"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_frozen"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("massCO2", "volume_100"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_100"),
-                    "svgDisplayDefByValue": rep_greyCube_100
+                    "svgDisplayDefByValue": representations["Grey Cube 100"]
                   },
                 ("massCO2", "volume_inAir"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_inAir"),
-                    "svgDisplayDefByValue": rep_greyCube_inAir
+                    "svgDisplayDefByValue": representations["Grey Cube in Air"]
                   },
             },
             inputFieldHUD = 
@@ -2324,23 +2304,23 @@ toReturn['translate3d'].update(
             {},
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume_frozen", ),
-                    "svgDisplayDefByValue": rep_kierBalesLogo,
+                    "svgDisplayDefByValue": representations["Kier Bales Logo"],
                   },
                 ("mass", ):
                   { "modelOutputField_forSVGConversion" : ("volume_frozen", ),
-                    "svgDisplayDefByValue": rep_greyCube,
+                    "svgDisplayDefByValue": representations["Grey Cube"],
                   },
                 ("volume_frozen", ):
                   { "modelOutputField_forSVGConversion" : ("volume_frozen", ),
-                    "svgDisplayDefByValue": rep_greyCube,
+                    "svgDisplayDefByValue": representations["Grey Cube"],
                   },
                 ("volume_100", ):
                   { "modelOutputField_forSVGConversion" : ("volume_100", ),
-                    "svgDisplayDefByValue": rep_greyCube_100,
+                    "svgDisplayDefByValue": representations["Grey Cube 100"],
                   },
                 ("volume_inAir", ):
                   { "modelOutputField_forSVGConversion" : ("volume_inAir", ),
-                    "svgDisplayDefByValue": rep_greyCube_inAir,
+                    "svgDisplayDefByValue": representations["Grey Cube in Air"],
                   },
             }
         )
@@ -2429,7 +2409,7 @@ toReturn['translate3d'].update(
             },
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("count", ),
-                    "svgDisplayDefByValue": rep_lightBulb
+                    "svgDisplayDefByValue": representations["Lightbulbs"]
                   },
             }
         )
@@ -2487,11 +2467,11 @@ toReturn['translate3d'].update(
             #  { currentOutputField: { stuff } , ... }
             {   "__default" :
                 { "modelOutputField_forSVGConversion" : ("inputWatts", "volume"),
-                  "svgDisplayDefByValue":               rep_barrelsOfOil
+                  "svgDisplayDefByValue":               representations["Barrels of Oil"]
                 },
                 (u"inputWatts", u"volume"):
                 { "modelOutputField_forSVGConversion" : ("inputWatts", "mass"),
-                  "svgDisplayDefByValue":               rep_person
+                  "svgDisplayDefByValue":               representations["People"]
                 }
             }
         )
@@ -2633,39 +2613,39 @@ toReturn['translate3d'].update(
             },
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("energy", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("mass", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("singleCube", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("aluminiumCube", ):
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_kierBalesLogo
+                    "svgDisplayDefByValue": representations["Kier Bales Logo"]
                   },
                 ("massCO2", ):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_frozen"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("massCO2", "volume_frozen"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_frozen"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("massCO2", "volume_100"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_100"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
                 ("massCO2", "volume_inAir"):
                   { "modelOutputField_forSVGConversion" : ("massCO2", "volume_inAir"),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
             }
         )
@@ -2787,7 +2767,7 @@ toReturn['translate3d'].update(
             {   "__default" :
                 { 
                   "modelOutputField_forSVGConversion" : ("number of people", ),
-                  "svgDisplayDefByValue": rep_person
+                  "svgDisplayDefByValue": representations["People"]
                 }
             }
         )
@@ -2893,7 +2873,7 @@ toReturn['translate3d'].update(
             },
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume", ),
-                    "svgDisplayDefByValue": rep_greyCube
+                    "svgDisplayDefByValue": representations["Grey Cube"]
                   },
             }
         )
