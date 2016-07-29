@@ -1076,8 +1076,6 @@ class SVGDisplayDefs(Node):
     svgFieldValue   = svgProcessPath.process(modelInstance)
     print "processed Value: %s" % (svgFieldValue, )
 
-    ipdb.set_trace()
-
     if 'closure' in output_to_valueQuantise_Dict:
       data = output_to_valueQuantise_Dict['closure']
 
