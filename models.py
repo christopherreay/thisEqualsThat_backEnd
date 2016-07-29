@@ -1818,7 +1818,133 @@ toReturn['translate3d'].update(
 
 
         ScottishParliamentaryElection = None
+             
+        PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
+            { "ratios": ClassField({ 
+                                "name":                 "ratios", 
+                                "fieldType":            "text", 
+                                "defaultValue":         0.1, 
+                                "rangeBottom":             0, 
+                                "rangeTop":             100, 
+                                "rangeType":           "linear",
+                                "selectableValues":     None, 
+                                "unit":                "percent", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "%",
+                                "inputField":          True, 
+                                "outputField":         True,
+                                "visualisationField":  False,
+                                "defaultInputField":   True, 
+                                "defaultOutputField":  False,
+                                "svgComponent":         None
+                                }),
+              "colors": ClassField({ 
+                                "name":               "colors", 
+                                "fieldType":          "text", 
+                                "defaultValue":       "rgba(0,255,0, 0.77)", 
+                                "rangeBottom":             0, 
+                                "rangeTop":             100, 
+                                "rangeType":           "linear",
+                                "selectableValues":     None, 
+                                "unit":                "rgb", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "",
+                                "inputField":           True,
+                                "outputField":          False,
+                                "visualisationField":   False, 
+                                "defaultInputField":    False, 
+                                "defaultOutputField":   False,
+                                "svgComponent":         None
+                                }),
+              "numberOfClones": ClassField({ 
+                                "name":               "numberOfClones", 
+                                "fieldType":          "text", 
+                                "defaultValue":       "100", 
+                                "rangeBottom":             0, 
+                                "rangeTop":             100, 
+                                "rangeType":           "linear",
+                                "selectableValues":     None, 
+                                "unit":                "number", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "unit",
+                                "inputField":           True, 
+                                "outputField":          False,
+                                "visualisationField":   False, 
+                                "defaultInputField":    False, 
+                                "defaultOutputField":   False,
+                                "svgComponent":         None
+                                }),
               
+              "outputTable": ClassField({ 
+                                "name":               "outputTable", 
+                                "fieldType":          "text", 
+                                "defaultValue":       {}, 
+                                "rangeBottom":             0, 
+                                "rangeTop":             100, 
+                                "rangeType":           "linear",
+                                "selectableValues":     None, 
+                                "unit":                "percent", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "%",
+                                "inputField":           False, 
+                                "outputField":          True,
+                                "visualisationField":   True,
+                                "defaultInputField":    False, 
+                                "defaultOutputField":   True,
+                                "defaultVisualisationField": True,
+                                "svgComponent":         None
+                                }),
+              "randomLayout": ClassField({ 
+                                "name":               "randomLayout", 
+                                "fieldType":          "select", 
+                                "defaultValue":       "Yes", 
+                                "rangeBottom":             0, 
+                                "rangeTop":             100, 
+                                "rangeType":           "linear",
+                                "selectableValues":     {"Yes": "Yes", "No": "No"}, 
+                                "unit":                "choice",
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "Yn",
+                                "inputField":           True, 
+                                "outputField":          False,
+                                "visualisationField":   False,
+                                "defaultInputField":    False, 
+                                "defaultOutputField":   False,
+                                "defaultVisualisationField": False,
+                                "svgComponent":         None
+                                }),
+
+            },
+            { "outputTable" :  { "__default" : 
+                                  """toReturn = [ { 'ratios':         '!!ratios!!'.split("|"), 
+                                                    'colors':        '!!colors!!'.split("|"), 
+                                                    'cloneCount1' :   !!numberOfClones!!, 
+                                                    'randomLayout' :  '!!randomLayout!!'
+                                                  },
+                                                ]
+                                  """
+                            },
+              
+            },
+            {#LIST OF SUBMODEL FIELD MAPPINGS
+            #  { local(parent)FieldName: { "className": subModelClass, "remoteFieldName": targetFieldInSubModelClass} , ... }
+            },
+            {   "__default" :
+                  { "modelOutputField_forSVGConversion" : ("outputTable", ),
+                    "svgDisplayDefByValue": rep_ratioPeople
+                  },
+            },
+            inputFieldHUD =
+            { "Remove.preClone":
+              { "hideFields":
+                { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
+                },
+              },
+              "RatioColor.postColor":
+              { "config":{},
+              },
+            },
+        ) 
 
         PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
             { "ratios": ClassField({ 
