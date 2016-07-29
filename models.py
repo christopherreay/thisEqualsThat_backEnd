@@ -1847,6 +1847,18 @@ toReturn['translate3d'].update(
           if ("cloneable" in rep['class'] ):
             normalisedRep         = copy.deepcopy(rep)
             normalisedRep["toReturn = True"]["svgQuantiseEquation"] = "toReturn = svgFieldValue"
+            normalisedRep["toReturn = True"]["svgHUD"]              = { "RandomiseClones.postColor":
+                                                                        { "randomiseColors":
+                                                                          { "degreeOfRandom": 0,
+                                                                          },         
+                                                                          "randomiseColorsByGroup":
+                                                                          { "degreeOfRandom": 5,
+                                                                          },
+                                                                          "randomisePosition":
+                                                                          { "degreeOfRandom": 5,
+                                                                          },
+                                                                        },         
+                                                                      }
             ofWhatRepDict[key] = normalisedRep
         ofWhatSelectDict = {}
         for key in ofWhatRepDict.keys():
