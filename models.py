@@ -1128,7 +1128,8 @@ class SVGDisplayDefs(Node):
       #   inputFieldHUD = svgDisplayDef['inputFieldHUD']
 
       svgDisplayJSONDict = \
-          { "svgFile"               : svgDisplayDef['svgFile'],
+          { "representationName"    : svgDisplayDefByValue['name'],
+            "svgFile"               : svgDisplayDef['svgFile'],
             "rootGroupNodeSelector" : svgDisplayDef['rootGroupNodeSelector'],
             "svg3dConfiguration"    : svg3dConfiguration,
             "svgField"              : modelInstance['lastAlteredVisualisation'],
@@ -1498,11 +1499,14 @@ toReturn['clone3d'].update(
                                     },
                                 },
                               "svg3dParameterExec"        :
-                                  """toReturn['clone3d'].update(
-                                        { "nb"  : math.ceil(svgQuantiseValue),
-                                          "row" : math.ceil(math.sqrt(svgQuantiseValue))
-                                        }
-                                    )
+                                  """
+nb = math.ceil(svgQuantiseValue)
+toReturn['clone3d'].update(
+    { "nb"      : nb,
+      "row"     : math.ceil(math.sqrt(svgQuantiseValue)),
+      "layer"   : nb + 10,
+    }
+)
                                   """,
                             "svgHUD":
                             { "RandomiseClones.postColor":
@@ -1803,6 +1807,11 @@ toReturn['translate3d'].update(
                       }
             )
         
+        
+        for (key, item) in representations.items():
+          item["name"] = key
+        
+
         priceField = ClassField({ "name":           "price", 
                                 "fieldType":        "slider", 
                                 "defaultValue":     50000000, 
@@ -2358,6 +2367,7 @@ toReturn['translate3d'].update(
                                 "rangeBottom":             1, 
                                 "rangeTop":             1000, 
                                 "rangeType":           "log",
+                                "sliderRoundFunction": "toReturn = Math.ceil(currentValue);",
                                 "selectableValues":     None, 
                                 "unit":                "unit", 
                                 "unitPrefix":           "", 
