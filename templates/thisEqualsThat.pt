@@ -1,63 +1,88 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "//www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
-<head>
-  <title>The Pyramid Web Framework</title>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-  <meta name="keywords" content="python web application" />
-  <meta name="description" content="pyramid web application" />
-  <link rel="shortcut icon" href="/static/favicon.ico" />
-  
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    
 
-  
+    <title>The Pyramid Web Framework</title>
+    <meta name="keywords" content="python web application" />
+    <meta name="description" content="pyramid web application" />
+    
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/theme.min.css">
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+    <script type="text/javascript"   src="https://use.fontawesome.com/cee7f18682.js"></script>
 
-  
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-  
+
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/theme.min.css">
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    
+    <!-- jquery   libraries -->
+    <link    rel="stylesheet"       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script type="text/javascript"   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether-theme-basic.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/js/tether.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether-theme-arrows.min.css">
+
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css">
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.umd.min.js"></script>
+
+    
+    
+
+
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+
+    <script type="text/javascript"   src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>  
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/remodal/1.1.0/remodal.min.js"></script>
+
     <!-- jqueryUI libraries -->
-    <link   rel ="stylesheet"       href="/static/javascript/colorPicker/jquery.colorpicker.css"/script>
-    <script type="text/javascript"  src ="/static/javascript/colorPicker/jquery.colorpicker.js"> </script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 
-    <link   rel ="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">
-    <script type="text/javascript"  src ="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 
-    <script src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>  
+    <link    rel="stylesheet"       href="/static/css/thisEqualsThat.css"/>
+    <script type="text/javascript"   src="/static/javascript/thisEqualsThat.js"></script>
+    
+    <link    rel="stylesheet"       href="/static/css/menu.css" type="text/css" media="screen" charset="utf-8">
+    
+    <!-- SVG3d -->
+    <script type="text/javascript"   src="/static/javascript/svg3d/dom_utils.js"></script>
+    <script type="text/javascript"   src="/static/javascript/svg3d/jquery_svg3d.js"></script>
+    <script type="text/javascript"   src="/static/javascript/svg3d/svg3d.js"></script>
+    <script type="text/javascript"   src="/static/javascript/svg3d/svg3d_parsing.js"></script>
+        
+  </head>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
+  <body>
+    
 
-  <link rel="stylesheet" href="/static/css/thisEqualsThat.css" media="screen" />
-  <script src="/static/javascript/thisEqualsThat.js" type="text/javascript"></script>
 
-  
-  <!-- SVG3d -->
-  <script src="/static/javascript/svg3d/dom_utils.js"></script>
-  <script src="/static/javascript/svg3d/jquery_svg3d.js"></script>
-  <script src="/static/javascript/svg3d/svg3d.js"></script>
-  <script src="/static/javascript/svg3d/svg3d_parsing.js"></script>
-
-  <!--[if lte IE 6]>
-  <link rel="stylesheet" href="/static/ie6.css" type="text/css" media="screen" charset="utf-8" />
-  <![endif]-->
-</head>
-<body>
-  <div id="wrap">
-    <div id="top">
-      <div class="top">
-        <div id="logo">
-          HELLO
-          <img src="/static/graphics/thisEquals/this-equals-that.png" width="160" alt="pyramid"/>
+    <!-- 
+      <div id="wrap">
+        <div id="top">
+          <div class="top">
+            <div id="logo">
+              <img src="/static/graphics/thisEquals/this-equals-that.png" width="160" alt="pyramid"/>
+            </div>
+          </div>
+        </div>
+        <div id="thisEqualsThatSceneDiv">
         </div>
       </div>
-    </div>
-    <div id="thisEqualsThatSceneDiv">
-    </div>
-  </div>
-</body>
+    -->
+  </body>
 </html>
