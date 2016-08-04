@@ -67,6 +67,7 @@
 
     <link    rel="stylesheet"       href="/static/css/thisEqualsThat.css"/>
     <script type="text/javascript"   src="/static/javascript/thisEqualsThat.js"></script>
+    <script type="text/javascript"   src="/static/javascript/bootstrap.objects.js"></script>
     
     <link    rel="stylesheet"       href="/static/css/menu.css" type="text/css" media="screen" charset="utf-8">
     
