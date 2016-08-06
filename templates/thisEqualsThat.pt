@@ -23,8 +23,9 @@
     <link rel="shortcut icon" href="/static/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     
-    
+
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.7/uuid.min.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
     <script type="text/javascript"   src="https://use.fontawesome.com/cee7f18682.js"></script>
@@ -39,9 +40,11 @@
     
     <!-- jquery   libraries -->
     <link    rel="stylesheet"       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  
-            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
     <script type="text/javascript"   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link    rel="stylesheet"       href="/static/css/navbar-fixed-side.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether-theme-basic.min.css">
