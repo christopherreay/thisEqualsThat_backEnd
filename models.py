@@ -921,6 +921,7 @@ class ModelClass(Node):
         fieldDefinitions[fullAddress] = fieldDefinition.__dict__['data']
         fieldDefinitions[fullAddress]['displayFieldAddress'] = \
             field['classData'].getValue(root, "displayFieldAddress")
+        fieldDefinitions[fullAddress]['fullAddress'] = fullAddress
 
         fieldBranches[fullAddress] = field
         if 'subModelClass' in field:
@@ -2133,7 +2134,7 @@ toReturn['translate3d'].update(
                                 "selectableValues":     None, 
                                 "unit":                "kg", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "Kg",
+                                "unitSuffix":          "kg",
                                 "inputField":          False, 
                                 "outputField":         False, 
                                 "defaultInputField":   False, 
@@ -2558,7 +2559,7 @@ toReturn['translate3d'].update(
                                 "selectableValues":     None, 
                                 "unit":                "kg", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "Kg",
+                                "unitSuffix":          "kg",
                                 "inputField":          False, 
                                 "outputField":         False, 
                                 "defaultInputField":   False, 
@@ -2748,7 +2749,7 @@ toReturn['translate3d'].update(
                                 "selectableValues":     None, 
                                 "unit":                "Kilograms", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "KJ",
+                                "unitSuffix":          "kg",
                                 "inputField":          True, 
                                 "outputField":         True, 
                                 "defaultInputField":   False, 
@@ -2764,7 +2765,7 @@ toReturn['translate3d'].update(
                                 "selectableValues":     None,
                                 "unit":                 "Kilograms", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":           "Kg",
+                                "unitSuffix":           "kg",
                                 "inputField":           True, 
                                 "outputField":          False, 
                                 "defaultInputField":    False, 
