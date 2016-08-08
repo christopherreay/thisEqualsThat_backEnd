@@ -1862,13 +1862,13 @@ toReturn['translate3d'].update(
             normalisedRep["toReturn = True"]["svgQuantiseEquation"] = "toReturn = svgFieldValue"
             normalisedRep["toReturn = True"]["svgHUD"]              = { "RandomiseClones.postColor":
                                                                         { "randomiseColors":
-                                                                          { "degreeOfRandom": 0,
+                                                                          { "degreeOfRandom": 10,
                                                                           },         
                                                                           "randomiseColorsByGroup":
-                                                                          { "degreeOfRandom": 5,
+                                                                          { "degreeOfRandom": 10,
                                                                           },
                                                                           "randomisePosition":
-                                                                          { "degreeOfRandom": 5,
+                                                                          { "degreeOfRandom": 10,
                                                                           },
                                                                         },         
                                                                       }
