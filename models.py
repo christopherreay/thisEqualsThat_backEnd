@@ -1234,12 +1234,12 @@ def appmaker(zodb_root):
         app_root = Node()
         zodb_root['app_root'] = app_root
 
-        modelClasses                = app_root['modelClasses']    = ModelClasses()
-        modelInstances              = app_root['modelInstances']  = Node()
-        savedModelInstances         = app_root['savedModelInstances']= Node()
-        modelFields                 = app_root['fieldUnitIndex']  = ModelFields()
+        modelClasses                = app_root['modelClasses']        = ModelClasses()
+        modelInstances              = app_root['modelInstances']      = Node()
+        savedModelInstances         = app_root['savedModelInstances'] = Node()
+        modelFields                 = app_root['fieldUnitIndex']      = ModelFields()
 
-        users                       = app_root['users']           = Users()
+        users                       = app_root['users']               = Users()
         
         representations = {}
 
@@ -1849,6 +1849,10 @@ toReturn['translate3d'].update(
 
 
         ScottishParliamentaryElection = None
+
+
+
+
              
         # ofWhatSelectDict = {k: v for k, v in representations.iteritems() if "cloneable" in v["class"]}
         ofWhatRepDict = {}
@@ -3068,27 +3072,7 @@ toReturn['translate3d'].update(
         for (modelClassName, modelClass) in modelClasses.items():
           modelClass.initialise()  
         
-        """modelInstances = MyModel()
-        app_root['modelInstances'] = modelInstances
-        fieldUnitIndex = FieldUnitIndex()
-        app_root['fieldUnitIndex'] = fieldUnitIndex
         
-        Coal    = models.Coal("Coal", modelClasses)
-        CPS     = models.CoalPowerStation("CPS", modelClasses)
-        Kettle  = models.Kettle("Kettle", modelClasses)
-
-        modelClasses.createInstances(modelInstances, app_root)
-        
-        #app_root['users']   = MyModel()
-        #
-        
-        #user  = models.User("Christopher", app_root['users'])
-        #app_root['users']['testUser'] = user
-        #cps = CPS.createInstance("cps", user)
-        #app_root['models'][cps.id] = cps
-        
-        """
-
 
         transaction.commit()
         
@@ -3098,6 +3082,27 @@ toReturn['translate3d'].update(
     #print coalPowerStation.fieldContext['price']      
     
     appRoot = zodb_root['app_root']
+
+    iframeModelClasses = appRoot['iframeModelClasses'] = OD()
+    iframeModelClasses["Money"] = \
+        { "icon": "money.svg",
+          "src" : "/static/threeJS/money/money.html",
+        }
+    iframeModelClasses["Seesaw"] = \
+        { "icon": "seesaw.svg",
+          "src" : "/static/threeJS/seesaw/seesaw.html",
+        }
+    iframeModelClasses["Air Quality"] = \
+        { "icon": "gas-mask.svg",
+          "src" : "/static/threeJS/particle/particle.html",
+        }
+    iframeModelClasses["Earth"] = \
+        { "icon": "earth.svg",
+          "src" : "/static/threeJS/globe/index.html",
+        }
+
+    transaction.commit()
+
     #appRoot['coalPowerStation'] = ModelClass()
     #coal = Coal("coal", appRoot)
     #appRoot['coal'] = coal
