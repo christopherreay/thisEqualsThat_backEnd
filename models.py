@@ -1937,16 +1937,16 @@ toReturn['translate3d'].update(
                     "svgDisplayDefByValue": """toReturn = data['ofWhatRepDict'][modelClass['fields']['ofWhat'].getFieldValue(modelInstance)]""",
                   },
             },
-            inputFieldHUD =
-            { #"Remove.preClone":
-              #{ "hideFields":
-              #  { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
-              #  },
-              #},
-              #"RatioColor.postColor":
-              #{ "config":{},
-              #},
-            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_How Many"  ,
+                  "howMany"               ,
+                  "groupHeader_Of What"   ,
+                  "ofWhat"                ,
+                ],
+              },
+            }
         ) 
 
         PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
@@ -2345,6 +2345,17 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("volume_inAir", ),
                     "svgDisplayDefByValue": representations["Grey Cube in Air"],
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Carbon Dioxide"  ,
+                  "mass"                        ,
+                  "groupHeader_Volume as Gases" ,
+                  "volume_100"                  ,
+                  "volume_inAir"                ,
+                ],
+              },
             }
         )
 
@@ -2435,6 +2446,19 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("count", ),
                     "svgDisplayDefByValue": representations["Lightbulbs"]
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Lightbulbs"  ,
+                  "count"                        ,
+                  "groupHeader_Energy Calculation" ,
+                  "watts"                  ,
+                  "time"                ,
+                  "groupHeader_Total Energy" ,
+                  "energy"                  ,
+                ],
+              },
             }
         )
 
@@ -2899,6 +2923,17 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("volume", ),
                     "svgDisplayDefByValue": representations["Grey Cube"]
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Volume Mass & Density"  ,
+                  "volume"                        ,
+                  "mass" ,
+                  "density"                  ,
+                  "groupHeader_Note:<br />You can change the Calculated Output Field below",
+                ],
+              },
             }
         )
 
