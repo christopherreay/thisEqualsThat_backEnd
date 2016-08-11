@@ -1235,12 +1235,12 @@ def appmaker(zodb_root):
         app_root = Node()
         zodb_root['app_root'] = app_root
 
-        modelClasses                = app_root['modelClasses']    = ModelClasses()
-        modelInstances              = app_root['modelInstances']  = Node()
-        savedModelInstances         = app_root['savedModelInstances']= Node()
-        modelFields                 = app_root['fieldUnitIndex']  = ModelFields()
+        modelClasses                = app_root['modelClasses']        = ModelClasses()
+        modelInstances              = app_root['modelInstances']      = Node()
+        savedModelInstances         = app_root['savedModelInstances'] = Node()
+        modelFields                 = app_root['fieldUnitIndex']      = ModelFields()
 
-        users                       = app_root['users']           = Users()
+        users                       = app_root['users']               = Users()
         
         representations = {}
 
@@ -1850,6 +1850,10 @@ toReturn['translate3d'].update(
 
 
         ScottishParliamentaryElection = None
+
+
+
+
              
         # ofWhatSelectDict = {k: v for k, v in representations.iteritems() if "cloneable" in v["class"]}
         ofWhatRepDict = {}
@@ -1859,13 +1863,13 @@ toReturn['translate3d'].update(
             normalisedRep["toReturn = True"]["svgQuantiseEquation"] = "toReturn = svgFieldValue"
             normalisedRep["toReturn = True"]["svgHUD"]              = { "RandomiseClones.postColor":
                                                                         { "randomiseColors":
-                                                                          { "degreeOfRandom": 0,
+                                                                          { "degreeOfRandom": 10,
                                                                           },         
                                                                           "randomiseColorsByGroup":
-                                                                          { "degreeOfRandom": 5,
+                                                                          { "degreeOfRandom": 10,
                                                                           },
                                                                           "randomisePosition":
-                                                                          { "degreeOfRandom": 5,
+                                                                          { "degreeOfRandom": 10,
                                                                           },
                                                                         },         
                                                                       }
@@ -1934,16 +1938,16 @@ toReturn['translate3d'].update(
                     "svgDisplayDefByValue": """toReturn = data['ofWhatRepDict'][modelClass['fields']['ofWhat'].getFieldValue(modelInstance)]""",
                   },
             },
-            inputFieldHUD =
-            { #"Remove.preClone":
-              #{ "hideFields":
-              #  { "fieldsToHide": ["[\"colors\"]", "[\"ratios\"]"],
-              #  },
-              #},
-              #"RatioColor.postColor":
-              #{ "config":{},
-              #},
-            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_How Many"  ,
+                  "howMany"               ,
+                  "groupHeader_Of What"   ,
+                  "ofWhat"                ,
+                ],
+              },
+            }
         ) 
 
         PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
@@ -2342,6 +2346,17 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("volume_inAir", ),
                     "svgDisplayDefByValue": representations["Grey Cube in Air"],
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Carbon Dioxide"  ,
+                  "mass"                        ,
+                  "groupHeader_Volume as Gases" ,
+                  "volume_100"                  ,
+                  "volume_inAir"                ,
+                ],
+              },
             }
         )
 
@@ -2432,6 +2447,19 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("count", ),
                     "svgDisplayDefByValue": representations["Lightbulbs"]
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Lightbulbs"  ,
+                  "count"                        ,
+                  "groupHeader_Energy Calculation" ,
+                  "watts"                  ,
+                  "time"                ,
+                  "groupHeader_Total Energy" ,
+                  "energy"                  ,
+                ],
+              },
             }
         )
 
@@ -2896,6 +2924,17 @@ toReturn['translate3d'].update(
                   { "modelOutputField_forSVGConversion" : ("volume", ),
                     "svgDisplayDefByValue": representations["Grey Cube"]
                   },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Volume Mass & Density"  ,
+                  "volume"                        ,
+                  "mass" ,
+                  "density"                  ,
+                  "groupHeader_Note:<br />You can change the Calculated Output Field below",
+                ],
+              },
             }
         )
 
@@ -3069,27 +3108,7 @@ toReturn['translate3d'].update(
         for (modelClassName, modelClass) in modelClasses.items():
           modelClass.initialise()  
         
-        """modelInstances = MyModel()
-        app_root['modelInstances'] = modelInstances
-        fieldUnitIndex = FieldUnitIndex()
-        app_root['fieldUnitIndex'] = fieldUnitIndex
         
-        Coal    = models.Coal("Coal", modelClasses)
-        CPS     = models.CoalPowerStation("CPS", modelClasses)
-        Kettle  = models.Kettle("Kettle", modelClasses)
-
-        modelClasses.createInstances(modelInstances, app_root)
-        
-        #app_root['users']   = MyModel()
-        #
-        
-        #user  = models.User("Christopher", app_root['users'])
-        #app_root['users']['testUser'] = user
-        #cps = CPS.createInstance("cps", user)
-        #app_root['models'][cps.id] = cps
-        
-        """
-
 
         transaction.commit()
         
@@ -3099,6 +3118,27 @@ toReturn['translate3d'].update(
     #print coalPowerStation.fieldContext['price']      
     
     appRoot = zodb_root['app_root']
+
+    iframeModelClasses = appRoot['iframeModelClasses'] = OD()
+    iframeModelClasses["Money"] = \
+        { "icon": "money.svg",
+          "src" : "/static/threeJS/money/money.html",
+        }
+    iframeModelClasses["Seesaw"] = \
+        { "icon": "seesaw.svg",
+          "src" : "/static/threeJS/seesaw/seesaw.html",
+        }
+    iframeModelClasses["Air Quality"] = \
+        { "icon": "gas-mask.svg",
+          "src" : "/static/threeJS/particle/particle.html",
+        }
+    iframeModelClasses["Earth"] = \
+        { "icon": "earth.svg",
+          "src" : "/static/threeJS/globe/index.html",
+        }
+
+    transaction.commit()
+
     #appRoot['coalPowerStation'] = ModelClass()
     #coal = Coal("coal", appRoot)
     #appRoot['coal'] = coal

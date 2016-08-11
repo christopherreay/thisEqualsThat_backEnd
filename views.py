@@ -59,7 +59,11 @@ def thisEqualsThat_bertonbeil(request):
 def getModelClasses(request):
   modelClasses  = request.root['modelClasses']
   ##ipdb.set_trace()
-  jsonOutput    = modelClasses.keys()
+  jsonOutput    = \
+      { "standard": modelClasses.keys(),
+        "iframe":   request.root['iframeModelClasses']
+      }
+
   #user = request.root['user']['CPS']
   return jsonOutput
   
