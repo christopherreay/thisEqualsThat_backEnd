@@ -1883,7 +1883,10 @@ toReturn['translate3d'].update(
         print ofWhatSelectDict
         HowMany = ModelClass(app_root, "HowMany",
             { "howMany": ClassField({ 
-                                "name":                 "howMany", 
+                                "name":                 "howMany",
+                                "displayName":          "How Many",
+                                "displayIcon":          "howMany.svg",
+                                "description":          "Choose how many of what to show in the diagram",
                                 "fieldType":            "slider", 
                                 "defaultValue":         10, 
                                 "rangeBottom":          1, 
@@ -1903,7 +1906,10 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "ofWhat": ClassField({ 
-                                "name":               "ofWhat", 
+                                "name":               "ofWhat",
+                                "displayName":          "Of What",
+                                "displayIcon":          "howMany.svg",
+                                "description":          "Choose how many of what to show in the diagram",
                                 "fieldType":          "select", 
                                 "defaultValue":       "Trees", 
                                 "rangeBottom":             0, 
@@ -1988,7 +1994,10 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "numberOfClones": ClassField({ 
-                                "name":               "numberOfClones", 
+                                "name":               "numberOfClones",
+                                "displayName":          "Number of People",
+                                "displayIcon":          "howMany.svg",
+                                "description":          "Choose how many people in total in the diagram",
                                 "fieldType":          "text", 
                                 "defaultValue":       "100", 
                                 "rangeBottom":             0, 
@@ -2008,6 +2017,9 @@ toReturn['translate3d'].update(
               
               "outputTable": ClassField({ 
                                 "name":               "outputTable", 
+                                "displayName":          "Table of Values",
+                                "displayIcon":          "grid.svg",
+                                "description":          "Contains a table of data used to generate the diagram",
                                 "fieldType":          "text", 
                                 "defaultValue":       {}, 
                                 "rangeBottom":             0, 
@@ -2027,6 +2039,9 @@ toReturn['translate3d'].update(
                                 }),
               "randomLayout": ClassField({ 
                                 "name":               "randomLayout", 
+                                "displayName":          "Randomise Positions",
+                                "displayIcon":          "randomize.svg",
+                                "description":          "Put specials in random positions",
                                 "fieldType":          "select", 
                                 "defaultValue":       "Yes", 
                                 "rangeBottom":             0, 
@@ -2078,7 +2093,12 @@ toReturn['translate3d'].update(
         )
 
         Wood = ModelClass(app_root, "Wood", 
-            { "energy": ClassField({ "name":        "energy", 
+            { "energy": ClassField({ 
+                                "name":        "energy",
+                                "displayName":          "Energy Burned",
+                                "displayIcon":          "burn.svg",
+                                "description":          "Energy thru combustion in air",
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     5000000, 
                                 "rangeBottom":             1, 
@@ -2094,7 +2114,12 @@ toReturn['translate3d'].update(
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
-              "mass":  ClassField({ "name":        "mass", 
+              "mass":  ClassField({ 
+                                "name":        "mass",
+                                "displayName":          "Mass",
+                                "displayIcon":          "scales.svg",
+                                "description":          "Mass of wood",
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     100, 
                                 "rangeBottom":             0.1, 
@@ -2111,7 +2136,10 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
 
-              "volume": ClassField({ "name":        "volume", 
+              "volume": ClassField({ "name":        "volume",
+                                "displayName":          "Volume of Wood",
+                                "displayIcon":          "size.svg",
+                                "description":          "How much wood?",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2130,6 +2158,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "massCO2": ClassField({ "name":        "massCO2", 
+                                "displayName":          "CO2 thru Combustion",
+                                "displayIcon":          "randomize.svg",
+                                "description":          "Mass of CO2 in KG produced by burning this amount of wood",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.001, 
@@ -2213,13 +2244,33 @@ toReturn['translate3d'].update(
                   "massCO2, volume_100"       ,
                   "massCO2, volume_inAir"     ,
                 ],
+                "fieldDetails":
+                { "mass":       
+                  { "displayName":          "Mass",
+                    "displayIcon":          "scales.svg",
+                    "description":          "Mass of wood (some tree)",
+                  },
+                  "volume":     
+                  { "displayName":          "Volume",
+                    "displayIcon":          "size.svg",
+                    "description":          "Size of wood",
+                  },
+                  "energy":     
+                  { "displayName":          "Energy",
+                    "displayIcon":          "energy.svg",
+                    "description":          "Energy thru Combustion",
+                  },
+                },
               },
             }
         )
 
 
         CO2 = ModelClass(app_root, "CO2",
-          {   "mass":  ClassField({ "name":        "mass", 
+          {   "mass":  ClassField({ "name":        "mass",
+                                "displayName":          "Mass",
+                                "displayIcon":          "scales.svg",
+                                "description":          "Mass of CO2 in KG", 
                                 "fieldType":        "slider", 
                                 "defaultValue":     100, 
                                 "rangeBottom":             0.1, 
@@ -2236,6 +2287,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "volume_frozen": ClassField({ "name":        "volume_frozen", 
+                                "displayName":          "Volume Frozen",
+                                "displayIcon":          "size.svg",
+                                "description":          "If the CO2 is frozen solid, how big would it be?",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2252,7 +2306,10 @@ toReturn['translate3d'].update(
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "volume_100": ClassField({ "name":        "volume_100", 
+              "volume_100": ClassField({ "name":        "volume_100",
+                                "displayName":          "Volume as Pure Gas",
+                                "displayIcon":          "size.svg",
+                                "description":          "If the CO2 is pure gas, 100% CO2, how big would it be?",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2270,6 +2327,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "volume_inAir": ClassField({ "name":        "volume_inAir", 
+                                "displayName":          "Volume of Air",
+                                "displayIcon":          "size.svg",
+                                "description":          "How much Air do you need to count up this amount of CO2?",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2288,6 +2348,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "timeToBreathOut": ClassField({ "name":        "timeToBreathOut", 
+                                "displayName":          "Time to Breath",
+                                "displayIcon":          "breath.svg",
+                                "description":          "How long would it take a person to breath this amount of CO2 into the atmosphere?",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2361,7 +2424,10 @@ toReturn['translate3d'].update(
         )
 
         LightBulb = ModelClass(app_root, "LightBulb",
-        {     "energy": ClassField({ "name":        "energy", 
+        {     "energy": ClassField({ "name":        "energy",
+                                "displayName":          "Energy",
+                                "displayIcon":          "energy.svg",
+                                "description":          "Total energy to power lightbulbs", 
                                 "fieldType":        "slider", 
                                 "defaultValue":         60, 
                                 "rangeBottom":             1, 
