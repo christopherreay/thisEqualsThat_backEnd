@@ -1892,7 +1892,7 @@ toReturn['translate3d'].update(
                                 "rangeBottom":          1, 
                                 "rangeTop":             1000, 
                                 "rangeType":           "log",
-                                "sliderRoundFunction": "toReturn = Math.ceil(currentValue);",
+                                "fieldPrecisionFunction": "toReturn = Math.ceil(currentValue);",
                                 "selectableValues":     None, 
                                 "unit":                "number", 
                                 "unitPrefix":          "count of", 
@@ -2347,45 +2347,45 @@ toReturn['translate3d'].update(
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "timeToBreathOut": ClassField({ "name":        "timeToBreathOut", 
-                                "displayName":          "Time to Breath",
-                                "displayIcon":          "breath.svg",
-                                "description":          "How long would it take a person to breath this amount of CO2 into the atmosphere?",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
-                                "rangeTop":           1000000000,
-                                "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "s", 
-                                "unitPrefix":           "", 
-                                "unitSuffix":          "seconds",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
-                                "defaultOutputField":  False,
-                                "svgComponent":         None
-                                }),
+              # "timeToBreathOut": ClassField({ "name":        "timeToBreathOut", 
+              #                   "displayName":          "Time to Breath",
+              #                   "displayIcon":          "breath.svg",
+              #                   "description":          "How long would it take a person to breath this amount of CO2 into the atmosphere?",
+              #                   "fieldType":        "slider", 
+              #                   "defaultValue":     10, 
+              #                   "rangeBottom":        0.00000001, 
+              #                   "rangeTop":           1000000000,
+              #                   "rangeType":           "log",
+              #                   "selectableValues":     None, 
+              #                   "unit":                "s", 
+              #                   "unitPrefix":           "", 
+              #                   "unitSuffix":          "seconds",
+              #                   "inputField":          True, 
+              #                   "outputField":         True, 
+              #                   "defaultInputField":   False, 
+              #                   "defaultOutputField":  False,
+              #                   "svgComponent":         None
+              #                   }),
               
             },
 
             { "mass":             { "volume_100"      : "toReturn = !!volume_100!! / .5562",
                                     "volume_inAir"    : "toReturn = !!volume_inAir!! / .5562 / 2500",
-                                    "timeToBreathOut" : "toReturn = !!volume_inAir!! / 0.00120048019"
+                                    # "timeToBreathOut" : "toReturn = !!volume_inAir!! / 0.00120048019"
                                   },
               "volume_frozen":    { "mass"            : "toReturn = !!mass!! / 1562.0"        },
               "volume_100":       { "mass":             "toReturn = !!mass!! * (.5562)",
                                     "volume_inAir"    : "toReturn = !!volume_inAir!! / 2500",
-                                    "timeToBreathOut" : "toReturn = !!singleCube!!"
+                                    # "timeToBreathOut" : "toReturn = !!singleCube!!"
                                   },
               "volume_inAir":     { "mass"            : "toReturn = !!mass!! * .5562 * 2500",
                                     "volume_100"      : "toReturn = !!volume_100!! * 2500",
-                                    "timeToBreathOut" : "toReturn = !!volume_inAir!!"
+                                    # "timeToBreathOut" : "toReturn = !!volume_inAir!!"
                                   },
-              "timeToBreathOut":  { "mass"            : "toReturn = (!!energy!! / 27000000) * 0.00120048019",
-                                    "volume_100"      : "toReturn = !!mass!! * 0.00120048019",
-                                    "volume_inAir"    : "toReturn = !!volume_inAir!!"
-                                  }
+              # "timeToBreathOut":  { "mass"            : "toReturn = (!!energy!! / 27000000) * 0.00120048019",
+              #                       "volume_100"      : "toReturn = !!mass!! * 0.00120048019",
+              #                       "volume_inAir"    : "toReturn = !!volume_inAir!!"
+              #                     }
 
             },
             {},
@@ -2449,7 +2449,7 @@ toReturn['translate3d'].update(
                                 "rangeBottom":             1, 
                                 "rangeTop":             1000, 
                                 "rangeType":           "log",
-                                "sliderRoundFunction": "toReturn = Math.ceil(currentValue);",
+                                "fieldPrecisionFunction": "toReturn = Math.ceil(currentValue);",
                                 "selectableValues":     None, 
                                 "unit":                "unit", 
                                 "unitPrefix":           "", 
