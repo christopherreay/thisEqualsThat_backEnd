@@ -16,8 +16,8 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     
     <title>The Pyramid Web Framework</title>
-    <meta name="keywords" content="python web application" />
-    <meta name="description" content="pyramid web application" />
+    <meta name="keywords"     content="python web application" />
+    <meta name="description"  content="pyramid web application" />
     
 
     <link rel="shortcut icon" href="/static/favicon.ico" />
@@ -54,6 +54,10 @@
     <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css">
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.umd.min.js"></script>
 
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jqueryui-editable/css/jqueryui-editable.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jqueryui-editable/js/jqueryui-editable.min.js"></script>
+    <!-- <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script> -->
     
     
 
