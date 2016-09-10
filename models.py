@@ -854,6 +854,7 @@ class ModelClass(Node):
 
     fieldDict = self.getDict("fields")
     for (fieldName, field) in fields.items():
+      field["modelClass"]    = self['name']
       branch                = Branch(self, fieldName, field)
       fieldDict[fieldName]  = branch
       fieldUnitIndex.getList(field['unit']).append(branch)
@@ -1959,6 +1960,9 @@ toReturn['translate3d'].update(
         PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
             { "ratios": ClassField({ 
                                 "name":                 "ratios", 
+                                "displayName":          "Ratios",
+                                "displayIcon":          "howMany.svg",
+                                "description":          "Bleh",
                                 "fieldType":            "text", 
                                 "defaultValue":         0.1, 
                                 "rangeBottom":             0, 
@@ -1995,7 +1999,7 @@ toReturn['translate3d'].update(
                                 }),
               "numberOfClones": ClassField({ 
                                 "name":               "numberOfClones",
-                                "displayName":          "Number of People",
+                                "displayName":          "Size of Gathering",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "Choose how many people in total in the diagram",
                                 "fieldType":          "text", 
@@ -2240,7 +2244,6 @@ toReturn['translate3d'].update(
                   "energy"                    ,
                   "groupHeader_CO2"           ,
                   "massCO2, mass"             ,
-                  "massCO2, timeToBreathOut"  ,
                   "massCO2, volume_100"       ,
                   "massCO2, volume_inAir"     ,
                 ],
@@ -2327,7 +2330,7 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "volume_inAir": ClassField({ "name":        "volume_inAir", 
-                                "displayName":          "Volume of Air",
+                                "displayName":          "Volume CO2 in Air",
                                 "displayIcon":          "size.svg",
                                 "description":          "How much Air do you need to count up this amount of CO2?",
                                 "fieldType":        "slider", 
@@ -2444,6 +2447,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "count":  ClassField({ "name":        "count", 
+                                "displayName":          "Number of Bulbs",
+                                "displayIcon":          "count.svg",
+                                "description":          "Number of lightbulbs", 
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":             1, 
@@ -2464,6 +2470,9 @@ toReturn['translate3d'].update(
                                 }),
 
               "time": ClassField({ "name":        "time", 
+                                "displayName":          "Time",
+                                "displayIcon":          "time.svg",
+                                "description":          "Time lightbulbs are on", 
                                 "fieldType":        "slider", 
                                 "defaultValue":       3600, 
                                 "rangeBottom":        0.00000001, 
@@ -2480,6 +2489,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "watts": ClassField({ "name":        "watts", 
+                                "displayName":          "Watts",
+                                "displayIcon":          "energy.svg",
+                                "description":          "Watts per lightbulb", 
                                 "fieldType":        "slider", 
                                 "defaultValue":       60, 
                                 "rangeBottom":        0.001, 
@@ -2923,7 +2935,10 @@ toReturn['translate3d'].update(
         #######################static  data sets##########################
 
         VolMassDen = ModelClass(app_root, "VolMassDen", 
-            { "volume": ClassField({ "name":        "volume", 
+            { "volume": ClassField({ "name":        "volume",
+                                "displayName":          "Volume",
+                                "displayIcon":          "size.svg",
+                                "description":          "How big is the thing", 
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2942,6 +2957,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "mass": ClassField({ "name":        "mass", 
+                                "displayName":          "Mass",
+                                "displayIcon":          "howMany.svg",
+                                "description":          "How heavy is the thing",
                                 "fieldType":        "slider", 
                                 "defaultValue":     10.0, 
                                 "rangeBottom":            0.00000001, 
@@ -2950,7 +2968,7 @@ toReturn['translate3d'].update(
                                 "selectableValues":     None, 
                                 "unit":                "Kilograms", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "KJ",
+                                "unitSuffix":          "Kg",
                                 "inputField":          True, 
                                 "outputField":         True, 
                                 "defaultInputField":   False, 
@@ -2958,6 +2976,9 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "density": ClassField({ "name":        "density", 
+                                "displayName":          "Density",
+                                "displayIcon":          "howMany.svg",
+                                "description":          "How dense is the thing",
                                 "fieldType":        "slider", 
                                 "defaultValue":     1.0, 
                                 "rangeBottom":  0.000000001, 
@@ -2968,7 +2989,7 @@ toReturn['translate3d'].update(
                                 "unitPrefix":           "", 
                                 "unitSuffix":          "m3/kg",
                                 "inputField":          True, 
-                                "outputField":         False, 
+                                "outputField":         True, 
                                 "defaultInputField":   True, 
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
