@@ -2310,7 +2310,7 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "volume_100": ClassField({ "name":        "volume_100",
-                                "displayName":          "Volume as Pure Gas",
+                                "displayName":          "CO2 Pure Gas",
                                 "displayIcon":          "size.svg",
                                 "description":          "If the CO2 is pure gas, 100% CO2, how big would it be?",
                                 "fieldType":        "slider", 
@@ -2330,7 +2330,7 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "volume_inAir": ClassField({ "name":        "volume_inAir", 
-                                "displayName":          "Volume CO2 in Air",
+                                "displayName":          "CO2 in Air",
                                 "displayIcon":          "size.svg",
                                 "description":          "How much Air do you need to count up this amount of CO2?",
                                 "fieldType":        "slider", 
