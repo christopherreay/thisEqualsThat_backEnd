@@ -1948,9 +1948,7 @@ toReturn['translate3d'].update(
             inputFieldHUD = 
             { "FieldOrder.preClone":
               { "orderList":
-                [ "groupHeader_How Many"  ,
-                  "howMany"               ,
-                  "groupHeader_Of What"   ,
+                [ "howMany"               ,
                   "ofWhat"                ,
                 ],
               },
@@ -2469,11 +2467,11 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
 
-              "time": ClassField({ "name":        "time", 
+              "time": ClassField({ "name":              "time", 
                                 "displayName":          "Time",
                                 "displayIcon":          "time.svg",
                                 "description":          "Time lightbulbs are on", 
-                                "fieldType":        "slider", 
+                                "fieldType":            "slider", 
                                 "defaultValue":       3600, 
                                 "rangeBottom":        0.00000001, 
                                 "rangeTop":           10000000,
