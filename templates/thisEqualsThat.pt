@@ -74,13 +74,13 @@
     <!-- jqueryUI libraries -->
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 
+    <script type="text/javascript"   src="https://www.youtube.com/iframe_api"></script>
 
     <link    rel="stylesheet"       href="/static/css/thisEqualsThat.css"/>
     <script type="text/javascript"   src="/static/javascript/thisEqualsThat.js"></script>
     <script type="text/javascript"   src="/static/javascript/visual.tools.jQuery.objects.js"></script>
     <script type="text/javascript"   src="/static/javascript/visual.tools.bootstrap.objects.js"></script>
 
-    
     <link    rel="stylesheet"       href="/static/css/menu.css" type="text/css" media="screen" charset="utf-8">
     
     <!-- SVG3d -->
