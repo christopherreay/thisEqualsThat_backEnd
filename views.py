@@ -296,7 +296,7 @@ def inputFieldAltered(request):
                 "lastAlteredOutputValue": modelInstance['outputSetter'].getValue(modelInstance),
             }
   except:
-    pass
+    return {}
 
 @view_config(route_name="setBottomModel", renderer="json")
 def setBottomModel(request):
