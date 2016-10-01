@@ -152,148 +152,151 @@ def copyClassInstance(request):
   
 @view_config(route_name="inputFieldAltered", renderer="json")
 def inputFieldAltered(request):
-  print request.path_qs
-  
-  modelInstanceID   = request.params['modelInstanceID']
-  modelInstance     = request.root['modelInstances'][modelInstanceID]
-  modelClass        = modelInstance['modelClass']
-  
-  valueFromInstance = []
   try:
-    inputField      = tuple(json.loads(request.params['inputField']))
-    fieldDataType   = modelInstance.getInputSetter(inputField)['path'][-1]['field']['fieldType']
-    if fieldDataType == "text" or fieldDataType == "select":
-      inputFieldValue = request.params['newValue']
-    else:    
-      inputFieldValue = float(request.params['newValue'])
+    print request.path_qs
+  
+    modelInstanceID   = request.params['modelInstanceID']
+    modelInstance     = request.root['modelInstances'][modelInstanceID]
+    modelClass        = modelInstance['modelClass']
     
-    print "Set Input Value from Interface: %s: %s" % (inputField, inputFieldValue)
-    modelInstance['modelFieldAlteredSequence'].append(("input", inputField, inputFieldValue, time.time()))
-    modelInstance.getInputSetter(inputField).setValue(modelInstance, inputFieldValue)
-  except KeyError as e:
-    print "Exception in setting input value: %s" % e
-    valueFromInstance.append("inputField")
-    valueFromInstance.append("newValue")
-  try:
-    outputField     = tuple(json.loads(request.params['outputField']))
-    modelInstance['modelFieldAlteredSequence'].append(("output", outputField, None, time.time()))
-    modelInstance.getOutputSetter(outputField)
-  except Exception as e:
-    print repr(e)
-    valueFromInstance.append("outputField")
-    outputField = modelInstance['lastAlteredOutput']
-  try:
-    visualisationField = tuple(json.loads(request.params['visualisationField']))
-    modelInstance['modelFieldAlteredSequence'].append(("visualisation", visualisationField, None, time.time()))
-    modelInstance['lastAlteredVisualisation'] = visualisationField
-  except Exception as e:
-    print repr(e)
-    valueFromInstance.append("visualisationField")
-    if "lastAlteredVisualisation" not in modelInstance:
-      modelInstance['lastAlteredVisualisation'] = outputField
-    visualisationField = modelInstance['lastAlteredVisualisation']
-
-  print "valuesPreListing: \n  inputField: %s, fieldValue: %s\n  outputField: %s\nvisualisationField: %s\n filledFromInstance: %s" \
-      % ( modelInstance['inputSetter'], 
-          modelInstance['inputSetter'].getValue(modelInstance), 
-          modelInstance['outputSetter'], 
-          visualisationField, 
-          valueFromInstance,
-        )
-  
-  #if modelInstance['isBottomModel'] == True:
-  #  ipdb.set_trace()
-  
-  originalInputFieldAddress = modelInstance['inputFieldAddress']
-  #All that is needed to allow as many models as you like in a row is to have the top and bottom models store ID's for each other so they can tell what is going on. 
-  #The front end just neesd to have the overflow set for the container
-  if modelInstance['isBottomModel']:
-    modelInstance.getInputSetter(modelInstance['boundInputField'])
-  
-  newOutputValue = modelInstance.process()
-  modelInstance.getInputSetter(originalInputFieldAddress)  
-
-
-  #ipdb.set_trace()
-  choosableFields = []
-  bottomModelData = {}
-  if not modelInstance['isBottomModel']:
-    #ipdb.set_trace()
-    #if not (outputField == modelInstance.currentOutputField):
-    #else:
-      outputUnit      = modelInstance['outputSetter']['path'][-1]['field']['unit']
-      matchingFields  = request.root['fieldUnitIndex'][outputUnit]
-
-      bottomModel = modelInstance['bottomModel']
-      if bottomModel is None:
-        for field in matchingFields:
-          bottomModelLinkFieldItem = \
-              { "boundOutputField": modelInstance['outputFieldAddress'],
-                "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"), 
-                "bottomModelClass": field['modelClass']['name']
-              }
-          choosableFields.append(bottomModelLinkFieldItem)
-
-      elif bottomModel is not None:
-        #ipdb.set_trace()
-        
-
-        matchUnit             = False
-        matchFieldByFieldName = False
-        if not outputField == modelInstance['lastAlteredOutput']:
-          outputFieldName = modelInstance['outputSetter']['path'][-1]['field']['name']
-          if outputFieldName in bottomModel['modelClass']['fields']:
-            matchFieldByFieldName = bottomModel['modelClass']['fields'][outputFieldName]
-            bottomModel['boundInputField'] = matchFieldByFieldName['classData'].getValue(matchFieldByFieldName['modelClass'], "fieldAddress")
-          else:
-            matchUnit = True
-
-        for field in matchingFields:
-          bottomModelLinkFieldItem = \
-              { "boundOutputField": modelInstance['outputFieldAddress'],
-                "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"), 
-                "bottomModelClass": field['modelClass']['name']
-              }
-          if      (matchUnit is False  and matchFieldByFieldName is not False and field is matchFieldByFieldName) \
-              or  (matchUnit is True   and field['modelClass']['name'] == bottomModel['modelClass']['name']):
-            bottomModelLinkFieldItem['selected'] = "selected"
-            bottomModel['boundInputField'] = bottomModelLinkFieldItem['boundInputField']
-            matchUnit  = "matched"
-          choosableFields.append(bottomModelLinkFieldItem)
+    valueFromInstance = []
+    try:
+      inputField      = tuple(json.loads(request.params['inputField']))
+      fieldDataType   = modelInstance.getInputSetter(inputField)['path'][-1]['field']['fieldType']
+      if fieldDataType == "text" or fieldDataType == "select":
+        inputFieldValue = request.params['newValue']
+      else:    
+        inputFieldValue = float(request.params['newValue'])
       
-        bottomModel.getInputSetter(bottomModel['boundInputField']).setValue(bottomModel, newOutputValue)
-        #if there is no outputField set, set it to the inputField. Simple.
-        if "lastAlteredOutput" not in bottomModel:
-          bottomModel['lastAlteredOutput'] = bottomModel['bountInputField']
-        print "Bound InputField %s "    % (bottomModel['boundInputField'], )
-        print "currentOutputField: %s"  % (bottomModel['lastAlteredOutput'], )
-        bottomModelOutputValue = \
-          bottomModel['modelClass'].getProcessPath(bottomModel['boundInputField'], bottomModel['lastAlteredOutput']).process(bottomModel)
-        bottomModelSVG3dDisplayJSON = bottomModel['modelClass']['svgDisplayDefs'].process(bottomModel)
-        bottomModelData = { "fieldName": bottomModel['lastAlteredOutput'], "newValue": bottomModelOutputValue,
-                            "svg3dDisplayJSON": bottomModelSVG3dDisplayJSON
-                          }
+      print "Set Input Value from Interface: %s: %s" % (inputField, inputFieldValue)
+      modelInstance['modelFieldAlteredSequence'].append(("input", inputField, inputFieldValue, time.time()))
+      modelInstance.getInputSetter(inputField).setValue(modelInstance, inputFieldValue)
+    except KeyError as e:
+      print "Exception in setting input value: %s" % e
+      valueFromInstance.append("inputField")
+      valueFromInstance.append("newValue")
+    try:
+      outputField     = tuple(json.loads(request.params['outputField']))
+      modelInstance['modelFieldAlteredSequence'].append(("output", outputField, None, time.time()))
+      modelInstance.getOutputSetter(outputField)
+    except Exception as e:
+      print repr(e)
+      valueFromInstance.append("outputField")
+      outputField = modelInstance['lastAlteredOutput']
+    try:
+      visualisationField = tuple(json.loads(request.params['visualisationField']))
+      modelInstance['modelFieldAlteredSequence'].append(("visualisation", visualisationField, None, time.time()))
+      modelInstance['lastAlteredVisualisation'] = visualisationField
+    except Exception as e:
+      print repr(e)
+      valueFromInstance.append("visualisationField")
+      if "lastAlteredVisualisation" not in modelInstance:
+        modelInstance['lastAlteredVisualisation'] = outputField
+      visualisationField = modelInstance['lastAlteredVisualisation']
 
-  modelInstance['lastAlteredInput']  = originalInputFieldAddress
-  modelInstance['lastAlteredOutput'] = modelInstance['outputFieldAddress']
+    print "valuesPreListing: \n  inputField: %s, fieldValue: %s\n  outputField: %s\nvisualisationField: %s\n filledFromInstance: %s" \
+        % ( modelInstance['inputSetter'], 
+            modelInstance['inputSetter'].getValue(modelInstance), 
+            modelInstance['outputSetter'], 
+            visualisationField, 
+            valueFromInstance,
+          )
+    
+    #if modelInstance['isBottomModel'] == True:
+    #  ipdb.set_trace()
+    
+    originalInputFieldAddress = modelInstance['inputFieldAddress']
+    #All that is needed to allow as many models as you like in a row is to have the top and bottom models store ID's for each other so they can tell what is going on. 
+    #The front end just neesd to have the overflow set for the container
+    if modelInstance['isBottomModel']:
+      modelInstance.getInputSetter(modelInstance['boundInputField'])
+    
+    newOutputValue = modelInstance.process()
+    modelInstance.getInputSetter(originalInputFieldAddress)  
 
-  svg3dDisplayJSON = modelClass['svgDisplayDefs'].process(modelInstance)
 
-  transaction.commit()
-  
-  return {    "fieldName": modelInstance['outputFieldAddress'], 
-              "newValue": newOutputValue, 
+    #ipdb.set_trace()
+    choosableFields = []
+    bottomModelData = {}
+    if not modelInstance['isBottomModel']:
+      #ipdb.set_trace()
+      #if not (outputField == modelInstance.currentOutputField):
+      #else:
+        outputUnit      = modelInstance['outputSetter']['path'][-1]['field']['unit']
+        matchingFields  = request.root['fieldUnitIndex'][outputUnit]
 
-              "fieldValues": modelInstance.getJSInterface()['fieldValues'],
+        bottomModel = modelInstance['bottomModel']
+        if bottomModel is None:
+          for field in matchingFields:
+            bottomModelLinkFieldItem = \
+                { "boundOutputField": modelInstance['outputFieldAddress'],
+                  "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"), 
+                  "bottomModelClass": field['modelClass']['name']
+                }
+            choosableFields.append(bottomModelLinkFieldItem)
 
-              "choosableFields":    choosableFields,
-              "svg3dDisplayJSON":   svg3dDisplayJSON,
-              "bottomModelData":    bottomModelData,
-              "lastAlteredInput":   modelInstance['lastAlteredInput'],
-              "lastAlteredInputValue": modelInstance['inputSetter'].getValue(modelInstance),
-              "lastAlteredOutput":  modelInstance['lastAlteredOutput'],
-              "lastAlteredOutputValue": modelInstance['outputSetter'].getValue(modelInstance),
-          }
+        elif bottomModel is not None:
+          #ipdb.set_trace()
+          
+
+          matchUnit             = False
+          matchFieldByFieldName = False
+          if not outputField == modelInstance['lastAlteredOutput']:
+            outputFieldName = modelInstance['outputSetter']['path'][-1]['field']['name']
+            if outputFieldName in bottomModel['modelClass']['fields']:
+              matchFieldByFieldName = bottomModel['modelClass']['fields'][outputFieldName]
+              bottomModel['boundInputField'] = matchFieldByFieldName['classData'].getValue(matchFieldByFieldName['modelClass'], "fieldAddress")
+            else:
+              matchUnit = True
+
+          for field in matchingFields:
+            bottomModelLinkFieldItem = \
+                { "boundOutputField": modelInstance['outputFieldAddress'],
+                  "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"), 
+                  "bottomModelClass": field['modelClass']['name']
+                }
+            if      (matchUnit is False  and matchFieldByFieldName is not False and field is matchFieldByFieldName) \
+                or  (matchUnit is True   and field['modelClass']['name'] == bottomModel['modelClass']['name']):
+              bottomModelLinkFieldItem['selected'] = "selected"
+              bottomModel['boundInputField'] = bottomModelLinkFieldItem['boundInputField']
+              matchUnit  = "matched"
+            choosableFields.append(bottomModelLinkFieldItem)
+        
+          bottomModel.getInputSetter(bottomModel['boundInputField']).setValue(bottomModel, newOutputValue)
+          #if there is no outputField set, set it to the inputField. Simple.
+          if "lastAlteredOutput" not in bottomModel:
+            bottomModel['lastAlteredOutput'] = bottomModel['bountInputField']
+          print "Bound InputField %s "    % (bottomModel['boundInputField'], )
+          print "currentOutputField: %s"  % (bottomModel['lastAlteredOutput'], )
+          bottomModelOutputValue = \
+            bottomModel['modelClass'].getProcessPath(bottomModel['boundInputField'], bottomModel['lastAlteredOutput']).process(bottomModel)
+          bottomModelSVG3dDisplayJSON = bottomModel['modelClass']['svgDisplayDefs'].process(bottomModel)
+          bottomModelData = { "fieldName": bottomModel['lastAlteredOutput'], "newValue": bottomModelOutputValue,
+                              "svg3dDisplayJSON": bottomModelSVG3dDisplayJSON
+                            }
+
+    modelInstance['lastAlteredInput']  = originalInputFieldAddress
+    modelInstance['lastAlteredOutput'] = modelInstance['outputFieldAddress']
+
+    svg3dDisplayJSON = modelClass['svgDisplayDefs'].process(modelInstance)
+
+    transaction.commit()
+    
+    return {    "fieldName": modelInstance['outputFieldAddress'], 
+                "newValue": newOutputValue, 
+
+                "fieldValues": modelInstance.getJSInterface()['fieldValues'],
+
+                "choosableFields":    choosableFields,
+                "svg3dDisplayJSON":   svg3dDisplayJSON,
+                "bottomModelData":    bottomModelData,
+                "lastAlteredInput":   modelInstance['lastAlteredInput'],
+                "lastAlteredInputValue": modelInstance['inputSetter'].getValue(modelInstance),
+                "lastAlteredOutput":  modelInstance['lastAlteredOutput'],
+                "lastAlteredOutputValue": modelInstance['outputSetter'].getValue(modelInstance),
+            }
+  except:
+    pass
 
 @view_config(route_name="setBottomModel", renderer="json")
 def setBottomModel(request):
