@@ -175,6 +175,8 @@ def inputFieldAltered(request):
       print "Exception in setting input value: %s" % e
       valueFromInstance.append("inputField")
       valueFromInstance.append("newValue")
+    except ValueError as e:
+      print e
     try:
       outputField     = tuple(json.loads(request.params['outputField']))
       modelInstance['modelFieldAlteredSequence'].append(("output", outputField, None, time.time()))
