@@ -15,9 +15,15 @@
 
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     
-    <title>The Pyramid Web Framework</title>
-    <meta name="keywords"     content="python web application" />
-    <meta name="description"  content="pyramid web application" />
+    <title>ThisEqualsThat</title>
+  <meta property="og:image" content="https://visual.tools/static/graphics/og/og.visual.tools.thisEquals.logo.jpg"/>
+  <meta property="og:title" content="visual.tools - ThisEquals That"/>
+  <meta property="og:url"   content="https://visual.tools/thisEqualsThat"/>
+  <meta property="og:site_name" content="visual.tools"/>
+  <meta property="og:type"  content="education"/>
+
+  <meta property='og:image:width'  content="1200"/>
+  <meta property='og:image:height'  content="1200"/>
     
 
     <link rel="shortcut icon" href="/static/favicon.ico" />
