@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "//www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    
+    <title>Common Space Comments</title>
+  
+    
+
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.7/uuid.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+    <script type="text/javascript"   src="https://use.fontawesome.com/cee7f18682.js"></script>
+
+
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/theme.min.css">
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    
+    <!-- jquery   libraries -->
+    <link    rel="stylesheet"       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+   <!--  <script type="text/javascript"   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js" integrity="sha256-vwV2uHl48k90PixRkSltSxx+/4S8XhevXCrpaiJTGr8=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.ui.min.js" integrity="sha256-wDASuom6tG2Y97FEJuZU8GWLOpLqeR4WgyOt42cCX9g=" crossorigin="anonymous"></script>
+
+    <link    rel="stylesheet"       href="/static/css/navbar-fixed-side.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether-theme-basic.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/js/tether.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/css/tether-theme-arrows.min.css">
+
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css">
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.umd.min.js"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jqueryui-editable/css/jqueryui-editable.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jqueryui-editable/js/jqueryui-editable.min.js"></script>
+    <!-- <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script> -->
+    
+    
+
+
+    <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+
+    <script type="text/javascript"   src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>  
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/remodal/1.1.0/remodal.min.js"></script>
+
+    <!-- jqueryUI libraries -->
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+    <script type="text/javascript"   src="https://www.youtube.com/iframe_api"></script>
+
+    <link    rel="stylesheet"       href="/static/css/commonSpace_comments.css"/>
+    <script type="text/javascript"   src="/static/javascript/commonSpace_comments.js"></script>
+    <script type="text/javascript"   src="/static/javascript/visual.tools.jQuery.objects.js"></script>
+    <script type="text/javascript"   src="/static/javascript/visual.tools.bootstrap.objects.js"></script>
+
+    <link    rel="stylesheet"       href="/static/css/menu.css" type="text/css" media="screen" charset="utf-8">
+    
+    <!-- SVG3d -->
+    <script type="text/javascript"   src="/static/javascript/svg3d/dom_utils.js"></script>
+    <script type="text/javascript"   src="/static/javascript/svg3d/jquery_svg3d.js"></script>
+    <script type="text/javascript"   src="/static/javascript/svg3d/svg3d.js"></script>
+    <script type="text/javascript"   src="/static/javascript/svg3d/svg3d_parsing.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-textrange.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
+
+    <link    rel="stylesheet"       href="/static/css/jquery-comments.css"/>
+    <script  type="text/javascript"   src="/static/javascript/jquery-comments.min.js"></script>
+        
+  </head>
+
+  <body>
+    
+    <!--   <div id="wrap">
+        <div id="top">
+          <div class="top">
+            <div id="logo">
+              <img src="/static/graphics/thisEquals/this-equals-that.png" width="160" alt="pyramid"/>
+            </div>
+          </div>
+        </div>
+        <div id="thisEqualsThatSceneDiv">
+        </div>
+      </div> -->
+   <h3> Highlight some text to create a new comment set. <br>
+    Click on an existing highlight to see the existing comments</h3>
+   <div id="mainContent" class="mainContent">
+    CommonSpace columnist and Common Weal director Robin McAlpine says the indy movement must prioritise evidence over assumptions<br>
+<br>
+YOU know how everyone is regretting the Brexit vote, how public opinion across Britain is creeping to the realisation that 'we shouldn't have done this, it's all a mistake'? Well, it isn't.<br>
+<br>
+In fact, the evidence contained within that work suggests that most Leave voters are very happy with their vote and, in fact, it's Remain voters who are softening their position (one in five Remain voters say they've come to terms with the result, the same proportion as the one in five who say they are still depressed).<br>
+<br>
+I'm not awfully surprised about this. There were predictions of immediate economic collapse made by the Remain side which were, pound for pound, much more wrong than the claims about the NHS made by the Leavers. The immediate crisis didn't happen.<br>
+<br>
+One in five Remain voters say they've come to terms with the result, the same proportion as the one in five who say they are still depressed.
+Add to that the fact that generally people tend to normalise any change in their circumstances pretty quickly (the 'fait acomplis' effect) and it isn't hard to see why a lot of assumptions about public attitudes to Brexit may be wrong.<br>
+<br>
+Our generations seem to make more and more assumptions about what is 'true', or perhaps it's just that social media means we are better able to hear people's assumptions about what is 'true'. It is something of a companion to 'fake news' – many of us make statements on complex issues in short phrases which strip out the complexity.<br>
+<br>
+And these are then taken to be much more solid than they really are. I see an awful lot of partial restatement of polling data which to me looks like little more than confirmation bias. And for the independence movement I fear it is leading to some faulty thinking and analysis.<br>
+<br>
+Which is why Common Weal's paper on the polling trends on independence since 2014 are so interesting and important. Compiled by our head of research Craig Dalzell they raise some questions about what people have assumed.<br>
+<br>
+The one I think stands out most for me is the check on the regularly-stated assumption than in some way it is the higher income categories which are now crucial to whether we win Scottish independence or not.<br>
+    </div>
+  </body>
+</html>
