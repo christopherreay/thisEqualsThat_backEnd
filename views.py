@@ -775,7 +775,9 @@ def scottishParliament_updateSwings(context, request):
 
   return voteTree['seats']
 
-
+@view_config(route_name="commonSpace/comments", renderer="templates/commonSpace_comments.pt")
+def scottishParliament_votingModel(context, request):
+  return {};
 
 
 #yogesh
