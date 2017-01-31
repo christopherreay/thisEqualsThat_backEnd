@@ -2240,6 +2240,7 @@ toReturn['translate3d'].update(
             { "FieldOrder.preClone":
               { "orderList":
                 [ "groupHeader_Wood"          ,
+                  "#fieldInfo_Here be fascinating things about trees and stuff like that CO2 and Burnings and hangings too"               ,
                   "mass"                      ,
                   "volume"                    ,
                   "energy"                    ,
