@@ -1954,6 +1954,8 @@ toReturn['translate3d'].update(
                 ],
               },
             }
+          ,
+          displayName = "How Many",
         ) 
 
         PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
