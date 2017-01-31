@@ -704,7 +704,8 @@ class ModelInstance(Node):
     #if not 'jsInterface' in self:
     jsInterface = self['jsInterface'] = \
     { "id":     self['uuid'],
-      "fields": dict(fieldDefinitions)
+      "fields": dict(fieldDefinitions),
+      "displayName": self['modelClass']['displayName'] or self['modelClass']['name']
     }
     #more bottomModel stuff
     if boundInputField is not None:

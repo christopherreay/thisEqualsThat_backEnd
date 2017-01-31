@@ -59,8 +59,12 @@ def thisEqualsThat_bertonbeil(request):
 def getModelClasses(request):
   modelClasses  = request.root['modelClasses']
   ##ipdb.set_trace()
+  standard = []
+  for key in modelClasses.keys():
+    standard.append({"name":key, "displayName": modelClasses[key]['displayName'] if "displayName" in modelClasses[key] else modelClasses[key]['name']})
+
   jsonOutput    = \
-      { "standard": modelClasses.keys(),
+      { "standard": standard,
         "iframe":   request.root['iframeModelClasses']
       }
 
