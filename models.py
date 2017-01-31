@@ -2604,6 +2604,11 @@ toReturn['translate3d'].update(
         Coal = ModelClass(app_root, "Coal", 
             { "price": priceField,
               "energy": ClassField({ "name":        "energy", 
+                                
+                                "displayName":          "Coal",
+                                "displayIcon":          "size.svg",
+                                "description":          "How much energy on combustion", 
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     5000000, 
                                 "rangeBottom":             1, 
@@ -2620,6 +2625,11 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "mass":  ClassField({ "name":        "mass", 
+
+                                "displayName":          "Mass",
+                                "displayIcon":          "size.svg",
+                                "description":          "Mass of Coal (How Much)", 
+                                
                                 "fieldType":        "slider", 
                                 "defaultValue":     100, 
                                 "rangeBottom":             0.1, 
@@ -2637,6 +2647,11 @@ toReturn['translate3d'].update(
                                 }),
 
               "volume": ClassField({ "name":        "volume", 
+                                
+                                "displayName":          "Volume",
+                                "displayIcon":          "size.svg",
+                                "description":          "How big is the Coal", 
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.00000001, 
@@ -2655,6 +2670,10 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "massCO2": ClassField({ "name":        "massCO2", 
+                                "displayName":          "CO2",
+                                "displayIcon":          "size.svg",
+                                "description":          "How much CO2 produced on combustion", 
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.001, 
