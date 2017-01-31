@@ -2092,6 +2092,7 @@ toReturn['translate3d'].update(
               { "config":{},
               },
             },
+            displayName = "Percentage",
         )
 
         Wood = ModelClass(app_root, "Wood", 
@@ -2605,7 +2606,7 @@ toReturn['translate3d'].update(
             { "price": priceField,
               "energy": ClassField({ "name":        "energy", 
                                 
-                                "displayName":          "Coal",
+                                "displayName":          "Energy Burned",
                                 "displayIcon":          "size.svg",
                                 "description":          "How much energy on combustion", 
 
@@ -2690,6 +2691,11 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "singleCube": ClassField({ "name":        "singleCube", 
+
+                                "displayName":          "Single Cube Graphic",
+                                "displayIcon":          "size.svg",
+                                "description":          "this is an outputField that shows a cube",
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.001, 
@@ -2707,6 +2713,11 @@ toReturn['translate3d'].update(
                                 "svgComponent":         None
                                 }),
               "aluminiumCube": ClassField({ "name":        "aluminiumCube", 
+
+                                "displayName":          "Aluminum Cube",
+                                "displayIcon":          "size.svg",
+                                "description":          "This is an output field which renders as alu cubes",
+
                                 "fieldType":        "slider", 
                                 "defaultValue":     10, 
                                 "rangeBottom":        0.001, 
@@ -3039,7 +3050,8 @@ toReturn['translate3d'].update(
                   "groupHeader_Note:<br />You can change the Calculated Output Field below",
                 ],
               },
-            }
+            },
+            displayName = "How Much",
         )
 
 
@@ -3235,6 +3247,7 @@ toReturn['translate3d'].update(
     iframeModelClasses["Air Quality"] = \
         { "icon": "gas-mask.svg",
           "src" : "/static/threeJS/particle/particle.html",
+          "displayName" : "Particulate",
         }
     iframeModelClasses["Earth"] = \
         { "icon": "earth.svg",
