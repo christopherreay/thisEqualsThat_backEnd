@@ -2010,7 +2010,7 @@ toReturn['translate3d'].update(
                                 "selectableValues":     None, 
                                 "unit":                "number", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "unit",
+                                "unitSuffix":          "people",
                                 "inputField":           True, 
                                 "outputField":          False,
                                 "visualisationField":   False, 
