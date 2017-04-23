@@ -525,21 +525,16 @@ def googleConnect_getCellRange(context, request):
     print('An exception occurred: {}'.format(exception))
 
 
-@view_config(route_name="scottishParliament/votingModel", renderer="templates/scottishParliament_votingModel.pt")
+@view_config(route_name="votingModel/scotland/national", renderer="templates/scottishParliament_votingModel.pt")
 def scottishParliament_votingModel(context, request):
-  return {};
+  # ipdb.set_trace()
+  return {}
 
 @view_config(route_name="scottishParliament/data", renderer="json")
 def scottishParliament_data(context, request):
-  
-
-
-  
-
   # ipdb.set_trace()
 
   return {}
-  
 
 @view_config(route_name="scottishParliament/updateSwings", renderer="json")
 def scottishParliament_updateSwings(context, request):
@@ -780,13 +775,46 @@ def scottishParliament_updateSwings(context, request):
   return voteTree['seats']
 
 @view_config(route_name="commonSpace/comments", renderer="templates/commonSpace_comments.pt")
-def scottishParliament_votingModel(context, request):
-  return {};
+def commonSpace_comments(context, request):
+  # ipdb.set_trace()
+  return {}
 
 
 #yogesh
 @view_config(route_name="mapppm", renderer="templates/mapppm.pt")
 def mapppm(context, request):
   toReturn = {}
+
+
+#holochain
+#@view_config(route_name="holochain", renderer="templates/holochain.pt")
+#def mapppm(context, request):
+#  toReturn = {}
+
+
+#@view_config(route_name="holochain/projects", renderer="json")
+#def holochain_projects(request):
+#  projects = request['root']['holoProjects']
+#  toReturn = {}
+
+#@view_config(route_name="holochain/addProject", renderer="json")
+#def holochain_addProject(request):
+#  toReturn = {}
+
+#@view_config(route_name="holochain/loadProject", renderer="json")
+#def holochain_loadProject(request):
+#  toReturn = {}
+
+#@view_config(route_name="holochain/createServer", renderer="json")
+#def holochain_createServer(request):
+#  toReturn = {}
+
+#@view_config(route_name="holochain/destroyServer", renderer="json")
+#def holochain_loadProject(request):
+#  toReturn = {}
+
+#@view_config(route_name="holochain/refreshServers", renderer="json")
+#def holochain_loadProject(request):
+#  toReturn = {}
 
   return toReturn
