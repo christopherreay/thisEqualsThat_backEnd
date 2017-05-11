@@ -3247,7 +3247,7 @@ toReturn['translate3d'].update(
         { "icon": "seesaw.svg",
           "src" : "/static/threeJS/seesaw/seesaw.html",
         }
-    iframeModelClasses["Air Quality"] = \
+    iframeModelClasses["Particle"] = \
         { "icon": "gas-mask.svg",
           "src" : "/static/threeJS/particle/particle.html",
           "displayName" : "Particulate",
@@ -3255,6 +3255,10 @@ toReturn['translate3d'].update(
     iframeModelClasses["Earth"] = \
         { "icon": "earth.svg",
           "src" : "/static/threeJS/globe/index.html",
+        }
+    iframeModelClasses["Box"] = \
+        { "icon": "earth.svg",
+          "src" : "/static/threeJS/box/box.html",
         }
 
     transaction.commit()
