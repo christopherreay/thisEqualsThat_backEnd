@@ -33,6 +33,8 @@ def main(global_config, **settings):
     config.add_route("thisEqualsThat_iframe",     "/thisEqualsThat_iframe")
     config.add_route("thisEqualsThat_bertonbeil", "/thisEqualsThat_bertonbeil")
 
+    config.add_route("blueprintByName",            "/blueprint/{blueprintName}")
+
     config.add_route("testData",                  "/testData")
     
     config.add_route("inputFieldAltered",         "/inputFieldAltered")
