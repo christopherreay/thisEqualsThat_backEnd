@@ -44,7 +44,7 @@ def main(global_config, **settings):
     
     config.add_route("initialise",                "/intialise")
 
-    config.add_route("getEmbedURL",               "/getEmbedURL")
+    config.add_route("saveInfogram",               "/saveInfogram")
     config.add_route("getVisualisation",          "/getVisualisation/{uuid}")
     config.add_route("getSVGData",                "/getSVGData/{uuid}")
 

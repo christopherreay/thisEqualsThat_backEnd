@@ -92,13 +92,14 @@ def getClassInstance(request):
   transaction.commit()
   return jsonOutput
 
-@view_config(route_name="getEmbedURL", renderer="json")
-def getEmbedURL(request):
+@view_config(route_name="saveInfogram", renderer="json")
+def saveInfogram(request):
   ipdb.set_trace()
 
-  titleInput        = request.params['titleInput']
-  toggleFeatures    = json.loads(request.params['toggleFeatures'])
-  svg 			 	      = request.params["svg"]
+  #this functionality should be added at some point
+  #titleInput        = request.params['titleInput']
+  #toggleFeatures    = json.loads(request.params['toggleFeatures'])
+  #svg 			 	      = request.params["svg"]
 
   
   newModelInstance  = copyClassInstance(request)
@@ -106,23 +107,27 @@ def getEmbedURL(request):
   uuid              = newModelInstance['uuid']
 
 
-  newModelInstance['svg'] = svg
+  # maybe, maybe not
+  #newModelInstance['svg'] = svg
 
   transaction.commit()
 
-  with open(os.path.join(os.path.dirname(__file__), "visualisations", "svg", "%s.svg" % (uuid, ) ) , "w") as svgFile:
-    svgFile.write(svg)
+  # with open(os.path.join(os.path.dirname(__file__), "visualisations", "svg", "%s.svg" % (uuid, ) ) , "w") as svgFile:
+  #   svgFile.write(svg)
 
   #### Write a file to the filesystem and then nginx can serve it directly. Give that URL, including the UUID
   ####  various possiblities
 
-  # toReturn = {}
+  toReturn = {}
+  toReturn["infogramID"] = uuid
+
+  return toReturn
 
   # toReturn['uuid'] = newModelInstance['uuid']
   
   # # add query string arguments for title and axes etc
   # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
-  return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
+  #return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
 
 @view_config(route_name="getVisualisation")
 def getVisualisation(request):
@@ -144,14 +149,13 @@ def getSVGData(request):
   return res
 
 
-def copyClassInstance(request):
-  modelInstanceUUID   = request.params['modelInstanceUUID']
+def copyClassInstance(modelInstanceUUID, request):
   modelInstance       = request.root['modelInstances'][modelInstanceUUID]
   modelClass          = modelInstance['modelClass']
 
   urlData                       = modelInstance.getCanonicalURLJSON()
-  urlData['outputField']        = modelInstance['lastAlteredOutput']
-  urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
+  #urlData['outputField']        = modelInstance['lastAlteredOutput']
+  #urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
 
   newModelInstance = modelClass.getModelInstance(request.root['savedModelInstances'])
   newModelInstance.setFieldValues(urlData['fieldValues'])
