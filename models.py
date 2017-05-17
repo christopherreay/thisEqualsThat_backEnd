@@ -912,8 +912,8 @@ class ModelClass(Node):
       fieldDefinitions  = self['fieldDefinitions']
       fieldBranches     = self['fieldBranches']
     else:
-      fieldDefinitions = {}
-      fieldBranches    = {}
+      fieldDefinitions = PersistentMapping()
+      fieldBranches    = PersistentMapping()
       
       for (fieldName, field) in self['fields'].items():
         fieldDefinition = field['field']
