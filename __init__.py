@@ -9,7 +9,9 @@ def root_factory(request):
     conn = get_connection(request)
     savedModelInstancesConn = get_connection(request, "savedModelInstances")
     #print "Running Appmaker"
-    return appmaker(conn.root(), savedModelInstancesConn.root())
+    app = appmaker(conn.root(), savedModelInstancesConn.root())
+
+    return app 
 
 
 def main(global_config, **settings):

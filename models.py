@@ -396,7 +396,7 @@ class DynamicDataSet(Node):
           columnValues.append(columnValue)
   def buildSelectInputFields(self):
     dataContainer = self
-    newFieldDefinitions = {}
+    newFieldDefinitions = OD()
     for fieldName in self['selectInputFieldNames']:
       fieldValues = list(self['selectInputFieldValues'][fieldName])
       selectFieldValuesDict = {}
@@ -881,6 +881,7 @@ class ModelClass(Node):
       for (fieldName, fieldBranch) in self['fields'].items():
         fieldBranch.initialise(root, address + (fieldName,))
     if root==self:
+      self.getFieldDefinitions()
       root['initialised'] = True
       
   def getInputSetter(self, inputFieldAddress):
@@ -908,7 +909,7 @@ class ModelClass(Node):
     if root == None:
       root = self
     
-    if root == self and "fieldDefinitions" in self:
+    if root == self and "fieldDefinitionsRanAsRoot" in self:
       fieldDefinitions  = self['fieldDefinitions']
       fieldBranches     = self['fieldBranches']
     else:
@@ -921,7 +922,11 @@ class ModelClass(Node):
         fullAddress     = json.dumps(fieldAddress)
         ##ipdb.set_trace()
         
+        if "data" not in fieldDefinition.__dict__:
+          ipdb.set_trace()
+
         fieldDefinitions[fullAddress] = fieldDefinition.__dict__['data']
+
         fieldDefinitions[fullAddress]['displayFieldAddress'] = \
             field['classData'].getValue(root, "displayFieldAddress")
         fieldDefinitions[fullAddress]['fullAddress'] = fullAddress
@@ -935,6 +940,9 @@ class ModelClass(Node):
       if self == root:
         self['fieldDefinitions']  = PersistentMapping(fieldDefinitions)
         self['fieldBranches']     = PersistentMapping(fieldBranches)
+
+        self['fieldDefinitionsRanAsRoot'] = True
+
         transaction.commit()
 
     return (fieldDefinitions, fieldBranches)
@@ -1070,7 +1078,7 @@ class SVGDisplayDefs(Node):
     print "\n\nProcessing visualisation path"
     print "  from: %s to %s" % (modelInstance['lastAlteredOutput'], modelInstance['lastAlteredVisualisation'])
 
-    context = {}
+    context = OD()
     modelClass = modelInstance['modelClass']
         
     output_to_valueQuantise_Dict = getAddressOrDefault(self['svgDefinitions'], modelInstance['lastAlteredVisualisation'])
@@ -1121,13 +1129,13 @@ class SVGDisplayDefs(Node):
       if "postProcessing" in svgDisplayDef:
         postProcessing = dict(svgDisplayDef['postProcessing'])
       else:
-        postProcessing = {}
+        postProcessing = OD()
 
-      svgHUD = {}
+      svgHUD = OD()
       if "svgHUD" in svgDisplayDef:
         svgHUD = svgDisplayDef['svgHUD']
 
-      # inputFieldHUD = {}
+      # inputFieldHUD = OD()
       # if "inputFieldHUD" in svgDisplayDef:
       #   inputFieldHUD = svgDisplayDef['inputFieldHUD']
 
@@ -1165,7 +1173,7 @@ class SVGDisplayDefs(Node):
         svgDisplayDef = __svgDisplayDef
         break
 
-    svgDisplayJSDict = {}
+    svgDisplayJSDict = OD()
     if not svgDisplayDef == False:
       svgDisplayJSDict = svgDisplayDef.process(self['modelClass'], self['modelInstance'], outputFieldAddress, outputFieldValue)
     
@@ -1245,7 +1253,7 @@ def appmaker(zodb_root, savedModelInstances_root):
 
         users                       = app_root['users']               = Users()
         
-        representations = {}
+        representations = OD()
 
         representations["Barrels of Oil"] = \
             OD(       { "class": "cloneable",
@@ -1859,7 +1867,7 @@ toReturn['translate3d'].update(
 
              
         # ofWhatSelectDict = {k: v for k, v in representations.iteritems() if "cloneable" in v["class"]}
-        ofWhatRepDict = {}
+        ofWhatRepDict = OD()
         for (key, rep) in representations.items():
           if ("cloneable" in rep['class'] ):
             normalisedRep         = copy.deepcopy(rep)
@@ -1877,7 +1885,7 @@ toReturn['translate3d'].update(
                                                                         },         
                                                                       }
             ofWhatRepDict[key] = normalisedRep
-        ofWhatSelectDict = {}
+        ofWhatSelectDict = OD()
         for key in ofWhatRepDict.keys():
           ofWhatSelectDict[key] = key
 
@@ -2027,7 +2035,7 @@ toReturn['translate3d'].update(
                                 "displayIcon":          "grid.svg",
                                 "description":          "Contains a table of data used to generate the diagram",
                                 "fieldType":          "text", 
-                                "defaultValue":       {}, 
+                                "defaultValue":       PersistentMapping(), 
                                 "rangeBottom":             0, 
                                 "rangeTop":             100, 
                                 "rangeType":           "linear",
@@ -2093,7 +2101,7 @@ toReturn['translate3d'].update(
                 },
               },
               "RatioColor.postColor":
-              { "config":{},
+              { "config":PersistentMapping(),
               },
             },
             displayName = "Percentage",
@@ -2395,7 +2403,7 @@ toReturn['translate3d'].update(
               #                     }
 
             },
-            {},
+            OD(),
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume_frozen", ),
                     "svgDisplayDefByValue": representations["Kier Bales Logo"],
@@ -2923,7 +2931,7 @@ toReturn['translate3d'].update(
                                             "toReturn = !!mass per person!!  * !!number of people!!",
                                   },
             },
-            {},
+            OD(),
             {   "__default" :
                 { 
                   "modelOutputField_forSVGConversion" : ("number of people", ),
@@ -3139,7 +3147,7 @@ toReturn['translate3d'].update(
 #               "outputTable": ClassField({ 
 #                                 "name":               "outputTable", 
 #                                 "fieldType":          "text", 
-#                                 "defaultValue":       {}, 
+#                                 "defaultValue":       OD(), 
 #                                 "rangeBottom":             0, 
 #                                 "rangeTop":             100, 
 #                                 "rangeType":           "linear",
@@ -3266,17 +3274,25 @@ toReturn['translate3d'].update(
     #coal = Coal("coal", appRoot)
     #appRoot['coal'] = coal
     
-    print "savedModelInstances"
-    print savedModelInstances_root['app_root']['savedModelInstances'].keys()
-    for savedModelInstance in savedModelInstances_root['app_root']['savedModelInstances']:
-      if savedModelInstance not in zodb_root['app_root']['savedModelInstances']:
-        zodb_root['app_root']['savedModelInstances'][savedModelInstance] = savedModelInstances_root['app_root']['savedModelInstances'][savedModelInstance]
-        print "copied %s from backup to new storage" % ( savedModelInstance ,)
-    print
+    # import copy
+
+    # print "savedModelInstances"
+    # print savedModelInstances_root['app_root']['savedModelInstances'].keys()
+    # for savedModelInstance in savedModelInstances_root['app_root']['savedModelInstances']:
+    #   if savedModelInstance not in zodb_root['app_root']['savedModelInstances']:
+    #     copiedSavedModelInstance = copy.deepcopy(savedModelInstances_root['app_root']['savedModelInstances'][savedModelInstance])
+    #     zodb_root['app_root']['savedModelInstances'][savedModelInstance] = copiedSavedModelInstance
+    #     copiedSavedModelInstance['modelClass'] = zodb_root['app_root']['modelClasses'][ copiedSavedModelInstance['modelClass']['name'] 
+    #     print "copied %s from backup to new storage" % ( savedModelInstance ,)
+    # print
 
     transaction.commit()
 
     return zodb_root['app_root']
+
+    # return { "mainDB": zodb_root['app_root'],
+    #          "savedModelInstances": savedModelInstances_root['app_root'],
+    #        }
 
 
     
