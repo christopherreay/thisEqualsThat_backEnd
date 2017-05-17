@@ -94,7 +94,7 @@ def getClassInstance(request):
 
 @view_config(route_name="saveInfogram", renderer="json")
 def saveInfogram(request):
-  ipdb.set_trace()
+  # ipdb.set_trace()
 
   #this functionality should be added at some point
   #titleInput        = request.params['titleInput']
@@ -103,7 +103,7 @@ def saveInfogram(request):
 
   modelInstanceUUID = request.params["modelInstanceUUID"]
 
-  newModelInstance  = copyClassInstance(modelInstanceUUID, request)
+  newModelInstance  = copyClassInstance(modelInstanceUUID, request, request.root['modelInstances'], request.root['savedModelInstances'])
   
   uuid              = newModelInstance['uuid']
 
@@ -122,6 +122,8 @@ def saveInfogram(request):
   toReturn = {}
   toReturn["infogramID"] = uuid
 
+
+  print toReturn
   return toReturn
 
   # toReturn['uuid'] = newModelInstance['uuid']
@@ -132,22 +134,20 @@ def saveInfogram(request):
 
 @view_config(route_name="getInfogramByID", renderer="json")
 def getInfogramByID(request):
-  # f6de2154f6fb4ee0ab24e16990e637f
-  infogramID = request.params["infogramID"]
+  # bb3233ea051545fd80fa3b88a83d8136
+  infogramID = request.matchdict["infogramID"]
 
-  modeInstance      = request.root['savedModelInstances'][infogramID]
+  # ipdb.set_trace()
 
-  newModelInstance  = copyClassInstance(infogramID, request)
-  newUUID = newModelInstance['uuid']
-
-  request.root['modelInstances'][newUUID] = request.root['savedModelInstances'][newUUID]
-  del request.root['savedModelInstances'][newUUID]
+  newModelInstance  = copyClassInstance(infogramID, request, request.root['savedModelInstances'], request.root['modelInstances'])
 
   modelInstanceInterface = newModelInstance.getJSInterface()
 
   jsOutput = [ modelInstanceInterface ]
 
   transaction.commit()
+
+  print uuid
   return jsOutput
 
 
@@ -171,16 +171,17 @@ def getSVGData(request):
   return res
 
 
-def copyClassInstance(modelInstanceUUID, request):
-  modelInstance       = request.root['modelInstances'][modelInstanceUUID]
+def copyClassInstance(modelInstanceUUID, request, fromDict, toDict):
+  modelInstance       = fromDict[modelInstanceUUID]
   modelClass          = modelInstance['modelClass']
 
   urlData                       = modelInstance.getCanonicalURLJSON()
   #urlData['outputField']        = modelInstance['lastAlteredOutput']
   #urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
 
-  newModelInstance = modelClass.getModelInstance(request.root['savedModelInstances'])
+  newModelInstance          = modelClass.getModelInstance(toDict)
   newModelInstance.setFieldValues(urlData['fieldValues'])
+  
   newModelInstance['lastAlteredInput']          = modelInstance['lastAlteredInput']
   newModelInstance['lastAlteredOutput']         = modelInstance['lastAlteredOutput']
   newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']

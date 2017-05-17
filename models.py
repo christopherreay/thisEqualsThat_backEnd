@@ -737,7 +737,7 @@ class ModelInstance(Node):
     return urlData
 
   def setFieldValues(self, fieldValues):
-    ipdb.set_trace()
+    # ipdb.set_trace()
 
     (fieldDefinitions, fieldBranches) = self['modelClass'].getFieldDefinitions()
     for (fieldName, fieldBranch) in fieldBranches.items():

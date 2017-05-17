@@ -45,7 +45,7 @@ def main(global_config, **settings):
     config.add_route("initialise",                "/intialise")
 
     config.add_route("saveInfogram",               "/saveInfogram")
-    config.add_route("getInfogramById",            "/getInfogramById")
+    config.add_route("getInfogramByID",            "/infogram/{infogramID}")
     config.add_route("getVisualisation",          "/getVisualisation/{uuid}")
     config.add_route("getSVGData",                "/getSVGData/{uuid}")
 
