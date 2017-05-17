@@ -130,6 +130,27 @@ def saveInfogram(request):
   # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
   #return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
 
+@view_config(route_name="getInfogramByID", renderer="json")
+def getInfogramByID(request):
+  # f6de2154f6fb4ee0ab24e16990e637f
+  infogramID = request.params["infogramID"]
+
+  modeInstance      = request.root['savedModelInstances'][infogramID]
+
+  newModelInstance  = copyClassInstance(infogramID, request)
+  newUUID = newModelInstance['uuid']
+
+  request.root['modelInstances'][newUUID] = request.root['savedModelInstances'][newUUID]
+  del request.root['savedModelInstances'][newUUID]
+
+  modelInstanceInterface = newModelInstance.getJSInterface()
+
+  jsOutput = [ modelInstanceInterface ]
+
+  transaction.commit()
+  return jsOutput
+
+
 @view_config(route_name="getVisualisation")
 def getVisualisation(request):
 
@@ -165,7 +186,8 @@ def copyClassInstance(modelInstanceUUID, request):
   newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']
 
   return newModelInstance
-  
+
+
 @view_config(route_name="inputFieldAltered", renderer="json")
 def inputFieldAltered(request):
   try:
