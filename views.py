@@ -128,8 +128,13 @@ def saveInfogram(request):
   toReturn["infogramID"] = newModelInstance['uuid']
 
   print 
-  print "saveInfogram:"
-  print toReturn
+  print "saveInfogram: %s" % ( toReturn, )
+  print "saved: "
+  print newModelInstance
+  print 
+  print 
+  print "loaded: "
+  print request.root['savedModelInstances'][newModelInstance['uuid']]
   print 
   return toReturn
 
@@ -163,6 +168,23 @@ def getInfogramByID(request):
   return jsOutput
 
 
+def copyClassInstance(modelInstanceUUID, request, fromDict, toDict):
+  modelInstance       = fromDict[modelInstanceUUID]
+  modelClass          = modelInstance['modelClass']
+
+  urlData                       = modelInstance.getCanonicalURLJSON()
+  #urlData['outputField']        = modelInstance['lastAlteredOutput']
+  #urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
+
+  newModelInstance          = modelClass.getModelInstance(toDict)
+  newModelInstance.setFieldValues(urlData['fieldValues'])
+  
+  newModelInstance['lastAlteredInput']          = modelInstance['lastAlteredInput']
+  newModelInstance['lastAlteredOutput']         = modelInstance['lastAlteredOutput']
+  newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']
+
+  return newModelInstance
+
 @view_config(route_name="getVisualisation")
 def getVisualisation(request):
 
@@ -183,22 +205,6 @@ def getSVGData(request):
   return res
 
 
-def copyClassInstance(modelInstanceUUID, request, fromDict, toDict):
-  modelInstance       = fromDict[modelInstanceUUID]
-  modelClass          = modelInstance['modelClass']
-
-  urlData                       = modelInstance.getCanonicalURLJSON()
-  #urlData['outputField']        = modelInstance['lastAlteredOutput']
-  #urlData['visualisationField'] = modelInstance['lastAlteredVisualisation']
-
-  newModelInstance          = modelClass.getModelInstance(toDict)
-  newModelInstance.setFieldValues(urlData['fieldValues'])
-  
-  newModelInstance['lastAlteredInput']          = modelInstance['lastAlteredInput']
-  newModelInstance['lastAlteredOutput']         = modelInstance['lastAlteredOutput']
-  newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']
-
-  return newModelInstance
 
 
 @view_config(route_name="inputFieldAltered", renderer="json")
@@ -226,6 +232,10 @@ def inputFieldAltered(request):
       print "Exception in setting input value: %s" % e
       valueFromInstance.append("inputField")
       valueFromInstance.append("newValue")
+
+      inputField = modelInstance['lastAlteredInput']
+      modelInstance.getInputSetter(inputField)
+
     except ValueError as e:
       print e
     try:
