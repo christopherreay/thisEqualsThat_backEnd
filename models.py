@@ -17,7 +17,6 @@ import math
 
 #dynamic data sets
 from datetime import datetime
-import time
 import requests
 
 def isalambda(v):
@@ -921,9 +920,7 @@ class ModelClass(Node):
         fieldAddress    = field['classData'].getValue(root, "fieldAddress")
         fullAddress     = json.dumps(fieldAddress)
         ##ipdb.set_trace()
-        while "__dict__" not in fieldDefinition:
-          time.sleep(0.1)
-
+        
         fieldDefinitions[fullAddress] = fieldDefinition.__dict__['data']
         fieldDefinitions[fullAddress]['displayFieldAddress'] = \
             field['classData'].getValue(root, "displayFieldAddress")
