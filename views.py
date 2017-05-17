@@ -101,8 +101,9 @@ def saveInfogram(request):
   #toggleFeatures    = json.loads(request.params['toggleFeatures'])
   #svg 			 	      = request.params["svg"]
 
-  
-  newModelInstance  = copyClassInstance(request)
+  modelInstanceUUID = request.params["modelInstanceUUID"]
+
+  newModelInstance  = copyClassInstance(modelInstanceUUID, request)
   
   uuid              = newModelInstance['uuid']
 
