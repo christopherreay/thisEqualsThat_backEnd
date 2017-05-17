@@ -7,8 +7,9 @@ import time
 
 def root_factory(request):
     conn = get_connection(request)
+    savedModelInstancesConn = get_connection(request, "savedModelInstances")
     #print "Running Appmaker"
-    return appmaker(conn.root())
+    return appmaker(conn.root(), savedModelInstancesConn.root())
 
 
 def main(global_config, **settings):
@@ -45,8 +46,8 @@ def main(global_config, **settings):
 
     config.add_route("initialise",                "/intialise")
 
-    config.add_route("saveInfogram",               "/saveInfogram")
-    config.add_route("getInfogramByID",            "/getInfogramByID")
+    config.add_route("saveInfogram",              "/saveInfogram")
+    config.add_route("getInfogramByID",           "/getInfogramByID")
     config.add_route("getVisualisation",          "/getVisualisation/{uuid}")
     config.add_route("getSVGData",                "/getSVGData/{uuid}")
 

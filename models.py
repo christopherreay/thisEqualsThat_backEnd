@@ -1231,7 +1231,7 @@ class cuboidRep(Node):
     volumeToHeightEquation = """toReturn = math.pow(svgFieldValue / (normalisedWidth * normalisedDepth), 1.0/3)"""
 
   
-def appmaker(zodb_root):
+def appmaker(zodb_root, savedModelInstances_root):
     #print "Starting App"
     if not 'app_root' in zodb_root:
         print "...building new database"
@@ -3229,7 +3229,6 @@ toReturn['translate3d'].update(
         for (modelClassName, modelClass) in modelClasses.items():
           modelClass.initialise()  
         
-        
 
         transaction.commit()
         
@@ -3263,12 +3262,22 @@ toReturn['translate3d'].update(
           "src" : "/static/threeJS/box/box.html",
         }
 
-    transaction.commit()
-
     #appRoot['coalPowerStation'] = ModelClass()
     #coal = Coal("coal", appRoot)
     #appRoot['coal'] = coal
     
+    print "savedModelInstances"
+    print savedModelInstances_root['app_root']['savedModelInstances'].keys()
+    for savedModelInstance in savedModelInstances_root['app_root']['savedModelInstances']:
+      if savedModelInstance not in zodb_root['app_root']['savedModelInstances']:
+        zodb_root['app_root']['savedModelInstances'][savedModelInstance] = savedModelInstances_root['app_root']['savedModelInstances'][savedModelInstance]
+        print "copied %s from backup to new storage" % ( savedModelInstance ,)
+    print
+
+    transaction.commit()
+
     return zodb_root['app_root']
+
+
     
 
