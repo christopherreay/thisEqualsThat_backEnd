@@ -33,7 +33,8 @@ def main(global_config, **settings):
     config.add_route("thisEqualsThat_iframe",     "/thisEqualsThat_iframe")
     config.add_route("thisEqualsThat_bertonbeil", "/thisEqualsThat_bertonbeil")
 
-    config.add_route("blueprintByName",            "/blueprint/{blueprintName}")
+    config.add_route("blueprintByName",           "/blueprint/{blueprintName}")
+    config.add_route("infogramByID",              "/infogram/{infogramID}")
 
     config.add_route("testData",                  "/testData")
     
@@ -41,11 +42,11 @@ def main(global_config, **settings):
     config.add_route("getModelClasses",           "/getModelClasses")
     config.add_route("getClassInstance",          "/getClassInstance")
     config.add_route("setBottomModel",            "/setBottomModel")
-    
+
     config.add_route("initialise",                "/intialise")
 
     config.add_route("saveInfogram",               "/saveInfogram")
-    config.add_route("getInfogramByID",            "/infogram/{infogramID}")
+    config.add_route("getInfogramByID",            "/getInfogramByID")
     config.add_route("getVisualisation",          "/getVisualisation/{uuid}")
     config.add_route("getSVGData",                "/getSVGData/{uuid}")
 

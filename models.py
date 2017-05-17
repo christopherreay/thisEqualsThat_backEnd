@@ -703,7 +703,8 @@ class ModelInstance(Node):
     ##ipdb.set_trace()    
     #if not 'jsInterface' in self:
     jsInterface = self['jsInterface'] = \
-    { "id":     self['uuid'],
+    { "id":         self['uuid'],
+      "modelClass": self['modelClass']['name'],
       "fields": dict(fieldDefinitions),
     }
     #more bottomModel stuff

@@ -54,6 +54,13 @@ def blueprintByName(request):
     print request.matchdict["blueprintName"]
     return {'project': 'thisEqualsThat'}
 
+@view_config(route_name='infogramByID',             renderer='templates/thisEqualsThat.pt')
+def infogramByID(request):
+    print ""
+    print "InfogramID:"
+    print request.matchdict["infogramID"]
+    return {'project': 'thisEqualsThat'}
+
 @view_config(route_name='thisEqualsThat_iframe',      renderer='templates/thisEqualsThat_iframe.pt')
 def thisEqualsThat_iframe(request):
     return {'project': 'thisEqualsThat'}
@@ -105,8 +112,6 @@ def saveInfogram(request):
 
   newModelInstance  = copyClassInstance(modelInstanceUUID, request, request.root['modelInstances'], request.root['savedModelInstances'])
   
-  uuid              = newModelInstance['uuid']
-
 
   # maybe, maybe not
   #newModelInstance['svg'] = svg
@@ -120,10 +125,12 @@ def saveInfogram(request):
   ####  various possiblities
 
   toReturn = {}
-  toReturn["infogramID"] = uuid
+  toReturn["infogramID"] = newModelInstance['uuid']
 
-
+  print 
+  print "saveInfogram:"
   print toReturn
+  print 
   return toReturn
 
   # toReturn['uuid'] = newModelInstance['uuid']
@@ -135,7 +142,7 @@ def saveInfogram(request):
 @view_config(route_name="getInfogramByID", renderer="json")
 def getInfogramByID(request):
   # bb3233ea051545fd80fa3b88a83d8136
-  infogramID = request.matchdict["infogramID"]
+  infogramID = request.params["infogramID"]
 
   # ipdb.set_trace()
 
@@ -147,7 +154,12 @@ def getInfogramByID(request):
 
   transaction.commit()
 
-  print uuid
+  print
+  print "getInfogramByID: %s" % (modelInstanceInterface['id'], )
+  print
+  print jsOutput
+  print 
+
   return jsOutput
 
 
