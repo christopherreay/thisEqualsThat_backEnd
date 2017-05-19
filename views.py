@@ -126,8 +126,9 @@ def saveInfogram(request):
   ####  various possiblities
 
   toReturn = {}
-  toReturn["infogramID"]  = newModelInstance['uuid']
-  toReturn["infogramURL"] = "https://visual.tools/infogram/%s" % (newModelInstance['uuid'] , )
+  toReturn["infogramID"]    = newModelInstance['uuid']
+  toReturn["infogramURL"]   = "https://visual.tools/infogram/%s" % (newModelInstance['uuid'] , )
+  toReturn["infogramPath"]  = "/infogram/%s" % (newModelInstance['uuid'] , )
 
   print 
   print "saveInfogram: %s" % ( toReturn, )
