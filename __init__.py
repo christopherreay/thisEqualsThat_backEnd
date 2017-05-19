@@ -50,6 +50,9 @@ def main(global_config, **settings):
 
     config.add_route("saveInfogram",              "/saveInfogram")
     config.add_route("getInfogramByID",           "/getInfogramByID")
+
+    config.add_route("saveSVG",                   "/saveSVG")
+
     config.add_route("getVisualisation",          "/getVisualisation/{uuid}")
     config.add_route("getSVGData",                "/getSVGData/{uuid}")
 

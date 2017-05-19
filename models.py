@@ -396,7 +396,7 @@ class DynamicDataSet(Node):
           columnValues.append(columnValue)
   def buildSelectInputFields(self):
     dataContainer = self
-    newFieldDefinitions = OD()
+    newFieldDefinitions = {}
     for fieldName in self['selectInputFieldNames']:
       fieldValues = list(self['selectInputFieldValues'][fieldName])
       selectFieldValuesDict = {}
@@ -1078,7 +1078,7 @@ class SVGDisplayDefs(Node):
     print "\n\nProcessing visualisation path"
     print "  from: %s to %s" % (modelInstance['lastAlteredOutput'], modelInstance['lastAlteredVisualisation'])
 
-    context = OD()
+    context = {}
     modelClass = modelInstance['modelClass']
         
     output_to_valueQuantise_Dict = getAddressOrDefault(self['svgDefinitions'], modelInstance['lastAlteredVisualisation'])
@@ -1129,13 +1129,13 @@ class SVGDisplayDefs(Node):
       if "postProcessing" in svgDisplayDef:
         postProcessing = dict(svgDisplayDef['postProcessing'])
       else:
-        postProcessing = OD()
+        postProcessing = {}
 
-      svgHUD = OD()
+      svgHUD = {}
       if "svgHUD" in svgDisplayDef:
         svgHUD = svgDisplayDef['svgHUD']
 
-      # inputFieldHUD = OD()
+      # inputFieldHUD = {}
       # if "inputFieldHUD" in svgDisplayDef:
       #   inputFieldHUD = svgDisplayDef['inputFieldHUD']
 
@@ -1173,7 +1173,7 @@ class SVGDisplayDefs(Node):
         svgDisplayDef = __svgDisplayDef
         break
 
-    svgDisplayJSDict = OD()
+    svgDisplayJSDict = {}
     if not svgDisplayDef == False:
       svgDisplayJSDict = svgDisplayDef.process(self['modelClass'], self['modelInstance'], outputFieldAddress, outputFieldValue)
     
@@ -1253,7 +1253,7 @@ def appmaker(zodb_root, savedModelInstances_root):
 
         users                       = app_root['users']               = Users()
         
-        representations = OD()
+        representations = {}
 
         representations["Barrels of Oil"] = \
             OD(       { "class": "cloneable",
@@ -1867,7 +1867,7 @@ toReturn['translate3d'].update(
 
              
         # ofWhatSelectDict = {k: v for k, v in representations.iteritems() if "cloneable" in v["class"]}
-        ofWhatRepDict = OD()
+        ofWhatRepDict = {}
         for (key, rep) in representations.items():
           if ("cloneable" in rep['class'] ):
             normalisedRep         = copy.deepcopy(rep)
@@ -1885,7 +1885,7 @@ toReturn['translate3d'].update(
                                                                         },         
                                                                       }
             ofWhatRepDict[key] = normalisedRep
-        ofWhatSelectDict = OD()
+        ofWhatSelectDict = {}
         for key in ofWhatRepDict.keys():
           ofWhatSelectDict[key] = key
 
@@ -2035,7 +2035,7 @@ toReturn['translate3d'].update(
                                 "displayIcon":          "grid.svg",
                                 "description":          "Contains a table of data used to generate the diagram",
                                 "fieldType":          "text", 
-                                "defaultValue":       PersistentMapping(), 
+                                "defaultValue":       {}, 
                                 "rangeBottom":             0, 
                                 "rangeTop":             100, 
                                 "rangeType":           "linear",
@@ -2101,7 +2101,7 @@ toReturn['translate3d'].update(
                 },
               },
               "RatioColor.postColor":
-              { "config":PersistentMapping(),
+              { "config": {},
               },
             },
             displayName = "Percentage",
@@ -2403,7 +2403,7 @@ toReturn['translate3d'].update(
               #                     }
 
             },
-            OD(),
+            {},
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume_frozen", ),
                     "svgDisplayDefByValue": representations["Kier Bales Logo"],
@@ -2931,7 +2931,7 @@ toReturn['translate3d'].update(
                                             "toReturn = !!mass per person!!  * !!number of people!!",
                                   },
             },
-            OD(),
+            {},
             {   "__default" :
                 { 
                   "modelOutputField_forSVGConversion" : ("number of people", ),

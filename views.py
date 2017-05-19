@@ -17,6 +17,7 @@ import transaction, json
 
 import httplib2
 import os
+import urllib
 import time
 
 from apiclient import discovery
@@ -143,6 +144,35 @@ def saveInfogram(request):
   # # add query string arguments for title and axes etc
   # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
   #return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
+@view_config(route_name="saveSVG", renderer="json")
+def saveSVG(request):
+  # ipdb.set_trace()
+
+  svgToSave           = request.params['svgToSave']
+  svgTextDescription  = re.sub("[^A-Za-z0-9_-]", "_", request.params['svgTextDescription']  )
+  modelOutputField    = re.sub("[^A-Za-z0-9_-]", "_", request.params['modelOutputField']    )
+  modelOutputValue    = re.sub("[^A-Za-z0-9_-]", "_", request.params['modelOutputValue']    )
+
+  readableFileName    = "%s____%s__%s" % (svgTextDescription, modelOutputField, modelOutputValue)
+  readableFileName    = readableFileName.replace(" ", "_")
+  readableFileName    = urllib.quote_plus(readableFileName)
+
+  thisFileDir = os.path.dirname(os.path.realpath(__file__))
+  # find a free uuid filename
+  svgFilename = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
+  filename    = os.path.join(thisFileDir, "static", "print", "svg", svgFilename)
+  while (os.path.isfile(filename) ):
+    svgFilename = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
+    filename    = os.path.join(thisFileDir, "static", "print", "svg", svgFilename)
+
+  with open(filename, "w") as svgServerFile:
+    svgServerFile.write(svgToSave)
+
+  svgURL = "https://visual.tools/print/svg/%s" % ( svgFilename, )
+
+  return { "svgURL": svgURL }
+
+
 
 @view_config(route_name="getInfogramByID", renderer="json")
 def getInfogramByID(request):

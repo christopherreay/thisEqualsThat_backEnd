@@ -1,0 +1,3 @@
+cd /home/developmentSpace/context/thisEquals/print
+git push origin master
+touch /home/developmentSpace/context/thisEquals/autoCommit.print
