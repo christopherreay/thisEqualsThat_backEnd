@@ -16,7 +16,7 @@ from .models import *
 import transaction, json
 
 import httplib2
-import os
+import os, subprocess
 import urllib
 import time
 
@@ -148,27 +148,27 @@ def saveInfogram(request):
 def saveSVG(request):
   # ipdb.set_trace()
 
-  svgToSave           = request.params['svgToSave']
-  svgTextDescription  = re.sub("[^A-Za-z0-9_-]", "_", request.params['svgTextDescription']  )
-  modelOutputField    = re.sub("[^A-Za-z0-9_-]", "_", request.params['modelOutputField']    )
-  modelOutputValue    = re.sub("[^A-Za-z0-9_-]", "_", request.params['modelOutputValue']    )
-
-  readableFileName    = "%s____%s__%s" % (svgTextDescription, modelOutputField, modelOutputValue)
-  readableFileName    = readableFileName.replace(" ", "_")
-  readableFileName    = urllib.quote_plus(readableFileName)
-
-  thisFileDir = os.path.dirname(os.path.realpath(__file__))
+  #svgToSave           = request.params['svgToSave']
+  readableFileName    = request.headers['X-VisualTools-SvgFilename']
+  nginxTempFileName   = request.headers['X-File']
+  
+  thisFileDir         = os.path.dirname(os.path.realpath(__file__))
   # find a free uuid filename
-  svgFilename = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
-  filename    = os.path.join(thisFileDir, "static", "print", "svg", svgFilename)
-  while (os.path.isfile(filename) ):
-    svgFilename = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
-    filename    = os.path.join(thisFileDir, "static", "print", "svg", svgFilename)
+  svgFileName         = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
+  svgFilePath         = os.path.join(thisFileDir, "static", "print", "svg")
+  while (os.path.isfile(os.path.join(svgFilePath, svgFileName) ) ):
+    svgFileName = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
+    svgFilepath = os.path.join(thisFileDir, "static", "print", "svg")
 
-  with open(filename, "w") as svgServerFile:
-    svgServerFile.write(svgToSave)
+  svgFilePathAndName = os.path.join(svgFilePath, svgFileName)
 
-  svgURL = "https://visual.tools/print/svg/%s" % ( svgFilename, )
+  setNginxTemporaryFilePermissionsFilePathAndName = os.path.join(thisFileDir, "serverConfigurationFiles", "setNginxTemporaryFilePermissions")
+  subprocess.call("sudo %s %s %s" % (setNginxTemporaryFilePermissionsFilePathAndName, nginxTempFileName, svgFilePathAndName), shell=True )
+  # os.rename(nginxTempFileName, svgFilePathAndName )
+
+  svgURL = "https://visual.tools/print/svg/%s" % ( svgFileName, )
+
+  print "svgSave: \n  %s\n  %s\n  %s" % (nginxTempFileName, svgFilePathAndName, svgURL)
 
   return { "svgURL": svgURL }
 

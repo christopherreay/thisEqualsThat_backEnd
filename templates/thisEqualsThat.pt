@@ -32,6 +32,7 @@
 
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.7/uuid.min.js"></script>
+    <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
     <script type="text/javascript"   src="https://use.fontawesome.com/cee7f18682.js"></script>

@@ -1,0 +1,9 @@
+#!/bin/bash
+chown root:thisEquals $1
+chmod 770 $1
+
+mv $1 $2
+
+#remove multipart form parts and leave raw svg
+sed -i -r "/^-*WebKitFormBoundary.*$|^Content-Disposition:.*$/d" $2
+

@@ -1,7 +1,28 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+printDir=$1
+if [ -z "$1" ] then
+  read -p "enter the directory print directory path:" printDir
+
+#add the printDir and clone the git repo into it. make it a member of the thisEquals group
+#  this will all fail if any of it is already there, except chgrp, and who cares
+mkdir $printDir
+cd $printDir
+git clone https://github.com/christopherreay/visual.tools.print.svg.git .
+sudo chgrp thisEquals $printDir
+
+
 #echo "export PATH=$DIR:$PATH" >> ~/.bashrc
 echo "install the git repo for svg files based on"
 echo "$DIR/visual.tools.svgToGithub"
 cat $DIR/visual.tools.svgToGithub
 (crontab -l 2>/dev/null; echo "0 * * * * $DIR/visual.tools.svgToGithub") | crontab -
+
+
+sudo mkdir /tmp_ownedBy_thisEquals
+sudo chgrp thisEquals /tmp_ownedBy_thisEquals
+sudo chmod g+s tmp_ownedBy_thisEquals
+sudo setfacl -dm u::rwx,g::rwx,o::r /tmp_ownedBy_thisEquals
+
+sudo chown root:thisEquals $DIR/setNginxTemporaryFilePermissions
+#NEED TO SETUP SUDO SO THAT THE USER THAT RUNS YOUR SERVER CAN USE SUDO WITHOUT A PASSWORD TO RUN THAT SCRIPT
