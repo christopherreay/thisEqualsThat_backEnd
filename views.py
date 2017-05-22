@@ -377,7 +377,9 @@ def inputFieldAltered(request):
 
     transaction.commit()
     
-    return {    "fieldName": modelInstance['outputFieldAddress'], 
+    return {    "modelClass": modelInstance['modelClass']['name'],
+
+                "fieldName": modelInstance['outputFieldAddress'], 
                 "newValue": newOutputValue, 
 
                 "fieldValues": modelInstance.getJSInterface()['fieldValues'],
