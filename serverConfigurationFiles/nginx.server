@@ -45,10 +45,23 @@ server {
 
 	
   location /print/
-  {  root /home/developmentSpace/context/thisEquals/virtualEnv/src/thisEqualsDev/thisequalsdev/static/;
+  { root /home/developmentSpace/context/thisEquals/;
   }
-  location /saveSVG/
-  { client_max_body_size 10m;
+  location /saveSVG
+  { #auth_basic                 "Restricted Upload";
+    #auth_basic_user_file       basic.htpasswd;
+    limit_except POST          { deny all; }
+
+    client_body_temp_path      /tmp_ownedBy_thisEquals/;
+    client_body_in_file_only   on;
+    client_body_buffer_size    128K;
+    client_max_body_size       20M;
+
+    proxy_pass_request_headers on;
+    proxy_set_header           X-File $request_body_file; 
+    proxy_set_body             off;
+    proxy_redirect             off;
+    proxy_pass                 http://pyramid_dev;
   }
   location / {
 		try_files $uri $uri/ @pyramid;
