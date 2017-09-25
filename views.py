@@ -27,6 +27,25 @@ from oauth2client import tools
 
 from apiclient import errors
 
+
+@view_config(route_name = "debug", renderer="json")
+def debug(request):
+  ipdb.set_trace()
+
+  request.root['modelClasses']['Wood']['svgDisplayDefs']['svgDefinitions'][('volume',)]['svgDisplayDefByValue']['toReturn = True']['svgQuantiseEquation'] = \
+      """toReturn = svgFieldValue / 2.5"""
+  request.root['modelClasses']['Wood']['svgDisplayDefs']['svgDefinitions'][('volume',)]['svgDisplayDefByValue']['toReturn = True']['height'] = \
+      '\nif svgQuantiseValue < 1.0:\n  toReturn = 8 * svgQuantiseValue\nelse:\n  toReturn = 8\n'
+  
+  toInsert="#fieldInfo_<a href=\"https://www.forestry.gov.uk/pdf/TimberVolumeCalculator.pdf/$FILE/TimberVolumeCalculator.pdf\">source for 2.5m3 per tree</a>"
+  if toInsert not in request.root['modelClasses']['Wood']['inputFieldHUD']['FieldOrder.preClone']['orderList']:
+    request.root['modelClasses']['Wood']['inputFieldHUD']['FieldOrder.preClone']['orderList']\
+        .insert(4, toInsert)
+
+  transaction.commit()
+
+  return {}
+
 @view_config(route_name = "initialise", renderer='templates/initialise.pt')
 def initalise(request):
   toReturn = {"stauts": "fail"}

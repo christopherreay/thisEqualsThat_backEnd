@@ -1353,9 +1353,9 @@ if svgQuantiseValue > 1.0:
 #""",
                             """
 if svgQuantiseValue < 1.0:
-  toReturn = (0.7853 * svgQuantiseValue) / 0.0624921884 / math.pi
+  toReturn = 8 * svgQuantiseValue
 else:
-  toReturn = 4
+  toReturn = 8
 """,
                             "defaultSVG3dDict"        : 
                               { "translate3d" : {"x": 210, "y": 100, "z": 0},
@@ -2194,7 +2194,7 @@ toReturn['translate3d'].update(
             },
             { "energy": { "mass"    : "toReturn = !!mass!!    * 19000000.0",
                           "volume"  : "toReturn = !!volume!!  * 500.0 * 19000000.0",
-                          "massCO2" : "toReturn = !!massCO2!! / 1.835 * 19000000.0"
+                          "massCO2" : "toReturn = (!!massCO2!! / 1.835) * 19000000.0"
                          },
               "mass":   { "energy"  : "toReturn = !!energy!!  / 19000000.0",
                           "volume"  : "toReturn = !!volume!!  * 500.0",
@@ -2253,6 +2253,7 @@ toReturn['translate3d'].update(
                   "#fieldInfo_Here be fascinating things about trees and stuff like that CO2 and Burnings and hangings too"               ,
                   "mass"                      ,
                   "volume"                    ,
+                  "#fieldInfo_<a href='https://www.forestry.gov.uk/pdf/TimberVolumeCalculator.pdf/$FILE/TimberVolumeCalculator.pdf'>source for 2.5m3 per tree</a>"               ,
                   "energy"                    ,
                   "groupHeader_CO2"           ,
                   "massCO2, mass"             ,
@@ -2750,7 +2751,7 @@ toReturn['translate3d'].update(
             },
             { "energy": { "mass"   : "toReturn = !!mass!! * 27000000",
                           "volume" : "toReturn = (!!volume!! / 0.00120048019) * 27000000",
-                          "massCO2" : "toReturn = !!mass!! * 27000000"
+                          "massCO2" : "toReturn =(!!massCO2!! / 2.93 ) * 27000000"
                         },
               "mass":   { "energy":  "toReturn = !!energy!! / 27000000",
                           "volume":  "toReturn = !!volume!! / 0.00120048019",

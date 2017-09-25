@@ -30,7 +30,9 @@ def main(global_config, **settings):
     config.add_static_view("css",                 "/static/css",            cache_max_age=3600)
     config.add_static_view("svg",                 "/static/svg",            cache_max_age=3600)
         
-    config.add_route("home",                      "/home");
+    config.add_route("home",                      "/home")
+
+    config.add_route("debug",            "/debug")
 
     config.add_route("thisEqualsThat",            "/thisEqualsThat")
     config.add_route("thisEqualsThat_iframe",     "/thisEqualsThat_iframe")
