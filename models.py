@@ -1819,7 +1819,58 @@ toReturn['translate3d'].update(
                       }
             )
         
-        
+
+        # SVGs with Images
+
+        representations["Kettle by Size"] = \
+            OD({ "class": "howMuch",
+                  "toReturn = True":
+                          { "svgFile"                 : "kettleAsPNG.svg",
+                            "rootGroupNodeSelector"   : "#person",
+                            "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
+                            # radius from volume plus handle = ( ( (3 * volume) / (4*PI) ) ^ (1.0/3) ) * 1.15 <- handle
+                            # energy to heat 1 L of water form 20 degrees to 100 degrees:
+                            #   0.09379 KW = 93.79 Watts
+                            #   height is energy / (93.79 * 1.5) 30cm
+                            "height"                  : 
+"""
+volumeOfWater   = svgFieldValue
+radiusOfKettle  = math.pow( (3 * (svgFieldValue) / (4 * math.pi) ), 1.0/3)
+# the 1.15 multiplier is for the handle on the top of the kettle image
+toReturn        = radiusOfKettle * 1.15
+""",
+
+                            "defaultSVG3dDict"        : 
+                            { "translate3d" : {"x": 200, "y": 200, "z": 0},
+                                   "clone3d": {
+                                           "row":        6,
+                                             "x":          150,
+                                         "layer":       100,
+                                             "y":          -90,
+                                             "z":          220,
+                                            "nb":         1,
+                                            "symbolize":  1,
+                                              },
+                            },
+                            "svg3dParameterExec"        :
+                                """
+                                """,
+                            # "svgHUD":
+                            # { "fillManager.postClone":
+                            #   { "cubeShader":
+                            #     { "initialColorString": "rgba(128,128,128,0.7)",
+                            #       "fillSmasher":
+                            #       { ".faceBack, .faceFront"  : "pickedColor            .toString('rgb')",
+                            #         ".faceTop,  .faceBottom" : "pickedColor.darken(10) .toString('rgb')",
+                            #         ".faceLeft, .faceRight"  : "pickedColor.darken(20) .toString('rgb')",
+                            #       },
+                            #     }
+                            #   }
+                            # }
+                          }
+             })
+
+
         for (key, item) in representations.items():
           item["name"] = key
         
@@ -3066,6 +3117,97 @@ toReturn['translate3d'].update(
               },
             },
             displayName = "How Much",
+        )
+
+
+        ElectricKettle = ModelClass(app_root, "ElectricKettle",
+        {     "energy": ClassField({ "name":        "energy",
+                                "displayName":          "Energy",
+                                "displayIcon":          "energy.svg",
+                                "description":          "Total energy to power kettle", 
+                                "fieldType":            "slider", 
+                                "defaultValue":         0.14068, 
+                                "rangeBottom":             1, 
+                                "rangeTop":     100000000000, 
+                                "rangeType":           "log",
+                                "selectableValues":     None, 
+                                "unit":                "kW h", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "kW h",
+                                "inputField":          True, 
+                                "outputField":         True, 
+                                "defaultInputField":   True, 
+                                "defaultOutputField":  False,
+                                "svgComponent":         None
+                                }),
+
+              "volume": ClassField({ "name":        "volume",
+                                "displayName":          "Volume",
+                                "displayIcon":          "size.svg",
+                                "description":          "How big is the Kettle", 
+                                "fieldType":        "slider", 
+                                "defaultValue":     1.5,
+                                "rangeBottom":        0.00000001, 
+                                "rangeTop":           10000000,
+                                "rangeType":           "log",
+                                "selectableValues":     None, 
+                                "unit":                "litres", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "l",
+                                "inputField":          True, 
+                                "outputField":         True, 
+                                "visualisationField":   True,
+                                "defaultInputField":   False, 
+                                "defaultOutputField":  True,
+                                "defaultVisualisationField": True,
+                                "svgComponent":         None
+                                }),
+              # "watts": ClassField({ "name":        "watts", 
+              #                   "displayName":          "Watts",
+              #                   "displayIcon":          "energy.svg",
+              #                   "description":          "Watts per kettle", 
+              #                   "fieldType":        "slider", 
+              #                   "defaultValue":       60, 
+              #                   "rangeBottom":        0.001, 
+              #                   "rangeTop":           10000,
+              #                   "rangeType":           "log",
+              #                   "selectableValues":     None, 
+              #                   "unit":                "w", 
+              #                   "unitPrefix":           "", 
+              #                   "unitSuffix":          "Watts",
+              #                   "inputField":          True, 
+              #                   "outputField":         True, 
+              #                   "defaultInputField":   False, 
+              #                   "defaultOutputField":  False,
+              #                   "svgComponent":         None
+              #                   }),
+            },
+            # heating 1 litre of water by 80 degrees needs 0.09379 kW
+            { "energy": { "__default"  : "toReturn = !!volume!! * 0.09379",
+                        },
+              "volume": { "__default"  : "toReturn = !!energy!! / 0.09379",
+                        },
+            },
+            {#LIST OF SUBMODEL FIELD MAPPINGS
+            #  { local(parent)FieldName: { "className": subModelClass, "remoteFieldName": targetFieldInSubModelClass} , ... }
+              #"massCO2": {"className": "CO2", "remoteFieldName": "mass"}
+            },
+            {   "__default" :
+                  { "modelOutputField_forSVGConversion" : ("volume", ),
+                    "svgDisplayDefByValue": representations["Kettle by Size"]
+                  },
+            },
+            inputFieldHUD = 
+            { "FieldOrder.preClone":
+              { "orderList":
+                [ "groupHeader_Energy Calculation" ,
+                  "watts"                  ,
+                  "time"                ,
+                  "groupHeader_Total Energy" ,
+                  "energy"                  ,
+                ],
+              },
+            }
         )
 
 

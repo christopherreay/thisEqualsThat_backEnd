@@ -260,7 +260,7 @@ def getSVGData(request):
 
 @view_config(route_name="inputFieldAltered", renderer="json")
 def inputFieldAltered(request):
-  try:
+  # try:
     print request.path_qs
   
     modelInstanceID   = request.params['modelInstanceID']
@@ -411,8 +411,8 @@ def inputFieldAltered(request):
                 "lastAlteredOutput":  modelInstance['lastAlteredOutput'],
                 "lastAlteredOutputValue": modelInstance['outputSetter'].getValue(modelInstance),
             }
-  except:
-    return {}
+  # except:
+  #   return {}
 
 @view_config(route_name="setBottomModel", renderer="json")
 def setBottomModel(request):
