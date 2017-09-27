@@ -1837,7 +1837,7 @@ toReturn['translate3d'].update(
 volumeOfWater   = svgFieldValue
 radiusOfKettle  = math.pow( (3 * (svgFieldValue) / (4 * math.pi) ), 1.0/3)
 # the 1.15 multiplier is for the handle on the top of the kettle image
-toReturn        = radiusOfKettle * 1.15
+toReturn        = radiusOfKettle * 0.5
 """,
 
                             "defaultSVG3dDict"        : 
@@ -1849,7 +1849,7 @@ toReturn        = radiusOfKettle * 1.15
                                              "y":          -90,
                                              "z":          220,
                                             "nb":         1,
-                                            "symbolize":  1,
+                                            # "symbolize":  1,
                                               },
                             },
                             "svg3dParameterExec"        :
@@ -1869,6 +1869,9 @@ toReturn        = radiusOfKettle * 1.15
                             # }
                           }
              })
+
+
+        
 
 
         for (key, item) in representations.items():
@@ -3136,8 +3139,8 @@ toReturn        = radiusOfKettle * 1.15
                                 "unitSuffix":          "kW h",
                                 "inputField":          True, 
                                 "outputField":         True, 
-                                "defaultInputField":   True, 
-                                "defaultOutputField":  False,
+                                "defaultInputField":   False, 
+                                "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
 
@@ -3153,12 +3156,12 @@ toReturn        = radiusOfKettle * 1.15
                                 "selectableValues":     None, 
                                 "unit":                "litres", 
                                 "unitPrefix":           "", 
-                                "unitSuffix":          "l",
+                                "unitSuffix":          "litres",
                                 "inputField":          True, 
                                 "outputField":         True, 
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
-                                "defaultOutputField":  True,
+                                "defaultInputField":   True, 
+                                "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
@@ -3200,16 +3203,13 @@ toReturn        = radiusOfKettle * 1.15
             inputFieldHUD = 
             { "FieldOrder.preClone":
               { "orderList":
-                [ "groupHeader_Energy Calculation" ,
-                  "watts"                  ,
-                  "time"                ,
-                  "groupHeader_Total Energy" ,
-                  "energy"                  ,
+                [ "groupHeader_Energy Usage"  ,
+                  "volume"                    ,
+                  "energy"                    ,
                 ],
               },
             }
         )
-
 
         #######################dynamic data sets##########################
         #ipdb.set_trace()
