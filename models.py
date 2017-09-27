@@ -1871,7 +1871,61 @@ toReturn        = radiusOfKettle * 0.5
              })
 
 
-        
+        representations["Kettle by Count"] = \
+            OD(       { "class": "cloneable", 
+                        "toReturn = True":
+                          { "svgFile"                 : "kettleAsPNG.svg",
+                            "rootGroupNodeSelector"   : "#barrel",
+                            "svgQuantiseEquation"     : 
+"""toReturn = svgFieldValue
+""",
+                            "height"                  : 
+#"""context['heightOfCubes'] = math.pow(svgFieldValue/4.235, 1.0/3)
+#toReturn = context['heightOfCubes']
+#""",
+                            """
+if svgQuantiseValue < 1.0:
+  toReturn = 0.3 * svgQuantiseValue
+else:
+  toReturn = 0.3
+""",
+                            "defaultSVG3dDict"        : 
+                              { "translate3d" : {"x": 210, "y": 100, "z": 0},
+                                    "clone3d": {
+                                        "row":        1,
+                                        "x":          35,
+                                        "layer":      1000,
+                                        "y":          -50,
+                                        "z":          50,
+                                        "nb":         40
+                                    },
+                                  },
+                              "svg3dParameterExec"        :
+                                  """
+sqrt = math.ceil(math.sqrt(svgQuantiseValue))
+if sqrt > 10:
+  row = 10
+else:
+  row = sqrt
+nb = math.ceil(svgQuantiseValue)
+toReturn['clone3d'].update(
+  { "nb"  :   nb,
+    "row" :   row,
+    "layer":  nb+10,
+  }
+)
+                                  """,
+
+                            "svgHUD":
+                            { "RandomiseClones.postColor":
+                              { "randomisePosition":
+                                { "degreeOfRandom": 12,
+                                },
+                              },         
+                            },
+                          }
+                      }
+            )
 
 
         for (key, item) in representations.items():
@@ -3165,6 +3219,27 @@ toReturn        = radiusOfKettle * 0.5
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
+                "count": ClassField({ "name":        "count",
+                                "displayName":          "Kettle Count",
+                                "displayIcon":          "size.svg",
+                                "description":          "How many kettles", 
+                                "fieldType":        "slider", 
+                                "defaultValue":     1.0,
+                                "rangeBottom":        0.00000001, 
+                                "rangeTop":           10000000,
+                                "rangeType":           "log",
+                                "selectableValues":     None, 
+                                "unit":                "units", 
+                                "unitPrefix":           "", 
+                                "unitSuffix":          "kettles",
+                                "inputField":          False, 
+                                "outputField":         False, 
+                                "visualisationField":   True,
+                                "defaultInputField":   False, 
+                                "defaultOutputField":  False,
+                                "defaultVisualisationField": False,
+                                "svgComponent":         None
+                                }),
               # "watts": ClassField({ "name":        "watts", 
               #                   "displayName":          "Watts",
               #                   "displayIcon":          "energy.svg",
@@ -3190,6 +3265,8 @@ toReturn        = radiusOfKettle * 0.5
                         },
               "volume": { "__default"  : "toReturn = !!energy!! / 0.09379",
                         },
+              "count":  { "__default"  : "toReturn = !!energy!! / 0.09379 / 1.5",
+                        },
             },
             {#LIST OF SUBMODEL FIELD MAPPINGS
             #  { local(parent)FieldName: { "className": subModelClass, "remoteFieldName": targetFieldInSubModelClass} , ... }
@@ -3198,6 +3275,10 @@ toReturn        = radiusOfKettle * 0.5
             {   "__default" :
                   { "modelOutputField_forSVGConversion" : ("volume", ),
                     "svgDisplayDefByValue": representations["Kettle by Size"]
+                  },
+                "count" :
+                  { "modelOutputField_forSVGConversion" : ("count", ),
+                    "svgDisplayDefByValue": representations["Kettle by Count"]
                   },
             },
             inputFieldHUD = 
