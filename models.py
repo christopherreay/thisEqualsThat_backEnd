@@ -1080,7 +1080,8 @@ class SVGDisplayDefs(Node):
 
     context = {}
     modelClass = modelInstance['modelClass']
-        
+    
+    # ipdb.set_trace()
     output_to_valueQuantise_Dict = getAddressOrDefault(self['svgDefinitions'], modelInstance['lastAlteredVisualisation'])
     print "\nUsing algorithm: %s" % (output_to_valueQuantise_Dict, )
 
@@ -1874,7 +1875,7 @@ toReturn        = radiusOfKettle * 0.5
         representations["Kettle by Count"] = \
             OD(       { "class": "cloneable", 
                         "toReturn = True":
-                          { "svgFile"                 : "kettleAsPNG.svg",
+                          { "svgFile"                 : "kettleAsPNG_60pxWide.svg",
                             "rootGroupNodeSelector"   : "#barrel",
                             "svgQuantiseEquation"     : 
 """toReturn = svgFieldValue
@@ -1890,13 +1891,13 @@ else:
   toReturn = 0.3
 """,
                             "defaultSVG3dDict"        : 
-                              { "translate3d" : {"x": 210, "y": 100, "z": 0},
+                              { "translate3d" : {"x": 200, "y": 500, "z": 0},
                                     "clone3d": {
                                         "row":        1,
-                                        "x":          35,
+                                        "x":          70,
                                         "layer":      1000,
                                         "y":          -50,
-                                        "z":          50,
+                                        "z":          120,
                                         "nb":         40
                                     },
                                   },
@@ -1917,11 +1918,11 @@ toReturn['clone3d'].update(
                                   """,
 
                             "svgHUD":
-                            { "RandomiseClones.postColor":
-                              { "randomisePosition":
-                                { "degreeOfRandom": 12,
-                                },
-                              },         
+                            { #"RandomiseClones.postColor":
+                              # { "randomisePosition":
+                              #   { "degreeOfRandom": 12,
+                              #   },
+                              # },         
                             },
                           }
                       }
@@ -3225,6 +3226,7 @@ toReturn['clone3d'].update(
                                 "description":          "How many kettles", 
                                 "fieldType":        "slider", 
                                 "defaultValue":     1.0,
+                                "fieldPrecisionFunction": "toReturn = Math.ceil(currentValue);",
                                 "rangeBottom":        0.00000001, 
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
@@ -3276,7 +3278,7 @@ toReturn['clone3d'].update(
                   { "modelOutputField_forSVGConversion" : ("volume", ),
                     "svgDisplayDefByValue": representations["Kettle by Size"]
                   },
-                "count" :
+                (u'count',) :
                   { "modelOutputField_forSVGConversion" : ("count", ),
                     "svgDisplayDefByValue": representations["Kettle by Count"]
                   },
