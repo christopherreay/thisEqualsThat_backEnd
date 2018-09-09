@@ -49,7 +49,7 @@ def camelCase(toConvert):
 
 def traverse(obj, *params):
   # ipdb.set_trace()
-  
+
   paramIndex = 0
   while paramIndex < len(params):
       defaultValue  = params[paramIndex]
@@ -58,7 +58,7 @@ def traverse(obj, *params):
 
       if name not in obj:
         obj[name] = defaultValue
-      
+
       if paramIndex == len(params) and params[paramIndex -1] == True:
         return obj
       else:
@@ -107,7 +107,7 @@ class Node(PersistentMapping):
     #print type(self)
     if "name" in self:
       return self['name']
-    else: 
+    else:
       return str(self.__dict__)
   def __repr__(self):
     return self.__str__()
@@ -122,7 +122,7 @@ class ModelClasses(PersistentMapping):
 #no idea
 class ModelFields(Node):
   pass
-   
+
 #placeToRecordExternalDatasetUpdateTimings
 class DynamicDataSets(Node):
   pass
@@ -201,7 +201,7 @@ class ScottishParliamentaryElection(Node):
         #         pass
         #     if not swing == 0:
         #     traverse(swings, {},fromParty, [], toParty).append(swing)
-                        
+
         for fromParty in parties:
           try:
             baseVote = constituency[fromParty]['constituency']['baseVote']
@@ -228,7 +228,7 @@ class ScottishParliamentaryElection(Node):
                   continue
           except:
             pass
-        
+
         winningVotes = -1
         for party in parties:
           if constituency[party]['constituency']['calculatedVotes'] > winningVotes:
@@ -274,7 +274,7 @@ class ScottishParliamentaryElection(Node):
         for fromParty in parties:
           try:
             baseVote = constituency[fromParty]['constituency']['calculatedVotes']
-            
+
             # traverse(constituency[fromParty]['list'], 0, "calculatedVotes")
             constituency[fromParty]['list']['calculatedVotes'] += baseVote
             for toParty in parties:
@@ -292,13 +292,13 @@ class ScottishParliamentaryElection(Node):
                   continue
           except:
             pass
-      
+
       #implement dehondt voting thing
-      
+
       #transaction.commit()
-            
+
       #add up votes from constituencies
-      
+
       for (constituencyName, constituency) in region.items():
         for party in parties:
           try:
@@ -353,13 +353,13 @@ class ScottishParliamentaryElection(Node):
   def calculateConstituencyVotes(self):
     pass
 
-  
+
 
 
 class SwingVote(Node):
   def __init__(self, **kwargs):
     super(SwingVote, self).__init__(kwargs)
-  
+
 
 class DynamicDataSet(Node):
   def __init__(self, **kwargs):
@@ -416,9 +416,9 @@ class DynamicDataSet(Node):
                       "unit":               "arbitraryText",
                       "unitPrefix":          "",
                       "unitSuffix":          "",
-                      "inputField":          True, 
-                      "outputField":         True, 
-                      "defaultInputField":   False, 
+                      "inputField":          True,
+                      "outputField":         True,
+                      "defaultInputField":   False,
                       "defaultOutputField":  False,
                       "svgComponent":         None
                       })
@@ -508,20 +508,20 @@ class BranchPath(Node):
       path.append(currentBranch)
       if "subModelClass" in currentBranch:
         currentClass = currentBranch['subModelClass']
-        
+
   def setValue(self, instance, value):
     self['path'][-1]['instanceData'].setValue(instance, "fieldValue", value)
   def getValue(self, instance):
     return self['path'][-1]['instanceData'].getValue(instance, "fieldValue")
-  
-  def __str__(self):  
+
+  def __str__(self):
     toReturn = "\n\nBranchPath:"
     for branch in self['path']:
       toReturn += "\n  %s" % branch
     return toReturn
   def __repr__(self):
     return self.__str__()
-    
+
 #inputSetter is used to set the currentValue of a field
 #  when a user changes its value
 class InputSetter(BranchPath):
@@ -537,7 +537,7 @@ class OutputSetter(BranchPath):
 #  Branch is made to join the InputSetter and OutputSetter at the
 #  ModelClass where they meat up together.
 #  .process(instance) performs all calculations to make the
-#    currentOutput the correct value given the currentInput    
+#    currentOutput the correct value given the currentInput
 class ProcessPath(Node):
   def __init__(self, modelClass, inputFieldAddress, outputFieldAddress):
     super(ProcessPath, self).__init__()
@@ -561,20 +561,20 @@ class ProcessPath(Node):
         continue
       if i == outputPathMaxIndex:
         break
-    
+
     #rootBranch contains the common root of inputSetter and outputStter
     rootBranch  =   inputPath[i]
     #linkBranch is an anonymous Branch which connects the inputSetter to the outputSetter
     linkBranch  =   Branch(rootBranch['modelClass'], rootBranch['fieldName'], rootBranch['field'])
     linkBranch['outputFieldName'] = outputPath[i]['fieldName']
-    
+
     self['inputSetter']   = inputSetter
     self['outputSetter']  = outputSetter
     self['rootI']         = i
     self['linkBranch']    = linkBranch
-  
 
-    
+
+
   #Travel from the end of the inputSetter to the beginiing of the inputSetter (the commonRoot) and then from the start of the outputSetter
   #  to the end of the outpuSetter, updating all the relevant values
   #  in all the fields along the way. In the end, outputSetter.getValue(instance) will contain the correct value.
@@ -583,7 +583,7 @@ class ProcessPath(Node):
     instance['currentlyProcessing'] = []
     processPath = self
     print "Processing Path:\n  input: %s\n  output: %s" % (self['inputSetter'], self['outputSetter'])
-  
+
     #rootI is the [index] of the common root Branch
     rootI = processPath['rootI']
     inputPath = processPath['inputSetter']['path'][rootI:-1]
@@ -604,7 +604,7 @@ class ProcessPath(Node):
       #currentlyProcessing is used to find circular dependencies during
       #  processing
       del instance['currentlyProcessing'][:]
-    
+
     ##ipdb.set_trace()
     # iterate from commonRoot to end of outputSetter (forwards). Updating fieldValues along the way
     for branch in processPath['outputSetter']['path'][rootI:]:
@@ -635,12 +635,12 @@ class ModelInstance(Node):
     #modelInstances is a global store of all ModelInstance objects
     #  the UUID of a modelInstance is sent to the browser for identification
     modelInstances[self['uuid']] = self
-    
+
     self['modelClass']          = modelClass
     #contains a list of the fields whos values are part of the calculation
     #  for this ModelClass for this step in the iteration along the ProcessPath
     self['currentlyProcessing'] = PersistentList()
-    
+
     print "Setting Defaults for ModelClass: %s" % self['modelClass']['name']
     #set the currentInputField to either the last field updated by the user, or
     #  the default, if the user has not yet interacted with this instanceData
@@ -664,7 +664,7 @@ class ModelInstance(Node):
     #  and process :)
     self.process()
 
- 
+
   #utility method to get InputSetter from the parent ModelClass.
   #  make this the official InputSetter for this modelInstance
   def getInputSetter(self, inputFieldAddress):
@@ -677,7 +677,7 @@ class ModelInstance(Node):
     self['outputFieldAddress']        = outputFieldAddress
     toReturn = self['outputSetter'] = self['modelClass'].getOutputSetter(outputFieldAddress)
     return toReturn
-  
+
   #utility method to get ProcessPath from the parent ModelClass
   #  make this the official OutputSetter for this modelInstane
   def getProcessPath(self):
@@ -694,13 +694,13 @@ class ModelInstance(Node):
     ##ipdb.set_trace()
     processPath = self.getProcessPath()
     return processPath.process(self)
-  
+
   #get the JSON definition for this instance.
   #  Sent to the browser to constuct sliders and stuff
   def getJSInterface(self, boundInputField=None):
     boundInputFullAddress = json.dumps(boundInputField)
     (fieldDefinitions,  fieldBranches)  = self['modelClass'].getFieldDefinitions()
-    ##ipdb.set_trace()    
+    ##ipdb.set_trace()
     #if not 'jsInterface' in self:
     jsInterface = self['jsInterface'] = \
     { "id":         self['uuid'],
@@ -712,18 +712,18 @@ class ModelInstance(Node):
       jsInterface['fields'][boundInputFullAddress]['inputField'] = False
     fieldValues = jsInterface['fieldValues'] = {}
     for (fieldName, fieldBranch) in fieldBranches.items():
-      fieldValues[fieldName] = fieldBranch.getFieldValue(self)   
+      fieldValues[fieldName] = fieldBranch.getFieldValue(self)
 
     if "inputFieldHUD" in self['modelClass']:
-      jsInterface['inputFieldHUDJSON'] = self['modelClass']['inputFieldHUD'] 
+      jsInterface['inputFieldHUDJSON'] = self['modelClass']['inputFieldHUD']
     print    ("MODELINSTANCE", self.keys())
     return jsInterface
 
   def getCanonicalURLJSON(self):
     #modelClass, fieldValues, lastAlteredInput, lastAlteredOutput, lastAlteredVisualisation
-    
+
     (fieldDefinitions,  fieldBranches)  = self['modelClass'].getFieldDefinitions()
-    ##ipdb.set_trace()    
+    ##ipdb.set_trace()
     #if not 'jsInterface' in self:
     urlData = \
     { "id":     self['uuid'],
@@ -734,7 +734,7 @@ class ModelInstance(Node):
     #  urlData['fields'][boundInputFullAddress]['inputField'] = False
     fieldValues = urlData['fieldValues'] = {}
     for (fieldName, fieldBranch) in fieldBranches.items():
-      fieldValues[fieldName] = fieldBranch.getFieldValue(self)    
+      fieldValues[fieldName] = fieldBranch.getFieldValue(self)
     return urlData
 
   def setFieldValues(self, fieldValues):
@@ -747,7 +747,7 @@ class ModelInstance(Node):
 
 #Big complicated object that administrates loads of stuff
 #  FieldNames by RootClass
-#  
+#
 class Branch(Node):
   dependentFieldRegex       = re.compile("\!\!(?P<fieldName>.*?)\!\!")
   def __init__(self, modelClass, fieldName, field):
@@ -756,20 +756,20 @@ class Branch(Node):
     self['modelClass']    = modelClass
     #the name of this FieldBranch in the parent ModelClass
     self['fieldName']     = fieldName
-    #the fieldDefinition (more or less the same as the JSON object sent to 
+    #the fieldDefinition (more or less the same as the JSON object sent to
     #  the browser to define the Field
     self['field']         = field
     #Data stored by RootModelClass (e.g. the path to this FieldBranch from the RootModelClass, e.g. ["inputWatts", "mass"] for CPS: Coal: mass)
     self['classData']     = ValueByInstance()
     #data stored by ModelInstance (e.g the currentValue of this field)
     self['instanceData']  = ValueByInstance()
-    
+
   def initialise(self, root, fieldAddress):
     #store Field name by RootClass
     self['classData'].setValue(root, "fieldAddress", fieldAddress)
     #create a DisplayName and store by RootClass
     self['classData'].setValue(root, "displayFieldAddress", "%s: %s %s %s" % (self['modelClass']['name'], self['field']['unitPrefix'], self['fieldName'], self['field']['unitSuffix']))
-    
+
     #create a flat dictionary for ALL branches attached to a ModelClass and
     #  all its SubModelClasses
     root['fieldBranches'][fieldAddress] = self
@@ -791,7 +791,7 @@ class Branch(Node):
       if self['field']['defaultVisualisationField'] == True:
         root['defaultVisualisationField'] = fieldAddress
     return self
-  
+
   def getFieldValue(self, instance):
     if not self['instanceData'].hasInstance(instance,"fieldValue"):
       toReturn = self['field']['defaultValue']
@@ -799,13 +799,13 @@ class Branch(Node):
     else:
       toReturn = self['instanceData'].getValue(instance, "fieldValue")
     return toReturn
-    
+
   def setFieldValue(self, instance, value):
     self['instanceData'].setValue(instance, "fieldValue", value)
-  
+
   def process(self, instance, inputField):
     print "BranchProcess:\n  instance: %s\n  inputField: %s" % (instance, inputField)
-    
+
   def __str__(self):
     subModelClass = {"name": "noSubModel"}
     if "subModelClass" in self:
@@ -816,16 +816,16 @@ class Branch(Node):
     outputField = "__noOutputField"
     if "outputFieldName" in self:
       outputField = self['outputFieldName']
-    
-      
+
+
     return  "Branch: %s, Field: %s, SubModel: %s\n  outputField: %s" \
-        % ( self['modelClass']['name'], 
-            self['field']['name'], 
+        % ( self['modelClass']['name'],
+            self['field']['name'],
             subModelClass['name'],
             outputField
           )
-          
-          
+
+
 class ModelClassAlreadyDefinedException(Exception):
   def __init__(self, message):
     self.message = message
@@ -837,14 +837,14 @@ class ModelClass(Node):
     if modelClassName in modelClasses:
       raise ModelClassAlreadyDefinedException("There is already a ModelClass called %s" % modelClassName)
     modelClasses[modelClassName] = self
-    
+
     self["modelClassContainer"] = modelClasses
     self['fieldUnitIndex']      = fieldUnitIndex
     self["name"]                = modelClassName
     self["hasInstance"]         = False
 
     self['fieldBranches']       = PersistentMapping()
-    
+
     self["inputSetters"]        = PersistentMapping()
     self["outputSetters"]       = PersistentMapping()
     self["processPaths"]        = PersistentMapping()
@@ -860,19 +860,19 @@ class ModelClass(Node):
       fieldDict[fieldName]  = branch
       fieldUnitIndex.getList(field['unit']).append(branch)
       self['fieldsByUnit'].getList(field['unit']).append(branch)
-    
+
     processorDict = self.getDict('fieldProcessors')
     for (fieldName, processorDict) in processors.items():
         field = fieldDict[fieldName]
         field['processor'] = FieldProcessor(field, processorDict)
-           
+
     for (fieldName, subModelDef) in subModels.items():
       fieldDict[fieldName]['subModelClassDef']  = subModelDef
-    
+
     self['svgDisplayDefs']      = SVGDisplayDefs(self, svgDisplayDefs)
 
     self.update(kwargs)
-    
+
 
   def initialise(self, root=None, address=tuple()):
     if root==None:
@@ -883,45 +883,45 @@ class ModelClass(Node):
     if root==self:
       self.getFieldDefinitions()
       root['initialised'] = True
-      
+
   def getInputSetter(self, inputFieldAddress):
     if not inputFieldAddress in self['inputSetters']:
       self['inputSetters'][inputFieldAddress]   = InputSetter(self, inputFieldAddress)
     return self['inputSetters'][inputFieldAddress]
-  
+
   def getOutputSetter(self, outputFieldAddress):
     if not outputFieldAddress in self['outputSetters']:
       self['outputSetters'][outputFieldAddress] = OutputSetter(self, outputFieldAddress)
     return self['outputSetters'][outputFieldAddress]
-  
+
   def getProcessPath(self, inputFieldAddress, outputFieldAddress):
     #ipdb.set_trace()
     if inputFieldAddress not in self['processPaths']:
-      inputFieldMem = self['processPaths'][inputFieldAddress] = PersistentMapping()      
+      inputFieldMem = self['processPaths'][inputFieldAddress] = PersistentMapping()
     inputFieldMem = self['processPaths'][inputFieldAddress]
     if outputFieldAddress not in inputFieldMem:
       inputFieldMem[outputFieldAddress] = ProcessPath(self, inputFieldAddress, outputFieldAddress)
-    
+
     return self['processPaths'][inputFieldAddress][outputFieldAddress]
-  
-    
+
+
   def getFieldDefinitions(self, root=None):
     if root == None:
       root = self
-    
+
     if root == self and "fieldDefinitionsRanAsRoot" in self:
       fieldDefinitions  = self['fieldDefinitions']
       fieldBranches     = self['fieldBranches']
     else:
       fieldDefinitions = PersistentMapping()
       fieldBranches    = PersistentMapping()
-      
+
       for (fieldName, field) in self['fields'].items():
         fieldDefinition = field['field']
         fieldAddress    = field['classData'].getValue(root, "fieldAddress")
         fullAddress     = json.dumps(fieldAddress)
         ##ipdb.set_trace()
-        
+
         if "data" not in fieldDefinition.__dict__:
           ipdb.set_trace()
 
@@ -936,7 +936,7 @@ class ModelClass(Node):
           (subFieldDefinitions, subFieldBranches) = field['subModelClass'].getFieldDefinitions(root=root)
           fieldDefinitions.update(subFieldDefinitions)
           fieldBranches.update(subFieldBranches)
-        
+
       if self == root:
         self['fieldDefinitions']  = PersistentMapping(fieldDefinitions)
         self['fieldBranches']     = PersistentMapping(fieldBranches)
@@ -946,53 +946,53 @@ class ModelClass(Node):
         transaction.commit()
 
     return (fieldDefinitions, fieldBranches)
-    
+
   def getModelInstance(self, modelInstances):
     instance          = ModelInstance(modelInstances, self)
 
     #jsInterface       = instance.getJSInterface()
 
-    return instance    
-  
+    return instance
+
   def __str__(self):
     return "Class: %s\n  fields: %s\n  inputSetters: %s\n  outputSetters: %s\n  processPaths: %s\n  svgDisplayDefs: %s\n\n" \
         % (self['name'], self['fields'], self['inputSetters'], self['outputSetters'], self['processPaths'], self['svgDisplayDefs'])
-        
+
 class ClassField(Node):
-    
-  """def __init__( self, 
-                name, fieldType, 
+
+  """def __init__( self,
+                name, fieldType,
                 defaultValue, rangeBottom, rangeTop, rangeType,
-                selectableValues, 
+                selectableValues,
                 unit=None, unitPrefix="", unitSuffix="",
-                inputField=False, outputField=False, 
+                inputField=False, outputField=False,
                 defaultInputField=False, defaultOutputField=False,
-                svgComponent=None                
+                svgComponent=None
               ):
   """
   def __init__( self, data):
     super(ClassField, self).__init__()
-    
+
     self['visualisationField']        = False
     self['defaultVisualisationField'] = False
 
     self.update(data)
-    """ 
+    """
     self['name']                        = name
-    
+
     self['fieldType']                   = fieldType
     self['defaultValue']                = defaultValue
-    
+
     self['rangeBottom']                 = rangeBottom
     self['rangeTop']                    = rangeTop
     self['rangeType']                   = rangeType
-    
+
     self['unit']                        = unit
     self['unitPrefix']                  = unitPrefix
     self['unitSuffix']                  = unitSuffix
-    
+
     self['selectableValues']            = selectableValues
-    
+
     self['inputField']                  = inputField
     self['outputField']                 = outputField
     self['defaultInputField']           = defaultInputField
@@ -1010,14 +1010,14 @@ class FieldProcessor(Node):
     self["classField"]          = classField
     for inputFieldName in inputFieldEquations:
       self.addExecString(inputFieldName, inputFieldEquations[inputFieldName])
-  
+
   def addDefaultProcessor(self, execString):
     self.addExecString("__default", execString)
   def addExecString(self, inputFieldName, execString):
     self[inputFieldName] = \
         PersistentMapping({ "execString": execString,
             "dependentFields": FieldProcessor.dependentFieldRegex.findall(execString)})
-  
+
   def process(self, instance, inputFieldName):
     ##ipdb.set_trace()
     print "Processing field: %s" % inputFieldName
@@ -1025,10 +1025,10 @@ class FieldProcessor(Node):
     classFieldName    = classField['field']['name']
     modelClass        = classField['modelClass']
     modelClassFields  = modelClass['fields']
-    
+
     currentlyProcessing = instance['currentlyProcessing']
     currentlyProcessing.append(classFieldName)
-    
+
     if inputFieldName == classFieldName:
       return classField.getFieldValue(instance)
     elif inputFieldName in self:
@@ -1037,16 +1037,16 @@ class FieldProcessor(Node):
       fieldProcessor = self['__default']
     else:
       return classField.getFieldValue(instance)
-    
+
     dependentFields = fieldProcessor['dependentFields']
     for dependentField in dependentFields:
       print "searching for sub-dependency: %s" % dependentField
       if dependentField in currentlyProcessing:
         return classField.getFieldValue(instance)
-      
+
     print "DEPENDENT FIELDS"
     print dependentFields
-    
+
     execString = fieldProcessor['execString']
     for dependentField in dependentFields:
       print "Processing %s" % dependentField
@@ -1054,7 +1054,7 @@ class FieldProcessor(Node):
         fieldValue = modelClassFields[dependentField].getFieldValue(instance)
       else:
         fieldValue = modelClassFields[dependentField]['processor'].process(instance, inputFieldName)
-      
+
       execString = \
           execString.replace("!!%s!!" % dependentField, "%s" % fieldValue)
 
@@ -1066,13 +1066,13 @@ class FieldProcessor(Node):
 
     print "processedValue %s: %s" % (classFieldName, toReturn)
     return toReturn
-      
+
 class SVGDisplayDefs(Node):
   def __init__(self, modelClass, svgFieldDefinitions):
     super(Node, self).__init__()
     #self['modelClass']          = modelClass
     self['svgDefinitions']      = svgFieldDefinitions
-  
+
   def process(self, modelInstance):
 
     print "\n\nProcessing visualisation path"
@@ -1080,7 +1080,7 @@ class SVGDisplayDefs(Node):
 
     context = {}
     modelClass = modelInstance['modelClass']
-    
+
     # ipdb.set_trace()
     output_to_valueQuantise_Dict = getAddressOrDefault(self['svgDefinitions'], modelInstance['lastAlteredVisualisation'])
     print "\nUsing algorithm: %s" % (output_to_valueQuantise_Dict, )
@@ -1104,29 +1104,29 @@ class SVGDisplayDefs(Node):
       if toReturn == True:
         break
     foundValueMatch = toReturn
-    
+
     if foundValueMatch == True:
       toReturn = 0 #will be quantised value for SVG scalethingy
       exec(svgDisplayDef['svgQuantiseEquation'])
       svgQuantiseValue = toReturn
-      
+
       print "process SVGDef"
       print "  svgDisplayDef['svgQuantiseEquation']"
       print "  %s" % (svgQuantiseValue, )
-      
+
       exec(svgDisplayDef['height'])
       svgRelativeHighness = toReturn
       print "process svgHeight\n  svgDisplayDef['height']\n  %s" % (svgRelativeHighness, )
 
       svg3dConfiguration = dict(svgDisplayDef['defaultSVG3dDict'])
       toReturn = svg3dConfiguration
-      
+
       #ipdb.set_trace();
 
       exec(svgDisplayDef['svg3dParameterExec'])
       svg3dConfiguration.update(toReturn)
-      
-            
+
+
       if "postProcessing" in svgDisplayDef:
         postProcessing = dict(svgDisplayDef['postProcessing'])
       else:
@@ -1151,8 +1151,8 @@ class SVGDisplayDefs(Node):
             "postProcessing"        : postProcessing,
             "svgHUD"                : svgHUD,
             #"inputFieldHUD"         : inputFieldHUD,
-          } 
-      
+          }
+
       return svgDisplayJSONDict
 
   """def getSVGDisplay(self, outputFieldAddress):
@@ -1167,9 +1167,9 @@ class SVGDisplayDefs(Node):
     for (inputValueEquation, __svgDisplayDef) in inputValueEquations_to_svgDisplayDef.items():
       fieldValue = outputFieldValue
       toReturn = False
-      
+
       exec(inputValueEquation)
-      
+
       if toReturn == True or inputValueEquation == "__default":
         svgDisplayDef = __svgDisplayDef
         break
@@ -1177,11 +1177,11 @@ class SVGDisplayDefs(Node):
     svgDisplayJSDict = {}
     if not svgDisplayDef == False:
       svgDisplayJSDict = svgDisplayDef.process(self['modelClass'], self['modelInstance'], outputFieldAddress, outputFieldValue)
-    
+
     return svgDisplayJSDict
 
   def process(self, svgDisplayDef, outputFieldAddress, outputFieldValue):
-    
+
     toReturn = \
         { "svgComponentName": "rg1024_metal_barrel",
               "svg3d": \
@@ -1196,15 +1196,15 @@ class SVGDisplayDefs(Node):
                     },
               },
               "animateOptions":
-                  { "duration":       1000, 
+                  { "duration":       1000,
                       "easing":         "easeInCubic"
                   }
-            
+
         }
     modelClass      = self['modelClass']
     modelInstance   = self['modelInstance']
     exec(svgDisplayDef)
-    
+
     return toReturn
   """
 
@@ -1214,7 +1214,7 @@ class svgDisplayDef(Node):
     self['jsDict']              = jsDict
     self['svgOutFieldAddress']  = svgOutFieldAddress
     self['execString']          = execString
-  
+
   def process(modelClass, modelInstance, outputFieldAddress, outputFieldValue):
     #self['modelClass']          = modelClass
     #self['modelInstance']       = modelInstance
@@ -1223,7 +1223,7 @@ class svgDisplayDef(Node):
 
     processPath                 = modelInstance.getProcessPathTemp(outputFieldAddress, self['svgOutFieldAddress'])
     self['svgOutFieldValue']    = processPath.process()
-    
+
     toReturn                    = False
     exec(self['execString'])
     return toReturn
@@ -1239,7 +1239,7 @@ class cuboidRep(Node):
     normalisedDepth = heightRatio * d
     volumeToHeightEquation = """toReturn = math.pow(svgFieldValue / (normalisedWidth * normalisedDepth), 1.0/3)"""
 
-  
+
 def appmaker(zodb_root, savedModelInstances_root):
     #print "Starting App"
     if not 'app_root' in zodb_root:
@@ -1253,7 +1253,7 @@ def appmaker(zodb_root, savedModelInstances_root):
         modelFields                 = app_root['fieldUnitIndex']      = ModelFields()
 
         users                       = app_root['users']               = Users()
-        
+
         representations = {}
 
         representations["Barrels of Oil"] = \
@@ -1261,10 +1261,10 @@ def appmaker(zodb_root, savedModelInstances_root):
                         "toReturn = True":
                           { "svgFile"                 : "2barrel.svg",
                             "rootGroupNodeSelector"   : "#barrel",
-                            "svgQuantiseEquation"     : 
+                            "svgQuantiseEquation"     :
 """toReturn = svgFieldValue / 0.158987295
 """,
-                            "height"                  : 
+                            "height"                  :
 #"""context['heightOfCubes'] = math.pow(svgFieldValue/4.235, 1.0/3)
 #toReturn = context['heightOfCubes']
 #""",
@@ -1274,9 +1274,9 @@ if svgQuantiseValue < 1.0:
 else:
   toReturn = 0.85725
 """,
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                             { "translate3d" : {"x": 100, "y": 100, "z": 0},
-                              "clone3d": 
+                              "clone3d":
                               {   "row":        1,
                                   "x":          50,
                                   "layer":      100,
@@ -1330,25 +1330,25 @@ if svgQuantiseValue > 1.0:
                                 },
                                 "randomiseColors":
                                 { "degreeOfRandom": 0,
-                                },         
+                                },
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 2,
                                 },
-                              },         
+                              },
                             },
 
                           }
                       }
             )
         representations["Trees"] = \
-            OD(       { "class": "cloneable", 
+            OD(       { "class": "cloneable",
                         "toReturn = True":
                           { "svgFile"                 : "barrel.svg",
                             "rootGroupNodeSelector"   : "#barrel",
-                            "svgQuantiseEquation"     : 
+                            "svgQuantiseEquation"     :
 """toReturn = svgFieldValue / 0.7853
 """,
-                            "height"                  : 
+                            "height"                  :
 #"""context['heightOfCubes'] = math.pow(svgFieldValue/4.235, 1.0/3)
 #toReturn = context['heightOfCubes']
 #""",
@@ -1358,7 +1358,7 @@ if svgQuantiseValue < 1.0:
 else:
   toReturn = 8
 """,
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                               { "translate3d" : {"x": 210, "y": 100, "z": 0},
                                     "clone3d": {
                                         "row":        1,
@@ -1392,11 +1392,11 @@ toReturn['clone3d'].update(
                                 },
                                 "randomiseColors":
                                 { "degreeOfRandom": 10,
-                                },         
+                                },
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 25,
                                 },
-                              },         
+                              },
                             },
                           }
                       }
@@ -1408,7 +1408,7 @@ toReturn['clone3d'].update(
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
                             "height"                  : """toReturn = 1.72""",
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
             { "translate3d" : {"x": 100, "y": 100, "z": 0},
                                     "clone3d": {
                                         "row":        6,
@@ -1434,7 +1434,7 @@ toReturn['clone3d'].update(
                             { "RandomiseClones.postColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 5,
-                                },         
+                                },
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 0,
 
@@ -1442,7 +1442,7 @@ toReturn['clone3d'].update(
                                 "randomisePosition":
                                 { "degreeOfRandom": 20,
                                 },
-                              },         
+                              },
                             },
                           }
                       })
@@ -1453,9 +1453,9 @@ toReturn['clone3d'].update(
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
                             "height"                  : """toReturn = 1.72""",
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                                 { "translate3d" : {"x": 100, "y": 300, "z": 0},
-                                  "clone3d": 
+                                  "clone3d":
                                   { "row":        10,
                                     "x":          30,
                                     "layer":      1000,
@@ -1480,7 +1480,7 @@ toReturn['clone3d'].update(
                             { "RandomiseClones.postColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 1,
-                                },         
+                                },
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 5,
                                 },
@@ -1488,7 +1488,7 @@ toReturn['clone3d'].update(
                                 { "degreeOfRandom": 10,
                                   "randomMultiplier": 64, #default was 32
                                 },
-                              },         
+                              },
                             },
                           }
                       })
@@ -1500,7 +1500,7 @@ toReturn['clone3d'].update(
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
                             "height"                  : """toReturn = 0.15""",
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                                 { "translate3d" : {"x": 200, "y": 200, "z": 0},
                                     "clone3d": {
                                         "row":        6,
@@ -1525,14 +1525,14 @@ toReturn['clone3d'].update(
                             { "RandomiseClones.postColor":
                               { "randomiseColors":
                                 { "degreeOfRandom": 0,
-                                },         
+                                },
                                 "randomiseColorsByGroup":
                                 { "degreeOfRandom": 5,
                                 },
                                 "randomisePosition":
                                 { "degreeOfRandom": 5,
                                 },
-                              },         
+                              },
                             },
                           }
                       })
@@ -1544,7 +1544,7 @@ toReturn['clone3d'].update(
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
                             "height"                  : """toReturn = math.pow(svgFieldValue / 4.23508127518, 1.0/3)""",
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                             { "translate3d" : {"x": 200, "y": 200, "z": 0},
                                    "clone3d": {
                                            "row":        6,
@@ -1574,7 +1574,7 @@ toReturn['clone3d'].update(
              })
         representations["Grey Cube 100"]    = copy.deepcopy(representations["Grey Cube"])
         representations["Grey Cube 100"]    ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(120, 120, 120, 0.7)"
-        
+
         representations["Grey Cube in Air"] = copy.deepcopy(representations["Grey Cube"])
         representations["Grey Cube in Air"] ['toReturn = True']['svgHUD']["fillManager.postClone"]["cubeShader"]["initialColorString"] = "rgba(109,192,196,0.31)"
 
@@ -1613,10 +1613,10 @@ toReturn['clone3d'].update(
                 "toReturn = True":
                           { "svgFile"                 : "declarative_cube_yellow.svg",
                             "rootGroupNodeSelector"   : "#person",
-                            "svgQuantiseEquation"     : 
+                            "svgQuantiseEquation"     :
 """toReturn = svgFieldValue / 1.88606
 """,
-                            "height"                  : 
+                            "height"                  :
 #"""context['heightOfCubes'] = math.pow(svgFieldValue/4.235, 1.0/3)
 #toReturn = context['heightOfCubes']
 #""",
@@ -1626,7 +1626,7 @@ if svgQuantiseValue < 1.0:
 else:
   toReturn = 0.764
 """,
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                               { "translate3d" : {"x": 100, "y": 100, "z": 0},
                                     "clone3d": {
                                         "row":        "na",
@@ -1719,10 +1719,10 @@ toReturn['translate3d'].update(
                 "toReturn = True":
                           { "svgFile"                 : "declarative_cube_kierGroup.svg",
                             "rootGroupNodeSelector"   : "#person",
-                            "svgQuantiseEquation"     : 
+                            "svgQuantiseEquation"     :
 """toReturn = svgFieldValue / 1.27875
 """,
-                            "height"                  : 
+                            "height"                  :
 #"""context['heightOfCubes'] = math.pow(svgFieldValue/4.235, 1.0/3)
 #toReturn = context['heightOfCubes']
 #""",
@@ -1732,7 +1732,7 @@ if svgQuantiseValue < 1.0:
 else:
   toReturn = 0.75
 """,
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                               { "translate3d" : {"x": 100, "y": 100, "z": 0},
                                     "clone3d": {
                                         "row":        "na",
@@ -1819,7 +1819,7 @@ toReturn['translate3d'].update(
                           }
                       }
             )
-        
+
 
         # SVGs with Images
 
@@ -1833,7 +1833,7 @@ toReturn['translate3d'].update(
                             # energy to heat 1 L of water form 20 degrees to 100 degrees:
                             #   0.09379 KW = 93.79 Watts
                             #   height is energy / (93.79 * 1.5) 30cm
-                            "height"                  : 
+                            "height"                  :
 """
 volumeOfWater   = svgFieldValue
 radiusOfKettle  = math.pow( (3 * (svgFieldValue) / (4 * math.pi) ), 1.0/3)
@@ -1841,7 +1841,7 @@ radiusOfKettle  = math.pow( (3 * (svgFieldValue) / (4 * math.pi) ), 1.0/3)
 toReturn        = radiusOfKettle * 0.5
 """,
 
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                             { "translate3d" : {"x": 200, "y": 200, "z": 0},
                                    "clone3d": {
                                            "row":        6,
@@ -1873,14 +1873,14 @@ toReturn        = radiusOfKettle * 0.5
 
 
         representations["Kettle by Count"] = \
-            OD(       { "class": "cloneable", 
+            OD(       { "class": "cloneable",
                         "toReturn = True":
                           { "svgFile"                 : "kettleAsPNG_60pxWide.svg",
                             "rootGroupNodeSelector"   : "#barrel",
-                            "svgQuantiseEquation"     : 
+                            "svgQuantiseEquation"     :
 """toReturn = svgFieldValue
 """,
-                            "height"                  : 
+                            "height"                  :
 #"""context['heightOfCubes'] = math.pow(svgFieldValue/4.235, 1.0/3)
 #toReturn = context['heightOfCubes']
 #""",
@@ -1890,7 +1890,7 @@ if svgQuantiseValue < 1.0:
 else:
   toReturn = 0.3
 """,
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
                               { "translate3d" : {"x": 200, "y": 500, "z": 0},
                                     "clone3d": {
                                         "row":        1,
@@ -1922,7 +1922,7 @@ toReturn['clone3d'].update(
                               # { "randomisePosition":
                               #   { "degreeOfRandom": 12,
                               #   },
-                              # },         
+                              # },
                             },
                           }
                       }
@@ -1931,41 +1931,41 @@ toReturn['clone3d'].update(
 
         for (key, item) in representations.items():
           item["name"] = key
-        
 
-        priceField = ClassField({ "name":           "price", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     50000000, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+
+        priceField = ClassField({ "name":           "price",
+                                "fieldType":        "slider",
+                                "defaultValue":     50000000,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "GBP", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "GBP",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "GBP",
-                                "inputField":          False, 
-                                "outputField":         False, 
-                                "defaultInputField":   False, 
+                                "inputField":          False,
+                                "outputField":         False,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 })
-        energyField = ClassField({ "name":           "energy", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     50000000, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+        energyField = ClassField({ "name":           "energy",
+                                "fieldType":        "slider",
+                                "defaultValue":     50000000,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Joules", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Joules",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "J",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 })
-        
+
 
 
 
@@ -1974,7 +1974,7 @@ toReturn['clone3d'].update(
 
 
 
-             
+
         # ofWhatSelectDict = {k: v for k, v in representations.iteritems() if "cloneable" in v["class"]}
         ofWhatRepDict = {}
         for (key, rep) in representations.items():
@@ -1984,14 +1984,14 @@ toReturn['clone3d'].update(
             normalisedRep["toReturn = True"]["svgHUD"]              = { "RandomiseClones.postColor":
                                                                         { "randomiseColors":
                                                                           { "degreeOfRandom": 10,
-                                                                          },         
+                                                                          },
                                                                           "randomiseColorsByGroup":
                                                                           { "degreeOfRandom": 10,
                                                                           },
                                                                           "randomisePosition":
                                                                           { "degreeOfRandom": 10,
                                                                           },
-                                                                        },         
+                                                                        },
                                                                       }
             ofWhatRepDict[key] = normalisedRep
         ofWhatSelectDict = {}
@@ -2002,58 +2002,58 @@ toReturn['clone3d'].update(
 
         print ofWhatSelectDict
         HowMany = ModelClass(app_root, "HowMany",
-            { "howMany": ClassField({ 
+            { "howMany": ClassField({
                                 "name":                 "howMany",
                                 "displayName":          "How Many",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "Choose how many of what to show in the diagram",
-                                "fieldType":            "slider", 
-                                "defaultValue":         10, 
-                                "rangeBottom":          1, 
-                                "rangeTop":             1000, 
+                                "fieldType":            "slider",
+                                "defaultValue":         10,
+                                "rangeBottom":          1,
+                                "rangeTop":             1000,
                                 "rangeType":           "log",
                                 "fieldPrecisionFunction": "toReturn = Math.ceil(currentValue);",
-                                "selectableValues":     None, 
-                                "unit":                "number", 
-                                "unitPrefix":          "count of", 
+                                "selectableValues":     None,
+                                "unit":                "number",
+                                "unitPrefix":          "count of",
                                 "unitSuffix":          "",
-                                "inputField":          True, 
+                                "inputField":          True,
                                 "outputField":         True,
                                 "visualisationField":  True,
-                                "defaultInputField":   True, 
+                                "defaultInputField":   True,
                                 "defaultOutputField":  True,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "ofWhat": ClassField({ 
+              "ofWhat": ClassField({
                                 "name":               "ofWhat",
                                 "displayName":          "Of What",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "Choose how many of what to show in the diagram",
-                                "fieldType":          "select", 
-                                "defaultValue":       "Trees", 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
+                                "fieldType":          "select",
+                                "defaultValue":       "Trees",
+                                "rangeBottom":             0,
+                                "rangeTop":             100,
                                 "rangeType":           "linear",
-                                "selectableValues":     ofWhatSelectDict, 
+                                "selectableValues":     ofWhatSelectDict,
                                 "unit":                "choice List",
-                                "unitPrefix":           "", 
+                                "unitPrefix":           "",
                                 "unitSuffix":          "item",
-                                "inputField":           True, 
+                                "inputField":           True,
                                 "outputField":          False,
                                 "visualisationField":   False,
-                                "defaultInputField":    False, 
+                                "defaultInputField":    False,
                                 "defaultOutputField":   False,
                                 "defaultVisualisationField": False,
                                 "svgComponent":         None
                                 }),
 
             },
-            { "howMany" :  { "__default" : 
+            { "howMany" :  { "__default" :
                                   """toReturn = !!howMany!!
                                   """
                             },
-              
+
             },
             {#LIST OF SUBMODEL FIELD MAPPINGS
             #  { local(parent)FieldName: { "className": subModelClass, "remoteFieldName": targetFieldInSubModelClass} , ... }
@@ -2064,7 +2064,7 @@ toReturn['clone3d'].update(
                     "svgDisplayDefByValue": """toReturn = data['ofWhatRepDict'][modelClass['fields']['ofWhat'].getFieldValue(modelInstance)]""",
                   },
             },
-            inputFieldHUD = 
+            inputFieldHUD =
             { "FieldOrder.preClone":
               { "orderList":
                 [ "howMany"               ,
@@ -2074,126 +2074,126 @@ toReturn['clone3d'].update(
             }
           ,
           displayName = "How Many",
-        ) 
+        )
 
         PeopleRatioPlay = ModelClass(app_root, "PeopleRatioPlay",
-            { "ratios": ClassField({ 
-                                "name":                 "ratios", 
+            { "ratios": ClassField({
+                                "name":                 "ratios",
                                 "displayName":          "Ratios",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "Bleh",
-                                "fieldType":            "text", 
-                                "defaultValue":         0.1, 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
+                                "fieldType":            "text",
+                                "defaultValue":         0.1,
+                                "rangeBottom":             0,
+                                "rangeTop":             100,
                                 "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "percent", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "percent",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "%",
-                                "inputField":          True, 
+                                "inputField":          True,
                                 "outputField":         True,
                                 "visualisationField":  False,
-                                "defaultInputField":   True, 
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "colors": ClassField({ 
-                                "name":               "colors", 
-                                "fieldType":          "text", 
-                                "defaultValue":       "rgba(0,255,0, 0.77)", 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
+              "colors": ClassField({
+                                "name":               "colors",
+                                "fieldType":          "text",
+                                "defaultValue":       "rgba(0,255,0, 0.77)",
+                                "rangeBottom":             0,
+                                "rangeTop":             100,
                                 "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "rgb", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "rgb",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "",
                                 "inputField":           True,
                                 "outputField":          False,
-                                "visualisationField":   False, 
-                                "defaultInputField":    False, 
+                                "visualisationField":   False,
+                                "defaultInputField":    False,
                                 "defaultOutputField":   False,
                                 "svgComponent":         None
                                 }),
-              "numberOfClones": ClassField({ 
+              "numberOfClones": ClassField({
                                 "name":               "numberOfClones",
                                 "displayName":          "Size of Gathering",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "Choose how many people in total in the diagram",
-                                "fieldType":          "text", 
-                                "defaultValue":       "100", 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
+                                "fieldType":          "text",
+                                "defaultValue":       "100",
+                                "rangeBottom":             0,
+                                "rangeTop":             100,
                                 "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "number", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "number",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "people",
-                                "inputField":           True, 
+                                "inputField":           True,
                                 "outputField":          False,
-                                "visualisationField":   False, 
-                                "defaultInputField":    False, 
+                                "visualisationField":   False,
+                                "defaultInputField":    False,
                                 "defaultOutputField":   False,
                                 "svgComponent":         None
                                 }),
-              
-              "outputTable": ClassField({ 
-                                "name":               "outputTable", 
+
+              "outputTable": ClassField({
+                                "name":               "outputTable",
                                 "displayName":          "Table of Values",
                                 "displayIcon":          "grid.svg",
                                 "description":          "Contains a table of data used to generate the diagram",
-                                "fieldType":          "text", 
-                                "defaultValue":       {}, 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
+                                "fieldType":          "text",
+                                "defaultValue":       {},
+                                "rangeBottom":             0,
+                                "rangeTop":             100,
                                 "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "percent", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "percent",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "%",
-                                "inputField":           False, 
+                                "inputField":           False,
                                 "outputField":          True,
                                 "visualisationField":   True,
-                                "defaultInputField":    False, 
+                                "defaultInputField":    False,
                                 "defaultOutputField":   True,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "randomLayout": ClassField({ 
-                                "name":               "randomLayout", 
+              "randomLayout": ClassField({
+                                "name":               "randomLayout",
                                 "displayName":          "Randomise Positions",
                                 "displayIcon":          "randomize.svg",
                                 "description":          "Put specials in random positions",
-                                "fieldType":          "select", 
-                                "defaultValue":       "Yes", 
-                                "rangeBottom":             0, 
-                                "rangeTop":             100, 
+                                "fieldType":          "select",
+                                "defaultValue":       "Yes",
+                                "rangeBottom":             0,
+                                "rangeTop":             100,
                                 "rangeType":           "linear",
-                                "selectableValues":     {"Yes": "Yes", "No": "No"}, 
+                                "selectableValues":     {"Yes": "Yes", "No": "No"},
                                 "unit":                "choice",
-                                "unitPrefix":           "", 
+                                "unitPrefix":           "",
                                 "unitSuffix":          "Yn",
-                                "inputField":           True, 
+                                "inputField":           True,
                                 "outputField":          False,
                                 "visualisationField":   False,
-                                "defaultInputField":    False, 
+                                "defaultInputField":    False,
                                 "defaultOutputField":   False,
                                 "defaultVisualisationField": False,
                                 "svgComponent":         None
                                 }),
 
             },
-            { "outputTable" :  { "__default" : 
-                                  """toReturn = [ { 'ratios':         '!!ratios!!'.split("|"), 
-                                                    'colors':        '!!colors!!'.split("|"), 
-                                                    'cloneCount1' :   !!numberOfClones!!, 
+            { "outputTable" :  { "__default" :
+                                  """toReturn = [ { 'ratios':         '!!ratios!!'.split("|"),
+                                                    'colors':        '!!colors!!'.split("|"),
+                                                    'cloneCount1' :   !!numberOfClones!!,
                                                     'randomLayout' :  '!!randomLayout!!'
                                                   },
                                                 ]
                                   """
                             },
-              
+
             },
             {#LIST OF SUBMODEL FIELD MAPPINGS
             #  { local(parent)FieldName: { "className": subModelClass, "remoteFieldName": targetFieldInSubModelClass} , ... }
@@ -2216,46 +2216,46 @@ toReturn['clone3d'].update(
             displayName = "Percentage",
         )
 
-        Wood = ModelClass(app_root, "Wood", 
-            { "energy": ClassField({ 
+        Wood = ModelClass(app_root, "Wood",
+            { "energy": ClassField({
                                 "name":        "energy",
                                 "displayName":          "Energy Burned",
                                 "displayIcon":          "burn.svg",
                                 "description":          "Energy thru combustion in air",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     5000000, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+                                "fieldType":        "slider",
+                                "defaultValue":     5000000,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Joules", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Joules",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "J",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
-              "mass":  ClassField({ 
+              "mass":  ClassField({
                                 "name":        "mass",
                                 "displayName":          "Mass",
                                 "displayIcon":          "scales.svg",
                                 "description":          "Mass of wood",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     100, 
-                                "rangeBottom":             0.1, 
-                                "rangeTop":             1000000, 
+                                "fieldType":        "slider",
+                                "defaultValue":     100,
+                                "rangeBottom":             0.1,
+                                "rangeTop":             1000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Kilograms", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Kilograms",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kg",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   True, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
@@ -2264,39 +2264,39 @@ toReturn['clone3d'].update(
                                 "displayName":          "Volume of Wood",
                                 "displayIcon":          "size.svg",
                                 "description":          "How much wood?",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":  True,
                                 "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "massCO2": ClassField({ "name":        "massCO2", 
+              "massCO2": ClassField({ "name":        "massCO2",
                                 "displayName":          "CO2 thru Combustion",
                                 "displayIcon":          "randomize.svg",
                                 "description":          "Mass of CO2 in KG produced by burning this amount of wood",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.001,
                                 "rangeTop":           10000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "kg", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "kg",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kg",
-                                "inputField":          False, 
-                                "outputField":         False, 
-                                "defaultInputField":   False, 
+                                "inputField":          False,
+                                "outputField":         False,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
@@ -2355,7 +2355,7 @@ toReturn['clone3d'].update(
                     "svgDisplayDefByValue": representations["Grey Cube in Air"]
                   },
             },
-            inputFieldHUD = 
+            inputFieldHUD =
             { "FieldOrder.preClone":
               { "orderList":
                 [ "groupHeader_Wood"          ,
@@ -2370,17 +2370,17 @@ toReturn['clone3d'].update(
                   "massCO2, volume_inAir"     ,
                 ],
                 "fieldDetails":
-                { "mass":       
+                { "mass":
                   { "displayName":          "Mass",
                     "displayIcon":          "scales.svg",
                     "description":          "Mass of wood (some tree)",
                   },
-                  "volume":     
+                  "volume":
                   { "displayName":          "Volume",
                     "displayIcon":          "size.svg",
                     "description":          "Size of wood",
                   },
-                  "energy":     
+                  "energy":
                   { "displayName":          "Energy",
                     "displayIcon":          "energy.svg",
                     "description":          "Energy thru Combustion",
@@ -2395,39 +2395,39 @@ toReturn['clone3d'].update(
           {   "mass":  ClassField({ "name":        "mass",
                                 "displayName":          "Mass",
                                 "displayIcon":          "scales.svg",
-                                "description":          "Mass of CO2 in KG", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     100, 
-                                "rangeBottom":             0.1, 
-                                "rangeTop":             1000000, 
+                                "description":          "Mass of CO2 in KG",
+                                "fieldType":        "slider",
+                                "defaultValue":     100,
+                                "rangeBottom":             0.1,
+                                "rangeTop":             1000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Kilograms", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Kilograms",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kg",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   True, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "volume_frozen": ClassField({ "name":        "volume_frozen", 
+              "volume_frozen": ClassField({ "name":        "volume_frozen",
                                 "displayName":          "Volume Frozen",
                                 "displayIcon":          "size.svg",
                                 "description":          "If the CO2 is frozen solid, how big would it be?",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          False, 
+                                "inputField":          False,
                                 "outputField":         True,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
@@ -2435,63 +2435,63 @@ toReturn['clone3d'].update(
                                 "displayName":          "CO2 Pure Gas",
                                 "displayIcon":          "size.svg",
                                 "description":          "If the CO2 is pure gas, 100% CO2, how big would it be?",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "volume_inAir": ClassField({ "name":        "volume_inAir", 
+              "volume_inAir": ClassField({ "name":        "volume_inAir",
                                 "displayName":          "CO2 in Air",
                                 "displayIcon":          "size.svg",
                                 "description":          "How much Air do you need to count up this amount of CO2?",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              # "timeToBreathOut": ClassField({ "name":        "timeToBreathOut", 
+              # "timeToBreathOut": ClassField({ "name":        "timeToBreathOut",
               #                   "displayName":          "Time to Breath",
               #                   "displayIcon":          "breath.svg",
               #                   "description":          "How long would it take a person to breath this amount of CO2 into the atmosphere?",
-              #                   "fieldType":        "slider", 
-              #                   "defaultValue":     10, 
-              #                   "rangeBottom":        0.00000001, 
+              #                   "fieldType":        "slider",
+              #                   "defaultValue":     10,
+              #                   "rangeBottom":        0.00000001,
               #                   "rangeTop":           1000000000,
               #                   "rangeType":           "log",
-              #                   "selectableValues":     None, 
-              #                   "unit":                "s", 
-              #                   "unitPrefix":           "", 
+              #                   "selectableValues":     None,
+              #                   "unit":                "s",
+              #                   "unitPrefix":           "",
               #                   "unitSuffix":          "seconds",
-              #                   "inputField":          True, 
-              #                   "outputField":         True, 
-              #                   "defaultInputField":   False, 
+              #                   "inputField":          True,
+              #                   "outputField":         True,
+              #                   "defaultInputField":   False,
               #                   "defaultOutputField":  False,
               #                   "svgComponent":         None
               #                   }),
-              
+
             },
 
             { "mass":             { "volume_100"      : "toReturn = !!volume_100!! / .5562",
@@ -2535,7 +2535,7 @@ toReturn['clone3d'].update(
                     "svgDisplayDefByValue": representations["Grey Cube in Air"],
                   },
             },
-            inputFieldHUD = 
+            inputFieldHUD =
             { "FieldOrder.preClone":
               { "orderList":
                 [ "groupHeader_Carbon Dioxide"  ,
@@ -2552,80 +2552,80 @@ toReturn['clone3d'].update(
         {     "energy": ClassField({ "name":        "energy",
                                 "displayName":          "Energy",
                                 "displayIcon":          "energy.svg",
-                                "description":          "Total energy to power lightbulbs", 
-                                "fieldType":        "slider", 
-                                "defaultValue":         60, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+                                "description":          "Total energy to power lightbulbs",
+                                "fieldType":        "slider",
+                                "defaultValue":         60,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Joules", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Joules",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "J",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
-              "count":  ClassField({ "name":        "count", 
+              "count":  ClassField({ "name":        "count",
                                 "displayName":          "Number of Bulbs",
                                 "displayIcon":          "count.svg",
-                                "description":          "Number of lightbulbs", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":             1, 
-                                "rangeTop":             1000, 
+                                "description":          "Number of lightbulbs",
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":             1,
+                                "rangeTop":             1000,
                                 "rangeType":           "log",
                                 "fieldPrecisionFunction": "toReturn = Math.ceil(currentValue);",
-                                "selectableValues":     None, 
-                                "unit":                "unit", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "unit",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "light bulbs",
-                                "inputField":          True, 
+                                "inputField":          True,
                                 "outputField":         True,
                                 "visualisationField":  True,
-                                "defaultInputField":   True, 
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
 
-              "time": ClassField({ "name":              "time", 
+              "time": ClassField({ "name":              "time",
                                 "displayName":          "Time",
                                 "displayIcon":          "time.svg",
-                                "description":          "Time lightbulbs are on", 
-                                "fieldType":            "slider", 
-                                "defaultValue":       3600, 
-                                "rangeBottom":        0.00000001, 
+                                "description":          "Time lightbulbs are on",
+                                "fieldType":            "slider",
+                                "defaultValue":       3600,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "s", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "s",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "seconds",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "watts": ClassField({ "name":        "watts", 
+              "watts": ClassField({ "name":        "watts",
                                 "displayName":          "Watts",
                                 "displayIcon":          "energy.svg",
-                                "description":          "Watts per lightbulb", 
-                                "fieldType":        "slider", 
-                                "defaultValue":       60, 
-                                "rangeBottom":        0.001, 
+                                "description":          "Watts per lightbulb",
+                                "fieldType":        "slider",
+                                "defaultValue":       60,
+                                "rangeBottom":        0.001,
                                 "rangeTop":           10000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "w", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "w",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "Watts",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
@@ -2648,7 +2648,7 @@ toReturn['clone3d'].update(
                     "svgDisplayDefByValue": representations["Lightbulbs"]
                   },
             },
-            inputFieldHUD = 
+            inputFieldHUD =
             { "FieldOrder.preClone":
               { "orderList":
                 [ "groupHeader_Lightbulbs"  ,
@@ -2663,41 +2663,41 @@ toReturn['clone3d'].update(
             }
         )
 
-        CPS = ModelClass(app_root, "CPS", 
+        CPS = ModelClass(app_root, "CPS",
             #LIST OF FIELDS
             { "price":  priceField,
               "energy": energyField,
-              "inputWatts": ClassField({ "name":   "inputWatts", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     50000000, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+              "inputWatts": ClassField({ "name":   "inputWatts",
+                                "fieldType":        "slider",
+                                "defaultValue":     50000000,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Joules", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Joules",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "J",
-                                "inputField":          False, 
-                                "outputField":         False, 
-                                "defaultInputField":   False, 
+                                "inputField":          False,
+                                "outputField":         False,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              
-              "efficiency": ClassField({ "name":   "efficiency", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     70, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100, 
+
+              "efficiency": ClassField({ "name":   "efficiency",
+                                "fieldType":        "slider",
+                                "defaultValue":     70,
+                                "rangeBottom":             1,
+                                "rangeTop":     100,
                                 "rangeType":           "linear",
-                                "selectableValues":     None, 
-                                "unit":                "percent", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "percent",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "%",
-                                "inputField":          True, 
-                                "outputField":         False, 
-                                "defaultInputField":   True, 
+                                "inputField":          True,
+                                "outputField":         False,
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
@@ -2724,136 +2724,136 @@ toReturn['clone3d'].update(
                 }
             }
         )
-        
-        Coal = ModelClass(app_root, "Coal", 
+
+        Coal = ModelClass(app_root, "Coal",
             { "price": priceField,
-              "energy": ClassField({ "name":        "energy", 
-                                
+              "energy": ClassField({ "name":        "energy",
+
                                 "displayName":          "Energy Burned",
                                 "displayIcon":          "size.svg",
-                                "description":          "How much energy on combustion", 
+                                "description":          "How much energy on combustion",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     5000000, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+                                "fieldType":        "slider",
+                                "defaultValue":     5000000,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Joules", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Joules",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "J",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
-              "mass":  ClassField({ "name":        "mass", 
+              "mass":  ClassField({ "name":        "mass",
 
                                 "displayName":          "Mass",
                                 "displayIcon":          "size.svg",
-                                "description":          "Mass of Coal (How Much)", 
-                                
-                                "fieldType":        "slider", 
-                                "defaultValue":     100, 
-                                "rangeBottom":             0.1, 
-                                "rangeTop":             1000000, 
+                                "description":          "Mass of Coal (How Much)",
+
+                                "fieldType":        "slider",
+                                "defaultValue":     100,
+                                "rangeBottom":             0.1,
+                                "rangeTop":             1000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Kilograms", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Kilograms",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kg",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   True, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
 
-              "volume": ClassField({ "name":        "volume", 
-                                
+              "volume": ClassField({ "name":        "volume",
+
                                 "displayName":          "Volume",
                                 "displayIcon":          "size.svg",
-                                "description":          "How big is the Coal", 
+                                "description":          "How big is the Coal",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "massCO2": ClassField({ "name":        "massCO2", 
+              "massCO2": ClassField({ "name":        "massCO2",
                                 "displayName":          "CO2",
                                 "displayIcon":          "size.svg",
-                                "description":          "How much CO2 produced on combustion", 
+                                "description":          "How much CO2 produced on combustion",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.001,
                                 "rangeTop":           10000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "kg", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "kg",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kg",
-                                "inputField":          False, 
-                                "outputField":         False, 
-                                "defaultInputField":   False, 
+                                "inputField":          False,
+                                "outputField":         False,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "singleCube": ClassField({ "name":        "singleCube", 
+              "singleCube": ClassField({ "name":        "singleCube",
 
                                 "displayName":          "Single Cube Graphic",
                                 "displayIcon":          "size.svg",
                                 "description":          "this is an outputField that shows a cube",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.001,
                                 "rangeTop":           10000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          False, 
+                                "inputField":          False,
                                 "outputField":         False,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "aluminiumCube": ClassField({ "name":        "aluminiumCube", 
+              "aluminiumCube": ClassField({ "name":        "aluminiumCube",
 
                                 "displayName":          "Aluminum Cube",
                                 "displayIcon":          "size.svg",
                                 "description":          "This is an output field which renders as alu cubes",
 
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.001, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.001,
                                 "rangeTop":           10000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          False, 
+                                "inputField":          False,
                                 "outputField":         False,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
@@ -2874,7 +2874,7 @@ toReturn['clone3d'].update(
               "massCO2":{ "mass"      : "toReturn = !!mass!!    * 2.93",
                           "volume"    : "toReturn = (!!volume!! / 0.00120048019) * 2.93",
                           "energy"    : "toReturn = ((!!energy!! / 27000000) * 0.00120048019) * 2.93",
-                        }, 
+                        },
               "singleCube": { "energy":  "toReturn = (!!energy!! / 27000000) * 0.00120048019",
                               "mass"  :  "toReturn = !!mass!! * 0.00120048019",
                               "volume":  "toReturn = !!volume!!",
@@ -2927,60 +2927,60 @@ toReturn['clone3d'].update(
                   },
             }
         )
-        
-        person = ModelClass(app_root, "Person", 
-            { "energy": ClassField({ "name":        "energy", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     5000000, 
-                                "rangeBottom":            1, 
-                                "rangeTop":     100000000000, 
+
+        person = ModelClass(app_root, "Person",
+            { "energy": ClassField({ "name":        "energy",
+                                "fieldType":        "slider",
+                                "defaultValue":     5000000,
+                                "rangeBottom":            1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Joules", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Joules",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "J",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
-              "number of people": ClassField({ "name":  "number of people", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     1, 
-                                "rangeBottom":            1, 
-                                "rangeTop":     10000000000, 
+              "number of people": ClassField({ "name":  "number of people",
+                                "fieldType":        "slider",
+                                "defaultValue":     1,
+                                "rangeBottom":            1,
+                                "rangeTop":     10000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "person unit", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "person unit",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "people",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":  True,
-                                "defaultInputField":   True, 
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "type of analysis" : ClassField({ "name":  "type of analysis", 
-                                "fieldType":        "select", 
-                                "defaultValue":     9418000.05, 
-                                "rangeBottom":            0, 
-                                "rangeTop":     0, 
+              "type of analysis" : ClassField({ "name":  "type of analysis",
+                                "fieldType":        "select",
+                                "defaultValue":     9418000.05,
+                                "rangeBottom":            0,
+                                "rangeTop":     0,
                                 "rangeType":           "log",
-                                "selectableValues": { "energy in food consumed":                    9418000.05, 
-                                                      "total aggregated energy usage (lifestyle)":  349052942.466              
+                                "selectableValues": { "energy in food consumed":                    9418000.05,
+                                                      "total aggregated energy usage (lifestyle)":  349052942.466
                                                     },
-                                "unit":                "", 
-                                "unitPrefix":           "", 
+                                "unit":                "",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "",
-                                "inputField":          True, 
-                                "outputField":         False, 
-                                "defaultInputField":   True, 
+                                "inputField":          True,
+                                "outputField":         False,
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
-                                }), 
+                                }),
               #""" "energy in food daily":  ClassField("Energy Eaten daily", "slider",
               #          9418.05, 2000, 20000, "linear",
               #          None,
@@ -2997,44 +2997,44 @@ toReturn['clone3d'].update(
               #          outputField=True
               #),
               #"""
-              "mass": ClassField({ "name":        "mass", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     70.80, 
-                                "rangeBottom":            1, 
-                                "rangeTop":     100000000000, 
+              "mass": ClassField({ "name":        "mass",
+                                "fieldType":        "slider",
+                                "defaultValue":     70.80,
+                                "rangeBottom":            1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Kilograms", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Kilograms",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kg",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
-              "mass per person": ClassField({ "name":   "mass per person", 
-                                "fieldType":            "slider", 
-                                "defaultValue":         70.8, 
-                                "rangeBottom":          30, 
-                                "rangeTop":             200, 
+              "mass per person": ClassField({ "name":   "mass per person",
+                                "fieldType":            "slider",
+                                "defaultValue":         70.8,
+                                "rangeBottom":          30,
+                                "rangeTop":             200,
                                 "rangeType":            "linear",
                                 "selectableValues":     None,
-                                "unit":                 "Kilograms", 
-                                "unitPrefix":           "", 
+                                "unit":                 "Kilograms",
+                                "unitPrefix":           "",
                                 "unitSuffix":           "kg",
-                                "inputField":           True, 
-                                "outputField":          False, 
-                                "defaultInputField":    False, 
+                                "inputField":           True,
+                                "outputField":          False,
+                                "defaultInputField":    False,
                                 "defaultOutputField":   False,
                                 "svgComponent":         None
-                                }), 
+                                }),
             },
             { "number of people": { "energy"   : "toReturn = !!energy!! / !!type of analysis!!",
                                     "type of analysis"   : "toReturn = !!energy!! / !!type of analysis!!",
                                     "mass"     : "toReturn = !!mass!!   / !!mass per person!!"
                                   },
-              "energy"          : { "__default":                     
+              "energy"          : { "__default":
                                             "toReturn = !!type of analysis!! * !!number of people!!",
                                   },
               "mass"            : { "__default":
@@ -3043,23 +3043,23 @@ toReturn['clone3d'].update(
             },
             {},
             {   "__default" :
-                { 
+                {
                   "modelOutputField_forSVGConversion" : ("number of people", ),
                   "svgDisplayDefByValue": representations["People"]
                 }
             }
         )
-        
+
         comparisonVisual = SVGDisplayDefs(None,
             { "__default":
               { "modelOutputField_forSVGConversion" : ("volume", ),
-                  "svgDisplayDefByValue": 
+                  "svgDisplayDefByValue":
                       OD({ "toReturn = True":
                           { "svgFile"                 : "declarative_cube_yellow.svg",
                             "rootGroupNodeSelector"   : "#person",
                             "svgQuantiseEquation"     : """toReturn = svgFieldValue""",
                             "svgHeightComparisonClass": "__default",
-                            "defaultSVG3dDict"        : 
+                            "defaultSVG3dDict"        :
             { "translate3d" : {"x": 200, "y": 200, "z": 0},
                                     "clone3d": {
                                         "row":        6,
@@ -3085,71 +3085,71 @@ toReturn['clone3d'].update(
 
         #######################static  data sets##########################
 
-        VolMassDen = ModelClass(app_root, "VolMassDen", 
+        VolMassDen = ModelClass(app_root, "VolMassDen",
             { "volume": ClassField({ "name":        "volume",
                                 "displayName":          "Volume",
                                 "displayIcon":          "size.svg",
-                                "description":          "How big is the thing", 
-                                "fieldType":        "slider", 
-                                "defaultValue":     10, 
-                                "rangeBottom":        0.00000001, 
+                                "description":          "How big is the thing",
+                                "fieldType":        "slider",
+                                "defaultValue":     10,
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
                                 }),
-              "mass": ClassField({ "name":        "mass", 
+              "mass": ClassField({ "name":        "mass",
                                 "displayName":          "Mass",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "How heavy is the thing",
-                                "fieldType":        "slider", 
-                                "defaultValue":     10.0, 
-                                "rangeBottom":            0.00000001, 
-                                "rangeTop":     100000000000, 
+                                "fieldType":        "slider",
+                                "defaultValue":     10.0,
+                                "rangeBottom":            0.00000001,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "Kilograms", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "Kilograms",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "Kg",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
-              "density": ClassField({ "name":        "density", 
+              "density": ClassField({ "name":        "density",
                                 "displayName":          "Density",
                                 "displayIcon":          "howMany.svg",
                                 "description":          "How dense is the thing",
-                                "fieldType":        "slider", 
-                                "defaultValue":     1.0, 
-                                "rangeBottom":  0.000000001, 
-                                "rangeTop":     100000000000, 
+                                "fieldType":        "slider",
+                                "defaultValue":     1.0,
+                                "rangeBottom":  0.000000001,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "m3/kg", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "m3/kg",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "m3/kg",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   True, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "svgComponent":         None
                                 }),
             },
-              {           "mass": { "__default": 
+              {           "mass": { "__default":
                                             "toReturn = !!volume!!  / !!density!!",
                                   },
-                        "volume": { "__default":                     
+                        "volume": { "__default":
                                             "toReturn = !!mass!!    * !!density!!",
                                   },
                        "density": { "__default":
@@ -3163,7 +3163,7 @@ toReturn['clone3d'].update(
                     "svgDisplayDefByValue": representations["Grey Cube"]
                   },
             },
-            inputFieldHUD = 
+            inputFieldHUD =
             { "FieldOrder.preClone":
               { "orderList":
                 [ "groupHeader_Volume Mass & Density"  ,
@@ -3182,19 +3182,19 @@ toReturn['clone3d'].update(
         {     "energy": ClassField({ "name":        "energy",
                                 "displayName":          "Energy",
                                 "displayIcon":          "energy.svg",
-                                "description":          "Total energy to power kettle", 
-                                "fieldType":            "slider", 
-                                "defaultValue":         0.14068, 
-                                "rangeBottom":             1, 
-                                "rangeTop":     100000000000, 
+                                "description":          "Total energy to power kettle",
+                                "fieldType":            "slider",
+                                "defaultValue":         0.14068,
+                                "rangeBottom":             1,
+                                "rangeTop":     100000000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "kW h", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "kW h",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kW h",
-                                "inputField":          True, 
-                                "outputField":         True, 
-                                "defaultInputField":   False, 
+                                "inputField":          True,
+                                "outputField":         True,
+                                "defaultInputField":   False,
                                 "defaultOutputField":  True,
                                 "svgComponent":         None
                                 }),
@@ -3202,20 +3202,20 @@ toReturn['clone3d'].update(
               "volume": ClassField({ "name":        "volume",
                                 "displayName":          "Volume",
                                 "displayIcon":          "size.svg",
-                                "description":          "How big is the Kettle", 
-                                "fieldType":        "slider", 
+                                "description":          "How big is the Kettle",
+                                "fieldType":        "slider",
                                 "defaultValue":     1.5,
-                                "rangeBottom":        0.00000001, 
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "litres", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "litres",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "litres",
-                                "inputField":          True, 
-                                "outputField":         True, 
+                                "inputField":          True,
+                                "outputField":         True,
                                 "visualisationField":   True,
-                                "defaultInputField":   True, 
+                                "defaultInputField":   True,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": True,
                                 "svgComponent":         None
@@ -3223,41 +3223,41 @@ toReturn['clone3d'].update(
                 "count": ClassField({ "name":        "count",
                                 "displayName":          "Kettle Count",
                                 "displayIcon":          "size.svg",
-                                "description":          "How many kettles", 
-                                "fieldType":        "slider", 
+                                "description":          "How many kettles",
+                                "fieldType":        "slider",
                                 "defaultValue":     1.0,
                                 "fieldPrecisionFunction": "toReturn = Math.ceil(currentValue);",
-                                "rangeBottom":        0.00000001, 
+                                "rangeBottom":        0.00000001,
                                 "rangeTop":           10000000,
                                 "rangeType":           "log",
-                                "selectableValues":     None, 
-                                "unit":                "units", 
-                                "unitPrefix":           "", 
+                                "selectableValues":     None,
+                                "unit":                "units",
+                                "unitPrefix":           "",
                                 "unitSuffix":          "kettles",
-                                "inputField":          False, 
-                                "outputField":         False, 
+                                "inputField":          False,
+                                "outputField":         False,
                                 "visualisationField":   True,
-                                "defaultInputField":   False, 
+                                "defaultInputField":   False,
                                 "defaultOutputField":  False,
                                 "defaultVisualisationField": False,
                                 "svgComponent":         None
                                 }),
-              # "watts": ClassField({ "name":        "watts", 
+              # "watts": ClassField({ "name":        "watts",
               #                   "displayName":          "Watts",
               #                   "displayIcon":          "energy.svg",
-              #                   "description":          "Watts per kettle", 
-              #                   "fieldType":        "slider", 
-              #                   "defaultValue":       60, 
-              #                   "rangeBottom":        0.001, 
+              #                   "description":          "Watts per kettle",
+              #                   "fieldType":        "slider",
+              #                   "defaultValue":       60,
+              #                   "rangeBottom":        0.001,
               #                   "rangeTop":           10000,
               #                   "rangeType":           "log",
-              #                   "selectableValues":     None, 
-              #                   "unit":                "w", 
-              #                   "unitPrefix":           "", 
+              #                   "selectableValues":     None,
+              #                   "unit":                "w",
+              #                   "unitPrefix":           "",
               #                   "unitSuffix":          "Watts",
-              #                   "inputField":          True, 
-              #                   "outputField":         True, 
-              #                   "defaultInputField":   False, 
+              #                   "inputField":          True,
+              #                   "outputField":         True,
+              #                   "defaultInputField":   False,
               #                   "defaultOutputField":  False,
               #                   "svgComponent":         None
               #                   }),
@@ -3283,7 +3283,7 @@ toReturn['clone3d'].update(
                     "svgDisplayDefByValue": representations["Kettle by Count"]
                   },
             },
-            inputFieldHUD = 
+            inputFieldHUD =
             { "FieldOrder.preClone":
               { "orderList":
                 [ "groupHeader_Energy Usage"  ,
@@ -3318,73 +3318,73 @@ toReturn['clone3d'].update(
 #         bristolHealth_2012HealthData.getRawData()
 #         bristolHealth_2012HealthData.buildSelectInputFields()
 #         bristolHealth_2012HealthData['fieldDefinitions'].update(
-#             { "percentage" : ClassField({ "name":        "percentage", 
-#                                 "fieldType":        "slider", 
-#                                 "defaultValue":     10, 
-#                                 "rangeBottom":            1, 
-#                                 "rangeTop":     100000000000, 
+#             { "percentage" : ClassField({ "name":        "percentage",
+#                                 "fieldType":        "slider",
+#                                 "defaultValue":     10,
+#                                 "rangeBottom":            1,
+#                                 "rangeTop":     100000000000,
 #                                 "rangeType":           "log",
-#                                 "selectableValues":     None, 
-#                                 "unit":                "ratio", 
-#                                 "unitPrefix":           "", 
+#                                 "selectableValues":     None,
+#                                 "unit":                "ratio",
+#                                 "unitPrefix":           "",
 #                                 "unitSuffix":          "%",
-#                                 "inputField":          False, 
-#                                 "outputField":         True, 
-#                                 "defaultInputField":   False, 
+#                                 "inputField":          False,
+#                                 "outputField":         True,
+#                                 "defaultInputField":   False,
 #                                 "defaultOutputField":  True,
 #                                 "svgComponent":         None
 #                                 }),
-#              "color1": ClassField({ 
-#                                 "name":               "color1", 
-#                                 "fieldType":          "text", 
-#                                 "defaultValue":       "rgb(255,-255,-255)", 
-#                                 "rangeBottom":             0, 
-#                                 "rangeTop":             100, 
+#              "color1": ClassField({
+#                                 "name":               "color1",
+#                                 "fieldType":          "text",
+#                                 "defaultValue":       "rgb(255,-255,-255)",
+#                                 "rangeBottom":             0,
+#                                 "rangeTop":             100,
 #                                 "rangeType":           "linear",
-#                                 "selectableValues":     None, 
-#                                 "unit":                "percent", 
-#                                 "unitPrefix":           "", 
+#                                 "selectableValues":     None,
+#                                 "unit":                "percent",
+#                                 "unitPrefix":           "",
 #                                 "unitSuffix":          "%",
 #                                 "inputField":           True,
 #                                 "outputField":          False,
-#                                 "visualisationField":   False, 
-#                                 "defaultInputField":    False, 
+#                                 "visualisationField":   False,
+#                                 "defaultInputField":    False,
 #                                 "defaultOutputField":   False,
 #                                 "svgComponent":         None
 #                                 }),
-#               "numberOfClones": ClassField({ 
-#                                 "name":               "color1", 
-#                                 "fieldType":          "text", 
-#                                 "defaultValue":       "100", 
-#                                 "rangeBottom":             0, 
-#                                 "rangeTop":             100, 
+#               "numberOfClones": ClassField({
+#                                 "name":               "color1",
+#                                 "fieldType":          "text",
+#                                 "defaultValue":       "100",
+#                                 "rangeBottom":             0,
+#                                 "rangeTop":             100,
 #                                 "rangeType":           "linear",
-#                                 "selectableValues":     None, 
-#                                 "unit":                "unit", 
-#                                 "unitPrefix":           "", 
+#                                 "selectableValues":     None,
+#                                 "unit":                "unit",
+#                                 "unitPrefix":           "",
 #                                 "unitSuffix":          "unit",
-#                                 "inputField":           True, 
+#                                 "inputField":           True,
 #                                 "outputField":          False,
-#                                 "visualisationField":   False, 
-#                                 "defaultInputField":    True, 
+#                                 "visualisationField":   False,
+#                                 "defaultInputField":    True,
 #                                 "defaultOutputField":   False,
 #                                 "svgComponent":         None
 #                                 }),
-#               "outputTable": ClassField({ 
-#                                 "name":               "outputTable", 
-#                                 "fieldType":          "text", 
-#                                 "defaultValue":       OD(), 
-#                                 "rangeBottom":             0, 
-#                                 "rangeTop":             100, 
+#               "outputTable": ClassField({
+#                                 "name":               "outputTable",
+#                                 "fieldType":          "text",
+#                                 "defaultValue":       OD(),
+#                                 "rangeBottom":             0,
+#                                 "rangeTop":             100,
 #                                 "rangeType":           "linear",
-#                                 "selectableValues":     None, 
-#                                 "unit":                "percent", 
-#                                 "unitPrefix":           "", 
+#                                 "selectableValues":     None,
+#                                 "unit":                "percent",
+#                                 "unitPrefix":           "",
 #                                 "unitSuffix":          "%",
-#                                 "inputField":           False, 
+#                                 "inputField":           False,
 #                                 "outputField":          True,
 #                                 "visualisationField":   True,
-#                                 "defaultInputField":    False, 
+#                                 "defaultInputField":    False,
 #                                 "defaultOutputField":   False,
 #                                 "defaultVisualisationField": True,
 #                                 "svgComponent":         None
@@ -3416,12 +3416,12 @@ toReturn['clone3d'].update(
 # """
 
 #         bristolHealth_2012HealthData['processorDefinitions'].update(
-#             { "outputTable" :  { "__default" : 
+#             { "outputTable" :  { "__default" :
 #                                   """toReturn = [ { 'ratio1': !!percentage!!, 'color1': '!!color1!!', 'cloneCount1' : '!!numberOfClones!!'},
 #                                                 ]
 #                                   """},
-#               "percentage": 
-#                   { "__default": 
+#               "percentage":
+#                   { "__default":
 # buildQueryString + \
 # """
 # uri = "https://opendata.bristol.gov.uk/resource/8pfz-pbsq.json"
@@ -3452,8 +3452,8 @@ toReturn['clone3d'].update(
 #                   },
 #         }
 #         )
-          
-#         BristolHealthData = ModelClass(app_root, "BristolHealthData", 
+
+#         BristolHealthData = ModelClass(app_root, "BristolHealthData",
 #             bristolHealth_2012HealthData['fieldDefinitions'],
 #             bristolHealth_2012HealthData['processorDefinitions'],
 #             bristolHealth_2012HealthData['subModelDefinitions'],
@@ -3461,16 +3461,16 @@ toReturn['clone3d'].update(
 #           )
 
         for (modelClassName, modelClass) in modelClasses.items():
-          modelClass.initialise()  
-        
+          modelClass.initialise()
+
 
         transaction.commit()
-        
+
     #coalPowerStation = CoalPowerStation("coalPowerStation")
     #zodb_root['app_root']['coalPowerStation'] = coalPowerStation
-    
-    #print coalPowerStation.fieldContext['price']      
-    
+
+    #print coalPowerStation.fieldContext['price']
+
     appRoot = zodb_root['app_root']
 
     iframeModelClasses = appRoot['iframeModelClasses'] = OD()
@@ -3508,7 +3508,7 @@ toReturn['clone3d'].update(
     #   if savedModelInstance not in zodb_root['app_root']['savedModelInstances']:
     #     copiedSavedModelInstance = copy.deepcopy(savedModelInstances_root['app_root']['savedModelInstances'][savedModelInstance])
     #     zodb_root['app_root']['savedModelInstances'][savedModelInstance] = copiedSavedModelInstance
-    #     copiedSavedModelInstance['modelClass'] = zodb_root['app_root']['modelClasses'][ copiedSavedModelInstance['modelClass']['name'] 
+    #     copiedSavedModelInstance['modelClass'] = zodb_root['app_root']['modelClasses'][ copiedSavedModelInstance['modelClass']['name']
     #     print "copied %s from backup to new storage" % ( savedModelInstance ,)
     # print
 
@@ -3519,7 +3519,3 @@ toReturn['clone3d'].update(
     # return { "mainDB": zodb_root['app_root'],
     #          "savedModelInstances": savedModelInstances_root['app_root'],
     #        }
-
-
-    
-

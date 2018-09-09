@@ -104,7 +104,7 @@ def getModelClasses(request):
 
   #user = request.root['user']['CPS']
   return jsonOutput
-  
+
 @view_config(route_name='getClassInstance', renderer="json")
 def getClassInstance(request):
   ##ipdb.set_trace()
@@ -113,7 +113,7 @@ def getClassInstance(request):
 
   modelInstance                 = modelClass.getModelInstance(request.root['modelInstances'])
   modelInstanceInterface        = modelInstance.getJSInterface()
-  
+
   ##ipdb.set_trace()
   jsonOutput                    = [ modelInstanceInterface ]
   transaction.commit()
@@ -131,7 +131,7 @@ def saveInfogram(request):
   modelInstanceUUID = request.params["modelInstanceUUID"]
 
   newModelInstance  = copyClassInstance(modelInstanceUUID, request, request.root['modelInstances'], request.root['savedModelInstances'])
-  
+
 
   # maybe, maybe not
   #newModelInstance['svg'] = svg
@@ -149,21 +149,21 @@ def saveInfogram(request):
   toReturn["infogramURL"]   = "https://visual.tools/infogram/%s" % (newModelInstance['uuid'] , )
   toReturn["infogramPath"]  = "/infogram/%s" % (newModelInstance['uuid'] , )
 
-  print 
+  print
   print "saveInfogram: %s" % ( toReturn, )
   print "saved: "
   print newModelInstance
-  print 
-  print 
+  print
+  print
   print "loaded: "
   print request.root['savedModelInstances'][newModelInstance['uuid']]
-  print 
+  print
   return toReturn
 
   # toReturn['uuid'] = newModelInstance['uuid']
-  
+
   # # add query string arguments for title and axes etc
-  # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) ) 
+  # toReturn['embedURL'] = request.relative_url("/embedSVG/%s" % (newModelInstance['uuid'], ) )
   #return request.relative_url("visualisations/svg/%s.svg" % (uuid, ) )
 @view_config(route_name="saveSVG", renderer="json")
 def saveSVG(request):
@@ -172,7 +172,7 @@ def saveSVG(request):
   #svgToSave           = request.params['svgToSave']
   readableFileName    = request.headers['X-VisualTools-SvgFilename']
   nginxTempFileName   = request.headers['X-File']
-  
+
   thisFileDir         = os.path.dirname(os.path.realpath(__file__))
   # find a free uuid filename
   svgFileName         = "%s.%s.svg" % (readableFileName, uuid.uuid4().hex)
@@ -214,7 +214,7 @@ def getInfogramByID(request):
   print "getInfogramByID: %s" % (modelInstanceInterface['id'], )
   print
   print jsOutput
-  print 
+  print
 
   return jsOutput
 
@@ -229,7 +229,7 @@ def copyClassInstance(modelInstanceUUID, request, fromDict, toDict):
 
   newModelInstance          = modelClass.getModelInstance(toDict)
   newModelInstance.setFieldValues(urlData['fieldValues'])
-  
+
   newModelInstance['lastAlteredInput']          = modelInstance['lastAlteredInput']
   newModelInstance['lastAlteredOutput']         = modelInstance['lastAlteredOutput']
   newModelInstance['lastAlteredVisualisation']  = modelInstance['lastAlteredVisualisation']
@@ -262,20 +262,20 @@ def getSVGData(request):
 def inputFieldAltered(request):
   # try:
     print request.path_qs
-  
+
     modelInstanceID   = request.params['modelInstanceID']
     modelInstance     = request.root['modelInstances'][modelInstanceID]
     modelClass        = modelInstance['modelClass']
-    
+
     valueFromInstance = []
     try:
       inputField      = tuple(json.loads(request.params['inputField']))
       fieldDataType   = modelInstance.getInputSetter(inputField)['path'][-1]['field']['fieldType']
       if fieldDataType == "text" or fieldDataType == "select":
         inputFieldValue = request.params['newValue']
-      else:    
+      else:
         inputFieldValue = float(request.params['newValue'])
-      
+
       print "Set Input Value from Interface: %s: %s" % (inputField, inputFieldValue)
       modelInstance['modelFieldAlteredSequence'].append(("input", inputField, inputFieldValue, time.time()))
       modelInstance.getInputSetter(inputField).setValue(modelInstance, inputFieldValue)
@@ -309,24 +309,24 @@ def inputFieldAltered(request):
       visualisationField = modelInstance['lastAlteredVisualisation']
 
     print "valuesPreListing: \n  inputField: %s, fieldValue: %s\n  outputField: %s\nvisualisationField: %s\n filledFromInstance: %s" \
-        % ( modelInstance['inputSetter'], 
-            modelInstance['inputSetter'].getValue(modelInstance), 
-            modelInstance['outputSetter'], 
-            visualisationField, 
+        % ( modelInstance['inputSetter'],
+            modelInstance['inputSetter'].getValue(modelInstance),
+            modelInstance['outputSetter'],
+            visualisationField,
             valueFromInstance,
           )
-    
+
     #if modelInstance['isBottomModel'] == True:
     #  ipdb.set_trace()
-    
+
     originalInputFieldAddress = modelInstance['inputFieldAddress']
-    #All that is needed to allow as many models as you like in a row is to have the top and bottom models store ID's for each other so they can tell what is going on. 
+    #All that is needed to allow as many models as you like in a row is to have the top and bottom models store ID's for each other so they can tell what is going on.
     #The front end just neesd to have the overflow set for the container
     if modelInstance['isBottomModel']:
       modelInstance.getInputSetter(modelInstance['boundInputField'])
-    
+
     newOutputValue = modelInstance.process()
-    modelInstance.getInputSetter(originalInputFieldAddress)  
+    modelInstance.getInputSetter(originalInputFieldAddress)
 
 
     #ipdb.set_trace()
@@ -344,14 +344,14 @@ def inputFieldAltered(request):
           for field in matchingFields:
             bottomModelLinkFieldItem = \
                 { "boundOutputField": modelInstance['outputFieldAddress'],
-                  "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"), 
+                  "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"),
                   "bottomModelClass": field['modelClass']['name']
                 }
             choosableFields.append(bottomModelLinkFieldItem)
 
         elif bottomModel is not None:
           #ipdb.set_trace()
-          
+
 
           matchUnit             = False
           matchFieldByFieldName = False
@@ -366,7 +366,7 @@ def inputFieldAltered(request):
           for field in matchingFields:
             bottomModelLinkFieldItem = \
                 { "boundOutputField": modelInstance['outputFieldAddress'],
-                  "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"), 
+                  "boundInputField" : field['classData'].getValue(field['modelClass'], "fieldAddress"),
                   "bottomModelClass": field['modelClass']['name']
                 }
             if      (matchUnit is False  and matchFieldByFieldName is not False and field is matchFieldByFieldName) \
@@ -375,7 +375,7 @@ def inputFieldAltered(request):
               bottomModel['boundInputField'] = bottomModelLinkFieldItem['boundInputField']
               matchUnit  = "matched"
             choosableFields.append(bottomModelLinkFieldItem)
-        
+
           bottomModel.getInputSetter(bottomModel['boundInputField']).setValue(bottomModel, newOutputValue)
           #if there is no outputField set, set it to the inputField. Simple.
           if "lastAlteredOutput" not in bottomModel:
@@ -395,11 +395,11 @@ def inputFieldAltered(request):
     svg3dDisplayJSON = modelClass['svgDisplayDefs'].process(modelInstance)
 
     transaction.commit()
-    
+
     return {    "modelClass": modelInstance['modelClass']['name'],
 
-                "fieldName": modelInstance['outputFieldAddress'], 
-                "newValue": newOutputValue, 
+                "fieldName": modelInstance['outputFieldAddress'],
+                "newValue": newOutputValue,
 
                 "fieldValues": modelInstance.getJSInterface()['fieldValues'],
 
@@ -423,7 +423,7 @@ def setBottomModel(request):
   #ipdb.set_trace()
   boundOutputField  = tuple(json.loads(request.params['boundOutputField']))
   boundInputField   = tuple(json.loads(request.params['boundInputField']))
-  
+
   topModelInstance  = request.root['modelInstances'][topModelID]
   if bottomModelClass in topModelInstance['bottomModelHistory']:
     bottomModelInstance = topModelInstance['bottomModelHistory'][bottomModelClass]
@@ -431,25 +431,25 @@ def setBottomModel(request):
     bottomModelInstance = request.root['modelClasses'][bottomModelClass].getModelInstance(topModelInstance['bottomModelHistory'])
     bottomModelInstance['isBottomModel'] = True
     request.root['modelInstances'][bottomModelInstance['uuid']] = bottomModelInstance
-  
+
   topModelInstance['bottomModel'] = bottomModelInstance
 
   topModelInstance['boundOutputField']   = boundOutputField
   bottomModelInstance['boundInputField'] = boundInputField
-  
+
   bottomModelInstance.getInputSetter(boundInputField).setValue(bottomModelInstance, topModelInstance.getOutputSetter(boundOutputField).getValue(topModelInstance))
   bottomModelInstance.getOutputSetter(bottomModelInstance['lastAlteredOutput'])
   bottomModelInstance.getProcessPath().process(bottomModelInstance)
-  
+
   #jsonOutput = bottomModelInstance.getJSInterface(boundInputField=boundInputField)
   #remove input field binding. Destructive and Irrelevant
   jsonOutput = bottomModelInstance.getJSInterface()
   jsonOutput['__modelClass'] = bottomModelInstance['modelClass']['name'];
-  
+
   print "setBottomModel: \n  boundFields: %s, %s" % (boundOutputField, boundInputField)
-  
+
   transaction.commit()
-  
+
   return jsonOutput
 
 import pyramid_google_login
@@ -467,7 +467,7 @@ def googleConnect_login(context, request):
   transaction.commit()
 
   return pyramid_google_login.redirect_to_signin(request, url="/googleConnect/credentialsCheck?emailAddress=%s" % (emailAddress, ))
-  
+
 
 @subscriber(pyramid_google_login.events.UserLoggedIn)
 def googleConnect_login_happened(googleConnect_loginEvent):
@@ -476,18 +476,18 @@ def googleConnect_login_happened(googleConnect_loginEvent):
 
   userID        = googleConnect_loginEvent.userid
   loggingIn     = \
-      { "id":           userID, 
+      { "id":           userID,
         "userData":     googleConnect_loginEvent.userinfo,
         "oauth2_token": googleConnect_loginEvent.oauth2_token,
 
       }
-  
+
   users[userID] = loggingIn
-  
+
   localUserData = users[loggingIn["id"]]
 
   print "google connect log in event completed"
-  
+
   transaction.commit()
 
 @view_config(route_name="googleConnect/credentialsCheck", renderer="templates/googleCredentialsCheck.pt")
@@ -685,7 +685,7 @@ def scottishParliament_updateSwings(context, request):
             rowDict[columnName] = row[columnCounter]
             columnCounter += 1
           rows.append(rowDict)
-          
+
           region        = rowDict["Region"]
           constituency  = rowDict["Constituency"]
           if region not in voteData['regions']:
@@ -696,12 +696,12 @@ def scottishParliament_updateSwings(context, request):
             voteData['constituencies'].append(constituency)
 
           #voteData['constituency']['votesByConstituency'][constituency] = {"dataRow": rowDict}
-          
+
 
           for columnNumber in range(10, len(headerRow)):
             fromParty = headerRow[columnNumber]
 
-            traverse( voteTree, 
+            traverse( voteTree,
                        PM(), "2016",
                           PM(), region,
                             PM(), constituency,
@@ -718,7 +718,7 @@ def scottishParliament_updateSwings(context, request):
         rowCounter += 1
     voteData[voteType]["columnNames"] = headerRow
     voteData[voteType]["data"] = rows
-  
+
   voteData['constituency']['parties'] = voteData['constituency']['columnNames'][10:]
 
   traverse(voteTree, {}, 'swings', {}, 'constituency')
@@ -726,7 +726,7 @@ def scottishParliament_updateSwings(context, request):
 
   # traverse(voteTree, {}, "swings", {}, "constituency")["national.Labour.SNP"] = 100
   # traverse(voteTree, {}, "swings", {}, "list")        ["national.SNP.Green"]  = 50
-  
+
   # import pprint
   # pp = pprint.PrettyPrinter(indent=4)
   # with open("voteTree.py", "wb") as writeDict:
@@ -762,7 +762,7 @@ def scottishParliament_updateSwings(context, request):
   for rowData in voteData['constituency']['data']:
     # voteData['constituency']['votingNumbers'][rowData]['Constituency'] = {}
     partyVote = -1
-    
+
 
   regions = {
       'Central Scotland': {'constituencies': ['Airdrie and Shotts',
@@ -840,7 +840,7 @@ def scottishParliament_updateSwings(context, request):
          'Strathkelvin and Bearsden']}
   }
 
-  
+
 
   idMap = {"regions":{}, "constituencies":{}}
   for (region, value) in regions.items():
@@ -848,7 +848,7 @@ def scottishParliament_updateSwings(context, request):
     idMap['regions'][regionID] = {"title": region}
     for constituency in value['constituencies']:
       idMap['constituencies'][camelCase(constituency)] =  \
-      { "title":  constituency, 
+      { "title":  constituency,
         "region": regionID,
         "parties": {},
       }
@@ -870,7 +870,7 @@ def scottishParliament_updateSwings(context, request):
       swings[swingType][swingDef[0]] = float(swingDef[1])
 
   # import copy
-  
+
   # voteTree = ScottishParliamentaryElection()
   # voteTree['2016']    = copy.deepcopy(request.root["2011"]['2016'])
   # voteTree['parties'] = copy.deepcopy(request.root["2011"]["parties"])
