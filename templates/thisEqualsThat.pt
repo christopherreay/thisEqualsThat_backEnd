@@ -14,7 +14,7 @@
     <![endif]-->
 
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-    
+
     <title>ThisEqualsThat</title>
   <meta property="og:image" content="https://visual.tools/static/graphics/og/og.visual.tools.thisEquals.logo.jpg"/>
   <meta property="og:title" content="visual.tools - ThisEquals That"/>
@@ -24,11 +24,11 @@
 
   <meta property='og:image:width'  content="1200"/>
   <meta property='og:image:height'  content="1200"/>
-    
+
 
     <link rel="shortcut icon" href="/static/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    
+
 
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/setImmediate/1.0.4/setImmediate.min.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.7/uuid.min.js"></script>
@@ -44,11 +44,11 @@
     <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
     <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/theme.min.css">
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    
+
     <!-- jquery   libraries -->
-    <link    rel="stylesheet"       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  
+    <link    rel="stylesheet"       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
             integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
-   <!--  <script type="text/javascript"   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+   <!--  <script type="text/javascript"   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js" integrity="sha256-vwV2uHl48k90PixRkSltSxx+/4S8XhevXCrpaiJTGr8=" crossorigin="anonymous"></script>
@@ -68,14 +68,14 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jqueryui-editable/js/jqueryui-editable.min.js"></script>
     <!-- <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script> -->
-    
-    
+
+
 
 
     <link    rel="stylesheet"       href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 
-    <script type="text/javascript"   src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>  
+    <script type="text/javascript"   src="/static/javascript/popupWindow/jquery.popupWindow.js"></script>
     <script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/remodal/1.1.0/remodal.min.js"></script>
 
     <!-- jqueryUI libraries -->
@@ -89,17 +89,17 @@
     <script type="text/javascript"   src="/static/javascript/visual.tools.bootstrap.objects.js"></script>
 
     <link    rel="stylesheet"       href="/static/css/menu.css" type="text/css" media="screen" charset="utf-8">
-    
+
     <!-- SVG3d -->
     <script type="text/javascript"   src="/static/javascript/svg3d/dom_utils.js"></script>
     <script type="text/javascript"   src="/static/javascript/svg3d/jquery_svg3d.js"></script>
     <script type="text/javascript"   src="/static/javascript/svg3d/svg3d.js"></script>
     <script type="text/javascript"   src="/static/javascript/svg3d/svg3d_parsing.js"></script>
-        
+
   </head>
 
   <body>
-    
+
     <!--   <div id="wrap">
         <div id="top">
           <div class="top">
@@ -111,6 +111,6 @@
         <div id="thisEqualsThatSceneDiv">
         </div>
       </div> -->
-   
+
   </body>
 </html>
