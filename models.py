@@ -1597,9 +1597,9 @@ toReturn['clone3d'].update(
                                       "#"" var topColor  = pickedColor.transition("black", 0.10);
                                           var sideColor = pickedColor.transition("black", 0.175);
 
-                                          toReturn  = 
-                                              `.face                            { fill: ${ pickedColor .toRgbaString() };  } 
-                                               .face.faceTop,  .face.faceBottom { fill: ${ topColor    .toRgbaString() };  } 
+                                          toReturn  =
+                                              `.face                            { fill: ${ pickedColor .toRgbaString() };  }
+                                               .face.faceTop,  .face.faceBottom { fill: ${ topColor    .toRgbaString() };  }
                                                .face.faceLeft, .face.faceRight  { fill: ${ sideColor   .toRgbaString() };  }
                                               `;
                                       "#"",
