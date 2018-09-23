@@ -24,71 +24,18 @@ upstream pyramid_dev {
   }
 
 server {
-  
-  listen 443;
-	server_name christopher.freefreecrowdfunding.org dev.tet.freefreecrowdfunding.org;
+  listen 80;
 
-  disable_symlinks off;
-  root /home/developmentSpace/context/thisEquals/virtualEnv/src/thisEqualsDev/thisequalsdev/;
-
-
-  
-	ssl on;
-	ssl_certificate      /etc/nginx/ssl/tet.freefreecrowdfunding.org.crt;
-  ssl_certificate_key  /etc/nginx/ssl/tet.freefreecrowdfunding.org.key;
-
-	ssl_session_timeout 5m;
-
-	ssl_protocols SSLv3 TLSv1;
-	ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-	ssl_prefer_server_ciphers on;
-
-	
-  location /print/
-  { root /home/developmentSpace/context/thisEquals/;
-  }
-  location /saveSVG
-  { #auth_basic                 "Restricted Upload";
-    #auth_basic_user_file       basic.htpasswd;
-    limit_except POST          { deny all; }
-
-    client_body_temp_path      /tmp_ownedBy_thisEquals/;
-    client_body_in_file_only   on;
-    client_body_buffer_size    128K;
-    client_max_body_size       20M;
-
-    proxy_pass_request_headers on;
-    proxy_set_header           X-File $request_body_file; 
-    proxy_set_body             off;
-    proxy_redirect             off;
-    proxy_pass                 http://pyramid_dev;
-  }
-  location / {
-		try_files $uri $uri/ @pyramid;
-	}
-  location @pyramid
-  {     proxy_set_header        Host $http_host;
-        proxy_set_header        X-Real-IP $remote_addr;
-        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header        X-Forwarded-Proto $scheme;
-
-        client_max_body_size    10m;
-        client_body_buffer_size 128k;
-        proxy_connect_timeout   60s;
-        proxy_send_timeout      90s;
-        proxy_read_timeout      90s;
-        proxy_buffering         off;
-        proxy_temp_file_write_size 64k;
-        proxy_pass http://pyramid_dev;
-        proxy_redirect          off;
-  }
-
+  server_name dev.visual.tools;
+  return 302 https://dev.visual.tools$request_uri;
 }
-
 
 server {
   listen 443;
   server_name dev.visual.tools;
+
+  rewrite ^/$ https://dev.visual.tools/thisEqualsThat redirect;
+
 
   disable_symlinks off;
   root /home/developmentSpace/context/thisEquals/virtualEnv/src/thisEqualsDev/thisequalsdev/;
