@@ -36,11 +36,32 @@ def debug(request):
       """toReturn = svgFieldValue / 2.5"""
   request.root['modelClasses']['Wood']['svgDisplayDefs']['svgDefinitions'][('volume',)]['svgDisplayDefByValue']['toReturn = True']['height'] = \
       '\nif svgQuantiseValue < 1.0:\n  toReturn = 8 * svgQuantiseValue\nelse:\n  toReturn = 8\n'
-  
+
   toInsert="#fieldInfo_<a href=\"https://www.forestry.gov.uk/pdf/TimberVolumeCalculator.pdf/$FILE/TimberVolumeCalculator.pdf\">source for 2.5m3 per tree</a>"
   if toInsert not in request.root['modelClasses']['Wood']['inputFieldHUD']['FieldOrder.preClone']['orderList']:
     request.root['modelClasses']['Wood']['inputFieldHUD']['FieldOrder.preClone']['orderList']\
         .insert(4, toInsert)
+
+  # if "Voting" not in request.root['iframeModelClasses']:
+  request.root['iframeModelClasses']['Voting'] = \
+      { "icon": "earth.svg",
+        "src" : "votingModel/scotland/national",
+      }
+  request.root['iframeModelClasses']['Ideation'] = \
+      { "icon": "earth.svg",
+        "src" : "https://ideationboard.visual.tools/",
+      }
+  request.root['iframeModelClasses']['RegionalData'] = \
+        { "icon": "gas-mask.svg",
+          "src" : "/static/threeJS/map/map.html",
+          "displayName" : "Regional Data",
+        }
+  request.root['iframeModelClasses']['CurriculumRadialMap'] = \
+        { "icon": "gas-mask.svg",
+          "src" : "/static/legacy/curriculumRadialMap/d3TableHack-2.html",
+          "displayName" : "Curriculum Radial Map",
+        }
+
 
   transaction.commit()
 

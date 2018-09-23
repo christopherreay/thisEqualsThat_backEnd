@@ -3495,11 +3495,29 @@ toReturn['clone3d'].update(
         { "icon": "earth.svg",
           "src" : "/static/threeJS/box/box.html",
         }
+    iframeModelClasses["Voting"] = \
+        { "icon": "earth.svg",
+          "src" : "https://visual.tools/votingModel/scotland/national",
+        }
+    iframeModelClasses["Ideation"] = \
+        { "icon": "earth.svg",
+        "src" : "https://ideationboard.visual.tools/",
+      }
+    iframeModelClasses["RegionalData"] = \
+        { "icon": "gas-mask.svg",
+          "src" : "/static/threeJS/map/map.html",
+          "displayName" : "Regional Data",
+        }
+    iframeModelClasses['CurriculumRadialMap'] = \
+        { "icon": "gas-mask.svg",
+          "src" : "/static/legacy/curriculumRadialMap/d3TableHack-2.html",
+          "displayName" : "Curriculum Radial Map",
+        }
 
     #appRoot['coalPowerStation'] = ModelClass()
     #coal = Coal("coal", appRoot)
     #appRoot['coal'] = coal
-    
+
     # import copy
 
     # print "savedModelInstances"
